@@ -40,14 +40,20 @@ const seconds = String(now.getSeconds()).padStart(2, '0');
 const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
 const folderName = `${timestamp}_${slug}`;
 
-// Create folder path
+// Create folder paths
 const notesDir = join(__dirname, '..', 'src', 'content', 'notes');
 const noteFolder = join(notesDir, folderName);
 
-// Create folder
+const publicNotesDir = join(__dirname, '..', 'public', 'notes');
+const publicNoteFolder = join(publicNotesDir, folderName);
+
+// Create folders
 try {
   mkdirSync(noteFolder, { recursive: true });
-  console.log(`✅ Created folder: ${folderName}`);
+  console.log(`✅ Created folder: src/content/notes/${folderName}`);
+
+  mkdirSync(publicNoteFolder, { recursive: true });
+  console.log(`✅ Created folder: public/notes/${folderName}`);
 } catch (error) {
   console.error('❌ Error creating folder:', error.message);
   process.exit(1);
@@ -115,6 +121,8 @@ try {
   console.log(`\n📝 Edit the files:`);
   console.log(`   - src/content/notes/${folderName}/id.md`);
   console.log(`   - src/content/notes/${folderName}/en.md`);
+  console.log(`\n🖼️  Image folder ready:`);
+  console.log(`   - public/notes/${folderName}/`);
 } catch (error) {
   console.error('❌ Error creating files:', error.message);
   process.exit(1);

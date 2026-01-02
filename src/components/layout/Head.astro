@@ -1,0 +1,136 @@
+---
+import { getTranslations, getLocalizedPath, type Locale } from '../../utils/i18n';
+import SEO from '../common/SEO.astro';
+import StructuredData from '../common/StructuredData.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  author?: string;
+  tags?: string[];
+  currentPath: string;
+  locale: Locale;
+}
+
+const {
+  title,
+  description,
+  image,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  author,
+  tags = [],
+  currentPath,
+  locale,
+} = Astro.props;
+
+const t = getTranslations(locale);
+const pageTitle = title ? `${title} - ${t.site.title}` : t.site.title;
+const pageDescription = description || t.site.description;
+
+// Generate alternate locales
+const alternateLocales: Array<{ locale: Locale; url: string }> = [];
+if (locale === 'id') {
+  alternateLocales.push({
+    locale: 'en',
+    url: getLocalizedPath(currentPath, 'en'),
+  });
+} else {
+  alternateLocales.push({
+    locale: 'id',
+    url: getLocalizedPath(currentPath.replace('/en', ''), 'id'),
+  });
+}
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/favicon.svg" />
+<meta name="generator" content={Astro.generator} />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+
+{/* Resource hints for performance */}
+{
+  image && (
+    <>
+      <link rel="preconnect" href={new URL(image, Astro.site || Astro.url).origin} />
+      <link rel="dns-prefetch" href={new URL(image, Astro.site || Astro.url).origin} />
+    </>
+  )
+}
+
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${t.site.title} RSS Feed`}
+  href={`${Astro.site || Astro.url.origin}/rss.xml`}
+/>
+<title>{pageTitle}</title>
+
+<SEO
+  title={pageTitle}
+  description={pageDescription}
+  canonicalURL={Astro.url}
+  image={image}
+  type={type}
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
+  author={author}
+  tags={tags}
+  locale={locale}
+  alternateLocales={alternateLocales}
+  siteName={t.site.title}
+/>
+
+<StructuredData
+  type={type === 'article' ? 'BlogPosting' : 'WebSite'}
+  title={pageTitle}
+  description={pageDescription}
+  url={Astro.url.href}
+  image={image}
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
+  author={author ? { name: author } : undefined}
+  siteName={t.site.title}
+  siteURL={Astro.site?.href}
+  locale={locale === 'id' ? 'id-ID' : 'en-US'}
+  alternateLocales={alternateLocales.map((alt) => ({
+    locale: alt.locale === 'id' ? 'id-ID' : 'en-US',
+    url: alt.url,
+  }))}
+/>
+<!-- Blocking script to prevent flash of light theme - must run before render -->
+<script is:inline>
+  (function () {
+    try {
+      // Get theme from localStorage or default to system preference
+      const storedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+
+      // Apply theme immediately before any rendering
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+
+      // Mark theme as loaded after a short delay to enable transitions
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          document.documentElement.classList.add('theme-loaded');
+        });
+      });
+    } catch (e) {
+      // Fallback if localStorage is not available
+      document.documentElement.classList.add('theme-loaded');
+    }
+  })();
+</script>

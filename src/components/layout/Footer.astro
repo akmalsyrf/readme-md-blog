@@ -1,0 +1,23 @@
+---
+import { getTranslations, type Locale } from '../../utils/i18n';
+import SocialLinks from '../common/SocialLinks.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+---
+
+<footer class="mt-16 border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col items-center gap-4 text-center">
+      <SocialLinks />
+      <p class="text-gray-600 dark:text-gray-400">
+        &copy; {new Date().getFullYear()}
+        {t.site.title}. All rights reserved.
+      </p>
+    </div>
+  </div>
+</footer>
