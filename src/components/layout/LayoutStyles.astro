@@ -14,6 +14,28 @@
     }
   }
 
+  /* Text selection styles - Light theme (teal, darker shade for contrast) */
+  ::selection {
+    background-color: rgb(13 148 136); /* teal-600 - darker for good contrast on light background */
+    color: rgb(255 255 255); /* white */
+  }
+
+  ::-moz-selection {
+    background-color: rgb(13 148 136); /* teal-600 - darker for good contrast on light background */
+    color: rgb(255 255 255); /* white */
+  }
+
+  /* Text selection styles - Dark theme (teal, lighter shade for contrast) */
+  .dark ::selection {
+    background-color: rgb(45 212 191); /* teal-400 - lighter for good contrast on dark background */
+    color: rgb(255 255 255); /* white - better readability on teal background */
+  }
+
+  .dark ::-moz-selection {
+    background-color: rgb(45 212 191); /* teal-400 - lighter for good contrast on dark background */
+    color: rgb(255 255 255); /* white - better readability on teal background */
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 10px;
@@ -115,13 +137,53 @@
   .mobile-menu {
     max-height: 0;
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px);
+    transition:
+      max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .mobile-menu.mobile-menu-open {
-    max-height: 500px;
+    max-height: 600px;
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Mobile Menu Items Animation */
+  .mobile-menu-item {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition:
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mobile-menu-item.mobile-menu-item-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Hamburger Icon Animation */
+  #mobile-menu-icon-open,
+  #mobile-menu-icon-close {
+    transition:
+      opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+
+  #mobile-menu-icon-open.opacity-0,
+  #mobile-menu-icon-close.opacity-0 {
+    opacity: 0;
+  }
+
+  #mobile-menu-icon-open.rotate-90 {
+    transform: rotate(90deg) scale(0.8);
+  }
+
+  #mobile-menu-icon-close.rotate-90 {
+    transform: rotate(90deg) scale(0.8);
   }
 
   /* Better touch targets for mobile */

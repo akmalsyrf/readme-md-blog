@@ -16,23 +16,66 @@
       const isOpen = !mobileMenu.classList.contains('hidden');
 
       if (isOpen) {
-        // Close menu
-        mobileMenu.classList.add('hidden');
+        // Close menu with animation
         mobileMenu.classList.remove('mobile-menu-open');
         mobileMenuButton.setAttribute('aria-expanded', 'false');
-        mobileMenuIconOpen.classList.remove('hidden');
-        mobileMenuIconClose.classList.add('hidden');
-        document.body.classList.remove('menu-open');
+
+        // Hide menu items with stagger (reverse order)
+        const menuItems = Array.from(mobileMenu.querySelectorAll('.mobile-menu-item')).reverse();
+        menuItems.forEach((item, index) => {
+          setTimeout(() => {
+            item.classList.remove('mobile-menu-item-visible');
+          }, index * 30);
+        });
+
+        // Animate icon transition - close icon fades out and rotates
+        mobileMenuIconClose.classList.add('opacity-0', 'rotate-90');
+
+        // Switch to open icon after close icon animation
+        setTimeout(() => {
+          mobileMenuIconClose.classList.add('hidden');
+          mobileMenuIconOpen.classList.remove('hidden');
+          // Trigger reflow for animation
+          void mobileMenuIconOpen.offsetWidth;
+          mobileMenuIconOpen.classList.remove('opacity-0', 'rotate-90');
+        }, 150);
+
+        // Hide menu after animation
+        setTimeout(() => {
+          mobileMenu.classList.add('hidden');
+          document.body.classList.remove('menu-open');
+        }, 300);
       } else {
         // Open menu
         mobileMenu.classList.remove('hidden');
-        // Trigger animation on next frame
+        mobileMenuButton.setAttribute('aria-expanded', 'true');
+
+        // Animate icon transition
+        mobileMenuIconOpen.classList.add('opacity-0', 'rotate-90');
+        setTimeout(() => {
+          mobileMenuIconOpen.classList.add('hidden');
+          mobileMenuIconClose.classList.remove('hidden');
+          // Trigger reflow for animation
+          void mobileMenuIconClose.offsetWidth;
+          mobileMenuIconClose.classList.remove('opacity-0', 'rotate-90');
+        }, 150);
+
+        // Trigger menu slide animation on next frame
         requestAnimationFrame(() => {
           mobileMenu.classList.add('mobile-menu-open');
+
+          // Animate menu items with stagger
+          const menuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
+          menuItems.forEach((item, index) => {
+            setTimeout(
+              () => {
+                item.classList.add('mobile-menu-item-visible');
+              },
+              100 + index * 50
+            );
+          });
         });
-        mobileMenuButton.setAttribute('aria-expanded', 'true');
-        mobileMenuIconOpen.classList.add('hidden');
-        mobileMenuIconClose.classList.remove('hidden');
+
         document.body.classList.add('menu-open');
       }
     }
