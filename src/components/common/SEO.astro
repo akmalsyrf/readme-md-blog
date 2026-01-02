@@ -33,7 +33,7 @@ const {
   twitterHandle,
 } = Astro.props;
 
-const siteURL = new URL(Astro.site || 'https://example.com');
+const siteURL = new URL(Astro.site || 'https://readme-md-blog.vercel.app');
 const fullImageURL = image ? new URL(image, siteURL).href : new URL('/og-image.jpg', siteURL).href;
 
 // Open Graph tags
@@ -76,6 +76,8 @@ const articleTags =
 <meta name="title" content={title} />
 <meta name="description" content={description} />
 <meta name="author" content={author || siteName} />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<meta name="googlebot" content="index, follow" />
 {tags.length > 0 && <meta name="keywords" content={tags.join(', ')} />}
 
 <!-- Open Graph / Facebook -->

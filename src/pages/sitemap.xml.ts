@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import { getLocalizedPath } from '../utils/i18n';
 
 export const GET: APIRoute = async ({ site }) => {
-  const siteURL = site || new URL('https://example.com');
+  const siteURL = site || new URL('https://readme-md-blog.vercel.app');
   const allPosts = await getCollection('notes');
 
   // Get posts for both locales

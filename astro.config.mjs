@@ -3,7 +3,7 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://example.com', // TODO: Replace with your actual domain
+  site: 'https://readme-md-blog.vercel.app',
   integrations: [
     tailwind()
   ],

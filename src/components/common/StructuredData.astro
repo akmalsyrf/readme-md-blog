@@ -1,6 +1,6 @@
 ---
 interface Props {
-  type: 'Article' | 'Blog' | 'WebSite';
+  type: 'Article' | 'BlogPosting' | 'Blog' | 'WebSite';
   title: string;
   description: string;
   url: string;
@@ -27,19 +27,22 @@ const {
   modifiedTime,
   author,
   siteName = 'Readme.md',
-  siteURL = 'https://example.com',
+  siteURL = 'https://readme-md-blog.vercel.app',
   locale = 'id-ID',
   alternateLocales = [],
 } = Astro.props;
 
 function getStructuredData() {
+  // Format image as array for better SEO (Google recommends this)
+  const imageData = image ? (Array.isArray(image) ? image : [image]) : undefined;
+  
   const baseData = {
     '@context': 'https://schema.org',
     '@type': type,
     headline: title,
     description: description,
     url: url,
-    ...(image && { image: image }),
+    ...(imageData && { image: imageData }),
     ...(author && {
       author: {
         '@type': 'Person',
@@ -58,10 +61,10 @@ function getStructuredData() {
     }),
   };
 
-  if (type === 'Article') {
+  if (type === 'Article' || type === 'BlogPosting') {
     return {
       ...baseData,
-      '@type': 'Article',
+      '@type': type === 'BlogPosting' ? 'BlogPosting' : 'Article',
       ...(publishedTime && { datePublished: publishedTime.toISOString() }),
       ...(modifiedTime && { dateModified: modifiedTime.toISOString() }),
       mainEntityOfPage: {

@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://example.com/sitemap.xml
+Sitemap: https://readme-md-blog.vercel.app/sitemap.xml
 
 # Disallow admin or private pages if any
 # Disallow: /admin/

@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 
 export const GET: APIRoute = async ({ site }) => {
-  const siteURL = site || new URL('https://example.com');
+  const siteURL = site || new URL('https://readme-md-blog.vercel.app');
   const allPosts = await getCollection('notes');
 
   // Get posts for both locales, sorted by date
