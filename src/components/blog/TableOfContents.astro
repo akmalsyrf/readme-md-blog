@@ -1,0 +1,307 @@
+---
+import type { TOCItem } from '../../utils/extractHeadings';
+
+interface Props {
+  headings: TOCItem[];
+  locale: 'id' | 'en';
+  t: any;
+}
+
+const { headings, t } = Astro.props;
+
+if (headings.length === 0) {
+  return null;
+}
+
+const tocShow = t.toc.show;
+const tocHide = t.toc.hide;
+---
+
+<aside class="toc-container">
+  <div class="toc-wrapper">
+    <div class="toc-header">
+      <h2 class="toc-title">{t.toc.title}</h2>
+      <button
+        id="toc-toggle"
+        class="toc-toggle"
+        aria-label={tocHide}
+        aria-expanded="true"
+        title={tocHide}
+      >
+        <svg
+          class="toc-toggle-icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"
+          ></path>
+        </svg>
+      </button>
+    </div>
+    <div id="toc-content" class="toc-content">
+      <nav class="toc-nav" aria-label="Table of contents">
+        <ul class="toc-list">
+          {
+            headings.map((heading) => (
+              <li class={`toc-item toc-level-${heading.level}`}>
+                <a href={`#${heading.id}`} class="toc-link" data-heading-id={heading.id}>
+                  {heading.text}
+                </a>
+                {heading.children && heading.children.length > 0 && (
+                  <ul class="toc-sublist">
+                    {heading.children.map((child) => (
+                      <li class={`toc-item toc-level-${child.level}`}>
+                        <a href={`#${child.id}`} class="toc-link" data-heading-id={child.id}>
+                          {child.text}
+                        </a>
+                        {child.children && child.children.length > 0 && (
+                          <ul class="toc-sublist">
+                            {child.children.map((grandchild) => (
+                              <li class={`toc-item toc-level-${grandchild.level}`}>
+                                <a
+                                  href={`#${grandchild.id}`}
+                                  class="toc-link"
+                                  data-heading-id={grandchild.id}
+                                >
+                                  {grandchild.text}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </div>
+</aside>
+
+<script define:vars={{ tocShow, tocHide }}>
+  // TOC Toggle functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocContent = document.getElementById('toc-content');
+
+    if (!tocToggle || !tocContent) return;
+
+    // Load saved state from localStorage
+    const savedState = localStorage.getItem('toc-collapsed');
+    const isCollapsed = savedState === 'true';
+
+    if (isCollapsed) {
+      tocContent.classList.add('toc-content-collapsed');
+      tocToggle.setAttribute('aria-expanded', 'false');
+      tocToggle.setAttribute('aria-label', tocShow);
+      tocToggle.setAttribute('title', tocShow);
+      tocToggle.querySelector('.toc-toggle-icon')?.classList.add('toc-toggle-icon-rotated');
+    }
+
+    // Toggle functionality
+    tocToggle.addEventListener('click', () => {
+      const isCurrentlyCollapsed = tocContent.classList.contains('toc-content-collapsed');
+
+      if (isCurrentlyCollapsed) {
+        // Show
+        tocContent.classList.remove('toc-content-collapsed');
+        tocToggle.setAttribute('aria-expanded', 'true');
+        tocToggle.setAttribute('aria-label', tocHide);
+        tocToggle.setAttribute('title', tocHide);
+        tocToggle.querySelector('.toc-toggle-icon')?.classList.remove('toc-toggle-icon-rotated');
+        localStorage.setItem('toc-collapsed', 'false');
+      } else {
+        // Hide
+        tocContent.classList.add('toc-content-collapsed');
+        tocToggle.setAttribute('aria-expanded', 'false');
+        tocToggle.setAttribute('aria-label', tocShow);
+        tocToggle.setAttribute('title', tocShow);
+        tocToggle.querySelector('.toc-toggle-icon')?.classList.add('toc-toggle-icon-rotated');
+        localStorage.setItem('toc-collapsed', 'true');
+      }
+    });
+
+    // Add IDs to headings and handle smooth scroll
+    // Add IDs to headings if they don't have one
+    const headings = document.querySelectorAll('.prose h2, .prose h3, .prose h4');
+    headings.forEach((heading) => {
+      if (!heading.id) {
+        const text = heading.textContent || '';
+        const id = text
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
+        heading.id = id;
+
+        // Update TOC links to match the generated ID
+        const tocLinks = document.querySelectorAll(`.toc-link[data-heading-id="${id}"]`);
+        tocLinks.forEach((link) => {
+          link.setAttribute('href', `#${id}`);
+        });
+      }
+    });
+
+    // Smooth scroll for TOC links
+    const tocLinks = document.querySelectorAll('.toc-link');
+    tocLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href')?.substring(1);
+        if (targetId) {
+          const target = document.getElementById(targetId);
+          if (target) {
+            const offset = 100; // Offset for fixed header
+            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth',
+            });
+            // Update URL without triggering scroll
+            history.pushState(null, '', `#${targetId}`);
+          }
+        }
+      });
+    });
+
+    // Highlight active heading on scroll
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const id = entry.target.id;
+        const tocLink = document.querySelector(`.toc-link[data-heading-id="${id}"]`);
+
+        // Remove active class from all links
+        document.querySelectorAll('.toc-link').forEach((link) => {
+          link.classList.remove('toc-link-active');
+        });
+
+        // Add active class to current link
+        if (entry.isIntersecting && tocLink) {
+          tocLink.classList.add('toc-link-active');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all headings
+    headings.forEach((heading) => {
+      observer.observe(heading);
+    });
+
+    // Highlight heading on page load if hash exists
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      const targetLink = document.querySelector(`.toc-link[data-heading-id="${hash}"]`);
+      if (targetLink) {
+        setTimeout(() => {
+          targetLink.classList.add('toc-link-active');
+        }, 100);
+      }
+    }
+  });
+</script>
+
+<style>
+  .toc-container {
+    @apply mb-8 rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800;
+  }
+
+  .toc-wrapper {
+    @apply p-6;
+  }
+
+  .toc-header {
+    @apply mb-4 flex items-center justify-between;
+  }
+
+  .toc-title {
+    @apply text-lg font-semibold text-gray-900 dark:text-gray-100;
+    margin: 0;
+  }
+
+  .toc-toggle {
+    @apply flex items-center justify-center rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  .toc-toggle-icon {
+    @apply h-5 w-5 transition-transform duration-200;
+  }
+
+  .toc-toggle-icon-rotated {
+    transform: rotate(180deg);
+  }
+
+  .toc-content {
+    @apply overflow-hidden transition-all duration-300 ease-in-out;
+    max-height: 1000px;
+    opacity: 1;
+  }
+
+  .toc-content-collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-nav {
+    @apply text-sm;
+  }
+
+  .toc-list {
+    @apply space-y-2;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-sublist {
+    @apply mt-2 space-y-1 pl-4;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item {
+    @apply leading-relaxed;
+  }
+
+  .toc-link {
+    @apply text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400;
+    @apply no-underline;
+    display: block;
+    padding: 2px 0;
+  }
+
+  .toc-link-active {
+    @apply font-semibold text-blue-600 dark:text-blue-400;
+  }
+
+  .toc-level-2 .toc-link {
+    @apply font-medium;
+  }
+
+  .toc-level-3 .toc-link {
+    @apply pl-2;
+  }
+
+  .toc-level-4 .toc-link {
+    @apply pl-4 text-xs;
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getLocaleFromPath } from '../../utils/i18n';
+import { getBlogPostStaticPaths } from '../../utils/getBlogPostStaticPaths';
+import BlogPostDetail from '../../components/blog/BlogPostDetail.astro';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  return await getBlogPostStaticPaths('id');
+}
+
+interface Props {
+  post: CollectionEntry<'notes'>;
+}
+
+const { post } = Astro.props;
+const currentPath = Astro.url.pathname;
+const locale = getLocaleFromPath(currentPath);
+
+// Get image URL for SEO
+const imageURL = post.data.image
+  ? new URL(post.data.image, Astro.site || Astro.url).href
+  : undefined;
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  image={imageURL}
+  type="article"
+  publishedTime={post.data.pubDate}
+  modifiedTime={post.data.pubDate}
+  author={post.data.author}
+  tags={post.data.tags}
+>
+  <BlogPostDetail post={post} locale={locale} />
+</BaseLayout>

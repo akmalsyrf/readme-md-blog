@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTranslations, getLocaleFromPath } from '../../utils/i18n';
+import NotFoundPage from '../../components/404/NotFoundPage.astro';
+
+const currentPath = Astro.url.pathname;
+const locale = getLocaleFromPath(currentPath);
+const t = getTranslations(locale);
+---
+
+<BaseLayout title={t.notFound.title} description={t.notFound.description}>
+  <NotFoundPage locale={locale} />
+</BaseLayout>

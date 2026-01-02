@@ -1,0 +1,102 @@
+---
+interface Props {
+  type: 'Article' | 'Blog' | 'WebSite';
+  title: string;
+  description: string;
+  url: string;
+  image?: string;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  author?: {
+    name: string;
+    url?: string;
+  };
+  siteName?: string;
+  siteURL?: string;
+  locale?: string;
+  alternateLocales?: Array<{ locale: string; url: string }>;
+}
+
+const {
+  type,
+  title,
+  description,
+  url,
+  image,
+  publishedTime,
+  modifiedTime,
+  author,
+  siteName = 'Readme.md',
+  siteURL = 'https://example.com',
+  locale = 'id-ID',
+  alternateLocales = [],
+} = Astro.props;
+
+function getStructuredData() {
+  const baseData = {
+    '@context': 'https://schema.org',
+    '@type': type,
+    headline: title,
+    description: description,
+    url: url,
+    ...(image && { image: image }),
+    ...(author && {
+      author: {
+        '@type': 'Person',
+        name: author.name,
+        ...(author.url && { url: author.url }),
+      },
+    }),
+    publisher: {
+      '@type': 'Organization',
+      name: siteName,
+      url: siteURL,
+    },
+    inLanguage: locale,
+    ...(alternateLocales.length > 0 && {
+      inLanguage: [locale, ...alternateLocales.map((alt) => alt.locale)],
+    }),
+  };
+
+  if (type === 'Article') {
+    return {
+      ...baseData,
+      '@type': 'Article',
+      ...(publishedTime && { datePublished: publishedTime.toISOString() }),
+      ...(modifiedTime && { dateModified: modifiedTime.toISOString() }),
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': url,
+      },
+    };
+  }
+
+  if (type === 'Blog') {
+    return {
+      ...baseData,
+      '@type': 'Blog',
+    };
+  }
+
+  if (type === 'WebSite') {
+    return {
+      ...baseData,
+      '@type': 'WebSite',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${siteURL}/search?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    };
+  }
+
+  return baseData;
+}
+
+const structuredData = getStructuredData();
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />

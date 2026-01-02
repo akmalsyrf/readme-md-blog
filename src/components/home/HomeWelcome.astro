@@ -1,0 +1,272 @@
+---
+import { getTranslations, type Locale } from '../../utils/i18n';
+import { socialLinks } from '../../config/social';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+
+// Get Github URL
+const githubUrl = socialLinks.find((link) => link.name === 'GitHub')?.url || '#';
+---
+
+<!-- Welcome Section - Personal & Inspiring with Parallax -->
+<section id="welcome-section" class="parallax-section relative mb-24">
+  <div class="parallax-header mb-20">
+    <p class="parallax-greeting mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
+      {t.site.welcome.greeting}
+    </p>
+    <h1
+      class="parallax-title mb-4 text-4xl font-light tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl"
+    >
+      {t.site.welcome.description}{' '}
+      <a
+        href={githubUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block text-gray-600 underline decoration-blue-400/50 decoration-2 underline-offset-4 transition-colors duration-300 hover:text-blue-600 hover:decoration-blue-600 dark:text-gray-400 dark:hover:text-blue-400 dark:hover:decoration-blue-400"
+      >
+        {t.site.welcome.name}
+      </a>
+    </h1>
+  </div>
+
+  <div class="parallax-content prose prose-lg max-w-none dark:prose-invert">
+    <p
+      class="parallax-text mb-6 leading-7 text-gray-700 dark:text-gray-300"
+      data-delay="0"
+      data-speed="0.15"
+    >
+      {t.site.welcome.intro}
+    </p>
+    <p
+      class="parallax-text mb-6 leading-7 text-gray-700 dark:text-gray-300"
+      data-delay="100"
+      data-speed="0.25"
+    >
+      {t.site.welcome.message}
+    </p>
+    <p
+      class="parallax-text leading-7 text-gray-700 dark:text-gray-300"
+      data-delay="200"
+      data-speed="0.35"
+    >
+      {t.site.welcome.closing}
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Welcome section prose styling */
+  .prose p {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+
+  /* Parallax section base styles */
+  .parallax-section {
+    position: relative;
+    will-change: transform;
+  }
+
+  /* Parallax elements - initial state */
+  .parallax-header {
+    transform: translateY(0);
+    opacity: 1;
+    transition:
+      transform 0.1s ease-out,
+      opacity 0.3s ease-out;
+  }
+
+  .parallax-greeting {
+    transform: translateY(0);
+    opacity: 1;
+    transition:
+      transform 0.1s ease-out,
+      opacity 0.3s ease-out;
+  }
+
+  .parallax-title {
+    transform: translateY(0);
+    opacity: 1;
+    transition:
+      transform 0.1s ease-out,
+      opacity 0.3s ease-out;
+  }
+
+  .parallax-content {
+    transform: translateY(0);
+    opacity: 1;
+    transition:
+      transform 0.1s ease-out,
+      opacity 0.3s ease-out;
+  }
+
+  .parallax-text {
+    transform: translateY(20px);
+    opacity: 0;
+    transition:
+      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+    position: relative;
+  }
+
+  /* Visible state when in viewport */
+  .parallax-text.visible {
+    opacity: 1;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Performance optimization */
+  .parallax-section,
+  .parallax-header,
+  .parallax-title,
+  .parallax-content,
+  .parallax-text {
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+</style>
+
+<script>
+  (function () {
+    const welcomeSection = document.getElementById('welcome-section');
+    if (!welcomeSection) return;
+
+    let ticking = false;
+
+    // Parallax scroll handler
+    function updateParallax() {
+      if (!welcomeSection) return;
+
+      const rect = welcomeSection.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const sectionTop = rect.top;
+      const sectionHeight = rect.height;
+
+      // Calculate scroll progress (0 to 1)
+      const scrollProgress = Math.max(
+        0,
+        Math.min(1, (windowHeight - sectionTop) / (windowHeight + sectionHeight))
+      );
+
+      // Only animate if section is in viewport
+      if (sectionTop < windowHeight && sectionTop > -sectionHeight) {
+        // Parallax speeds (different elements move at different speeds)
+        const headerSpeed = 0.3;
+        const greetingSpeed = 0.2;
+        const titleSpeed = 0.4;
+        const contentSpeed = 0.1;
+
+        // Calculate transforms based on scroll position
+        const scrollOffset = sectionTop * 0.5;
+        const headerTransform = scrollOffset * headerSpeed;
+        const greetingTransform = scrollOffset * greetingSpeed;
+        const titleTransform = scrollOffset * titleSpeed;
+        const contentTransform = scrollOffset * contentSpeed;
+
+        // Apply transforms to header elements
+        const header = welcomeSection.querySelector('.parallax-header');
+        const greeting = welcomeSection.querySelector('.parallax-greeting');
+        const title = welcomeSection.querySelector('.parallax-title');
+        const content = welcomeSection.querySelector('.parallax-content');
+
+        if (header && header instanceof HTMLElement) {
+          header.style.transform = `translateY(${headerTransform}px)`;
+          header.style.opacity = String(1 - scrollProgress * 0.3);
+        }
+
+        if (greeting && greeting instanceof HTMLElement) {
+          greeting.style.transform = `translateY(${greetingTransform}px)`;
+        }
+
+        if (title && title instanceof HTMLElement) {
+          title.style.transform = `translateY(${titleTransform}px)`;
+        }
+
+        if (content && content instanceof HTMLElement) {
+          content.style.transform = `translateY(${contentTransform}px)`;
+        }
+
+        // Apply parallax to each paragraph individually
+        const textElements = welcomeSection.querySelectorAll('.parallax-text');
+        textElements.forEach((textElement) => {
+          if (textElement instanceof HTMLElement) {
+            const speed = Number.parseFloat(textElement.getAttribute('data-speed') || '0.2');
+            const elementRect = textElement.getBoundingClientRect();
+            const elementTop = elementRect.top;
+            const elementHeight = elementRect.height;
+            const elementCenter = elementTop + elementHeight / 2;
+
+            // Calculate parallax offset based on element's center position relative to viewport center
+            const viewportCenter = windowHeight / 2;
+            const distanceFromCenter = elementCenter - viewportCenter;
+            const parallaxTransform = distanceFromCenter * speed * 0.3;
+
+            // Only apply parallax if element is in viewport
+            if (elementTop < windowHeight && elementTop > -elementHeight) {
+              // Combine fade-in animation with parallax
+              const isVisible = textElement.classList.contains('visible');
+              const fadeInOffset = isVisible ? 0 : 20;
+              textElement.style.transform = `translateY(${fadeInOffset + parallaxTransform}px)`;
+            }
+          }
+        });
+      }
+
+      ticking = false;
+    }
+
+    // Intersection Observer for fade-in animations
+    const textElements = welcomeSection.querySelectorAll('.parallax-text');
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px',
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const delay = entry.target.getAttribute('data-delay') || '0';
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, Number.parseInt(delay));
+        }
+      });
+    }, observerOptions);
+
+    textElements.forEach((element) => {
+      observer.observe(element);
+    });
+
+    // Scroll event handler with throttling
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateParallax();
+        });
+        ticking = true;
+      }
+    }
+
+    // Initial check
+    updateParallax();
+
+    // Listen to scroll events
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', updateParallax, { passive: true });
+
+    // Cleanup on page navigation (for Astro view transitions)
+    document.addEventListener('astro:page-load', () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', updateParallax);
+    });
+  })();
+</script>

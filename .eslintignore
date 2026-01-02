@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+.output/
+.astro/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.production
+
+# Coverage
+coverage/
+*.lcov
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+

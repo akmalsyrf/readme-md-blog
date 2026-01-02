@@ -1,0 +1,54 @@
+---
+import { getTranslations, getLocalizedPath, type Locale } from '../../utils/i18n';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  posts: CollectionEntry<'notes'>[];
+  locale: Locale;
+}
+
+const { posts, locale } = Astro.props;
+const t = getTranslations(locale);
+
+// Count posts by tag
+const tagMap = new Map<string, number>();
+
+posts.forEach((post) => {
+  if (post.data.tags && post.data.tags.length > 0) {
+    post.data.tags.forEach((tag) => {
+      const count = tagMap.get(tag) || 0;
+      tagMap.set(tag, count + 1);
+    });
+  }
+});
+
+// Convert to array and sort alphabetically
+const tags = Array.from(tagMap.entries())
+  .map(([tag, count]) => ({ tag, count }))
+  .sort((a, b) => a.tag.localeCompare(b.tag));
+---
+
+{
+  tags.length > 0 ? (
+    <ul class="space-y-1">
+      {tags.map(({ tag, count }) => {
+        const tagPath = getLocalizedPath(`/tags/${tag}`, locale);
+        return (
+          <li>
+            <a
+              href={tagPath}
+              class="flex items-center justify-between rounded px-3 py-2 text-base transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <span class="text-gray-900 dark:text-gray-100">{tag}</span>
+              <span class="text-gray-600 dark:text-gray-400">
+                <strong>{count}</strong>
+              </span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  ) : (
+    <p class="text-gray-600 dark:text-gray-400">{t.tags.noTags}</p>
+  )
+}

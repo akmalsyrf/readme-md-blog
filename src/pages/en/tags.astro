@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTranslations, getLocaleFromPath } from '../../utils/i18n';
+import { getPostsByLocale } from '../../utils/getPostsByLocale';
+import TagsList from '../../components/tags/TagsList.astro';
+
+const currentPath = Astro.url.pathname;
+const locale = getLocaleFromPath(currentPath);
+const t = getTranslations(locale);
+
+// Get blog posts - filter by locale
+const posts = await getPostsByLocale(locale);
+---
+
+<BaseLayout title={t.tags.title} description={t.tags.description}>
+  <div class="container mx-auto px-4 py-12">
+    <div class="mx-auto max-w-4xl">
+      <h1 class="mb-8 text-4xl font-bold">{t.tags.title}</h1>
+      <TagsList posts={posts} locale={locale} />
+    </div>
+  </div>
+</BaseLayout>

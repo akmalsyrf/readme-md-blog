@@ -1,0 +1,322 @@
+---
+import { locales, getLocalizedPath, type Locale } from '../../utils/i18n';
+
+interface Props {
+  currentLocale: Locale;
+  currentPath: string;
+}
+
+const { currentLocale, currentPath } = Astro.props;
+
+const localeNames = {
+  id: 'ID',
+  en: 'EN',
+};
+
+const localeLabels = {
+  id: 'Indonesia',
+  en: 'English',
+};
+---
+
+<div class="lang-switcher-container">
+  <button
+    id="lang-switcher-button"
+    class="lang-switcher-button"
+    aria-label="Select language"
+    aria-expanded="false"
+    type="button"
+  >
+    <div class="flex items-center gap-2">
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+        ></path>
+      </svg>
+      <span>{localeNames[currentLocale]}</span>
+    </div>
+    <svg
+      class="lang-chevron h-4 w-4 transition-transform duration-200"
+      id="lang-chevron"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"
+      ></path>
+    </svg>
+  </button>
+
+  <div id="lang-dropdown" class="lang-dropdown" role="menu">
+    <div class="py-1">
+      {
+        locales.map((locale) => {
+          const isActive = locale === currentLocale;
+          const localizedPath = getLocalizedPath(currentPath, locale);
+
+          return (
+            <a
+              href={localizedPath}
+              class={`lang-option ${isActive ? 'lang-option-active' : 'lang-option-inactive'}`}
+              hreflang={locale}
+              role="menuitem"
+            >
+              <span class="font-medium">{localeNames[locale]}</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">({localeLabels[locale]})</span>
+              {isActive && (
+                <svg
+                  class="ml-auto h-4 w-4 text-blue-600 dark:text-blue-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              )}
+            </a>
+          );
+        })
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.lang-switcher-container');
+    const button = document.getElementById('lang-switcher-button');
+    const dropdown = document.getElementById('lang-dropdown');
+    const chevron = document.getElementById('lang-chevron');
+
+    if (!container || !button || !dropdown || !chevron) return;
+
+    // Check if mobile view
+    const isMobile = () => window.innerWidth < 768;
+
+    // Initialize state based on screen size
+    if (isMobile()) {
+      // Mobile: start collapsed, remove hidden class
+      dropdown.classList.remove('hidden');
+      dropdown.classList.add('lang-dropdown-collapsed');
+    } else {
+      // Desktop: start hidden, remove collapsed class
+      dropdown.classList.add('hidden');
+      dropdown.classList.remove('lang-dropdown-collapsed');
+    }
+
+    // Helper function to close dropdown
+    function closeDropdown() {
+      if (!dropdown || !chevron || !button) return;
+
+      if (isMobile()) {
+        // Mobile: use collapse animation like TOC
+        dropdown.classList.add('lang-dropdown-collapsed');
+      } else {
+        // Desktop: use hidden
+        dropdown.classList.add('hidden');
+      }
+      chevron.classList.remove('lang-chevron-rotated');
+      button.setAttribute('aria-expanded', 'false');
+    }
+
+    // Helper function to open dropdown
+    function openDropdown() {
+      if (!dropdown || !chevron || !button) return;
+
+      if (isMobile()) {
+        // Mobile: remove collapse class
+        dropdown.classList.remove('lang-dropdown-collapsed');
+      } else {
+        // Desktop: remove hidden
+        dropdown.classList.remove('hidden');
+      }
+      chevron.classList.add('lang-chevron-rotated');
+      button.setAttribute('aria-expanded', 'true');
+    }
+
+    // Toggle dropdown
+    function handleToggle(e) {
+      if (!dropdown) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const isOpen = isMobile()
+        ? !dropdown.classList.contains('lang-dropdown-collapsed')
+        : !dropdown.classList.contains('hidden');
+
+      if (isOpen) {
+        closeDropdown();
+      } else {
+        openDropdown();
+      }
+    }
+
+    // Handle button click/touch
+    button.addEventListener('click', handleToggle);
+
+    // Close dropdown when clicking outside (desktop only)
+    function handleClickOutside(e) {
+      if (isMobile() || !container || !dropdown) return; // Don't close on outside click for mobile
+
+      const target = e.target;
+      if (!container.contains(target)) {
+        closeDropdown();
+      }
+    }
+
+    // Only add outside click handler for desktop
+    if (!isMobile()) {
+      document.addEventListener('click', handleClickOutside, true);
+    }
+
+    // Close dropdown on escape key
+    document.addEventListener('keydown', (e) => {
+      if (!dropdown) return;
+
+      if (e.key === 'Escape') {
+        const isOpen = isMobile()
+          ? !dropdown.classList.contains('lang-dropdown-collapsed')
+          : !dropdown.classList.contains('hidden');
+        if (isOpen) {
+          closeDropdown();
+        }
+      }
+    });
+
+    // Prevent dropdown from closing when clicking inside it (desktop only)
+    if (!isMobile()) {
+      dropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    // Close dropdown when a language option is selected
+    const languageLinks = dropdown.querySelectorAll('a[role="menuitem"]');
+    languageLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        // Small delay to allow navigation
+        setTimeout(() => {
+          closeDropdown();
+        }, 100);
+      });
+    });
+
+    // Handle window resize to switch between mobile/desktop behavior
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      if (!dropdown) return;
+
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        // Reinitialize based on new screen size
+        if (isMobile()) {
+          // Switch to mobile mode: ensure collapsed class is used
+          if (
+            !dropdown.classList.contains('lang-dropdown-collapsed') &&
+            !dropdown.classList.contains('hidden')
+          ) {
+            dropdown.classList.add('lang-dropdown-collapsed');
+            dropdown.classList.remove('hidden');
+          }
+        } else {
+          // Switch to desktop mode: ensure hidden class is used
+          if (
+            !dropdown.classList.contains('hidden') &&
+            dropdown.classList.contains('lang-dropdown-collapsed')
+          ) {
+            dropdown.classList.remove('lang-dropdown-collapsed');
+            dropdown.classList.add('hidden');
+          }
+        }
+      }, 100);
+    });
+  });
+</script>
+
+<style>
+  /* Container */
+  .lang-switcher-container {
+    @apply relative z-10;
+  }
+
+  /* Button */
+  .lang-switcher-button {
+    @apply flex w-full items-center justify-between gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-gray-700;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800;
+    cursor: pointer;
+  }
+
+  /* Chevron icon */
+  .lang-chevron {
+    @apply transition-transform duration-200;
+  }
+
+  .lang-chevron-rotated {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown - Desktop (absolute positioning) */
+  .lang-dropdown {
+    @apply absolute left-0 right-0 z-[9999] mt-2 w-full origin-top rounded-lg border border-gray-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:border-gray-700 dark:bg-gray-800 md:left-auto md:right-0 md:w-48;
+    @apply hidden; /* Hidden by default, will be controlled by JS */
+  }
+
+  /* Dropdown - Mobile (block with collapse animation like TOC) */
+  @media (max-width: 767px) {
+    .lang-dropdown {
+      @apply relative mt-2 w-full;
+      @apply block; /* Always block on mobile */
+      @apply overflow-hidden transition-all duration-300 ease-in-out;
+      position: static !important;
+      box-shadow: none;
+      border: none;
+      @apply bg-transparent dark:bg-transparent;
+    }
+
+    .lang-dropdown-collapsed {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    /* Expanded state for mobile */
+    .lang-dropdown:not(.lang-dropdown-collapsed) {
+      max-height: 200px;
+      opacity: 1;
+    }
+
+    .lang-dropdown .py-1 {
+      @apply rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800;
+    }
+  }
+
+  /* Desktop: show when not hidden */
+  @media (min-width: 768px) {
+    .lang-dropdown:not(.hidden) {
+      @apply block;
+    }
+  }
+
+  /* Language options */
+  .lang-option {
+    @apply flex items-center gap-3 px-4 py-2 text-sm transition-colors;
+    @apply touch-manipulation;
+  }
+
+  .lang-option-active {
+    @apply bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400;
+  }
+
+  .lang-option-inactive {
+    @apply text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700;
+  }
+</style>

@@ -1,0 +1,125 @@
+---
+import type { Locale } from '../../utils/i18n';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalURL?: URL;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  author?: string;
+  tags?: string[];
+  locale?: Locale;
+  alternateLocales?: Array<{ locale: Locale; url: string }>;
+  siteName?: string;
+  twitterHandle?: string;
+}
+
+const {
+  title,
+  description,
+  canonicalURL = Astro.url,
+  image,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  author,
+  tags = [],
+  locale = 'id',
+  alternateLocales = [],
+  siteName = 'Readme.md',
+  twitterHandle,
+} = Astro.props;
+
+const siteURL = new URL(Astro.site || 'https://example.com');
+const fullImageURL = image ? new URL(image, siteURL).href : new URL('/og-image.jpg', siteURL).href;
+
+// Open Graph tags
+const ogTags = {
+  'og:title': title,
+  'og:description': description,
+  'og:type': type,
+  'og:url': canonicalURL.href,
+  'og:image': fullImageURL,
+  'og:image:width': '1200',
+  'og:image:height': '630',
+  'og:image:alt': title,
+  'og:site_name': siteName,
+  'og:locale': locale === 'id' ? 'id_ID' : 'en_US',
+};
+
+// Twitter Card tags
+const twitterTags = {
+  'twitter:card': 'summary_large_image',
+  'twitter:title': title,
+  'twitter:description': description,
+  'twitter:image': fullImageURL,
+  ...(twitterHandle && { 'twitter:creator': `@${twitterHandle}` }),
+  ...(twitterHandle && { 'twitter:site': `@${twitterHandle}` }),
+};
+
+// Article specific tags
+const articleTags =
+  type === 'article'
+    ? {
+        'article:published_time': publishedTime?.toISOString(),
+        'article:modified_time': modifiedTime?.toISOString(),
+        'article:author': author,
+        ...(tags.length > 0 && { 'article:tag': tags }),
+      }
+    : {};
+---
+
+<!-- Primary Meta Tags -->
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+<meta name="author" content={author || siteName} />
+{tags.length > 0 && <meta name="keywords" content={tags.join(', ')} />}
+
+<!-- Open Graph / Facebook -->
+{
+  Object.entries(ogTags).map(([property, content]) => {
+    if (!content) return null;
+    return <meta property={property} content={String(content)} />;
+  })
+}
+
+{/* Alternate locales for Open Graph */}
+{
+  alternateLocales.map(({ locale: altLocale }) => (
+    <meta property="og:locale:alternate" content={altLocale === 'id' ? 'id_ID' : 'en_US'} />
+  ))
+}
+
+<!-- Twitter -->
+{
+  Object.entries(twitterTags).map(([name, content]) => {
+    if (!content) return null;
+    return <meta name={name} content={String(content)} />;
+  })
+}
+
+<!-- Article specific -->
+{
+  Object.entries(articleTags).map(([property, content]) => {
+    if (!content) return null;
+    if (property === 'article:tag' && Array.isArray(content)) {
+      return content.map((tag) => <meta property="article:tag" content={tag} />);
+    }
+    return <meta property={property} content={String(content)} />;
+  })
+}
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL.href} />
+
+<!-- Alternate language versions -->
+{
+  alternateLocales.map(({ locale: altLocale, url }) => (
+    <link rel="alternate" hreflang={altLocale} href={url} />
+  ))
+}
+<link rel="alternate" hreflang={locale} href={canonicalURL.href} />
+<link rel="alternate" hreflang="x-default" href={canonicalURL.href} />

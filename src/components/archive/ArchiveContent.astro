@@ -1,0 +1,126 @@
+---
+import { getLocalizedPath, type Locale } from '../../utils/i18n';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  posts: CollectionEntry<'notes'>[];
+  locale: Locale;
+  t: any;
+}
+
+const { posts, locale, t } = Astro.props;
+
+// Group posts by year and month
+interface GroupedPosts {
+  year: number;
+  months: {
+    month: number;
+    monthName: string;
+    posts: typeof posts;
+  }[];
+}
+
+const groupedPosts: GroupedPosts[] = [];
+const yearMap = new Map<number, GroupedPosts>();
+
+const monthNames =
+  locale === 'id'
+    ? [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember',
+      ]
+    : [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ];
+
+posts.forEach((post) => {
+  const date = post.data.pubDate;
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const monthName = monthNames[month];
+
+  let yearGroup = yearMap.get(year);
+  if (!yearGroup) {
+    yearGroup = { year, months: [] };
+    yearMap.set(year, yearGroup);
+    groupedPosts.push(yearGroup);
+  }
+
+  let monthGroup = yearGroup.months.find((m) => m.month === month);
+  if (!monthGroup) {
+    monthGroup = { month, monthName, posts: [] };
+    yearGroup.months.push(monthGroup);
+  }
+
+  monthGroup.posts.push(post);
+});
+---
+
+{
+  groupedPosts.length > 0 ? (
+    <div class="space-y-8">
+      {groupedPosts.map((yearGroup) => (
+        <section>
+          <h2 class="mb-4 text-2xl font-bold text-gray-900 dark:text-gray-100">{yearGroup.year}</h2>
+          <div class="space-y-6">
+            {yearGroup.months.map((monthGroup) => (
+              <div>
+                <h3 class="mb-3 text-xl font-semibold text-gray-800 dark:text-gray-200">
+                  {monthGroup.monthName}
+                </h3>
+                <ul class="space-y-2">
+                  {monthGroup.posts.map((post) => {
+                    const postSlug = post.slug.replace(/\/id$|\/en$/, '');
+                    const postPath = getLocalizedPath(`/notes/${postSlug}`, locale);
+
+                    return (
+                      <li class="flex items-center justify-between border-b border-gray-200 py-2 dark:border-gray-700">
+                        <a
+                          href={postPath}
+                          class="text-gray-700 hover:text-blue-600 hover:underline dark:text-gray-300 dark:hover:text-blue-400"
+                        >
+                          {post.data.title}
+                        </a>
+                        <time class="text-sm text-gray-500 dark:text-gray-500">
+                          {post.data.pubDate.toLocaleDateString(
+                            locale === 'id' ? 'id-ID' : 'en-US',
+                            {
+                              day: 'numeric',
+                            }
+                          )}
+                        </time>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  ) : (
+    <p class="text-gray-600 dark:text-gray-400">{t.archive.noPosts}</p>
+  )
+}

@@ -1,0 +1,39 @@
+---
+import { getTranslations, type Locale } from '../../utils/i18n';
+import { extractHeadingsFromMarkdown } from '../../utils/extractHeadings';
+import TableOfContents from './TableOfContents.astro';
+import Breadcrumb from '../common/Breadcrumb.astro';
+import BlogPostHeader from './BlogPostHeader.astro';
+import BlogPostContent from './BlogPostContent.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'notes'>;
+  locale: Locale;
+}
+
+const { post, locale } = Astro.props;
+const t = getTranslations(locale);
+
+const { Content } = await post.render();
+const headings = extractHeadingsFromMarkdown(post.body);
+---
+
+<article class="container mx-auto px-4 py-12">
+  <div class="mx-auto max-w-3xl">
+    <Breadcrumb
+      locale={locale}
+      items={[
+        { label: t.breadcrumb.home, href: locale === 'id' ? '/' : '/en' },
+        { label: t.breadcrumb.notes, href: locale === 'id' ? '/notes' : '/en/notes' },
+        { label: post.data.title },
+      ]}
+    />
+
+    <BlogPostHeader post={post} locale={locale} />
+
+    {headings.length > 0 && <TableOfContents headings={headings} locale={locale} t={t} />}
+
+    <BlogPostContent content={Content} />
+  </div>
+</article>

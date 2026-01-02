@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getTranslations, getLocaleFromPath } from '../../../utils/i18n';
+import BlogListing from '../../../components/blog/BlogListing.astro';
+
+const currentPath = Astro.url.pathname;
+const locale = getLocaleFromPath(currentPath);
+const t = getTranslations(locale);
+---
+
+<BaseLayout title={t.notes.title} description={t.site.description}>
+  <BlogListing locale={locale} currentPage={1} />
+</BaseLayout>

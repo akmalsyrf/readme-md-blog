@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { getTranslations, getLocaleFromPath, getLocalizedPath } from '../../../../utils/i18n';
+import { getBlogPaginationStaticPaths } from '../../../../utils/getBlogPaginationStaticPaths';
+import { getPostsByLocale } from '../../../../utils/getPostsByLocale';
+import BlogListing from '../../../../components/blog/BlogListing.astro';
+import { POSTS_PER_PAGE } from '../../../../config/notes';
+
+export async function getStaticPaths() {
+  return await getBlogPaginationStaticPaths('en');
+}
+
+interface Props {
+  page: string;
+}
+
+const { page } = Astro.params;
+const currentPage = parseInt(page || '1', 10);
+
+const currentPath = Astro.url.pathname;
+const locale = getLocaleFromPath(currentPath);
+const t = getTranslations(locale);
+
+// Get notes to check total pages
+const posts = await getPostsByLocale(locale);
+const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+
+// Redirect to first page if page number is invalid
+if (currentPage < 1 || currentPage > totalPages) {
+  return Astro.redirect(getLocalizedPath('/notes', locale));
+}
+---
+
+<BaseLayout title={t.notes.title} description={t.site.description}>
+  <BlogListing locale={locale} currentPage={currentPage} />
+</BaseLayout>

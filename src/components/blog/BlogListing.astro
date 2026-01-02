@@ -1,0 +1,58 @@
+---
+import { getTranslations, type Locale } from '../../utils/i18n';
+import { getPostsByLocale } from '../../utils/getPostsByLocale';
+import BlogPostCard from '../common/BlogPostCard.astro';
+import Pagination from '../common/Pagination.astro';
+import { POSTS_PER_PAGE } from '../../config/notes';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  locale: Locale;
+  currentPage?: number;
+}
+
+const { locale, currentPage = 1 } = Astro.props;
+const t = getTranslations(locale);
+
+// Get blog posts - filter by locale
+const posts = await getPostsByLocale(locale);
+
+const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+
+// Get posts for current page
+const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+const paginatedPosts = posts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+
+const basePath = locale === 'id' ? '/notes' : '/en/notes';
+---
+
+<div class="container mx-auto px-4 py-12">
+  <div class="mx-auto max-w-4xl">
+    <h1 class="mb-6 text-4xl font-bold">{t.notes.title}</h1>
+
+    {
+      paginatedPosts.length > 0 ? (
+      <>
+        <div class="grid gap-6 md:grid-cols-2">
+            {paginatedPosts.map((post: CollectionEntry<'notes'>) => (
+            <BlogPostCard post={post} locale={locale} translations={t} />
+          ))}
+        </div>
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            basePath={basePath}
+            locale={locale}
+            translations={t}
+          />
+        )}
+      </>
+    ) : (
+      <p class="text-gray-600 dark:text-gray-400">
+          {locale === 'id' ? 'Belum ada catatan.' : 'No notes yet.'}
+      </p>
+      )
+    }
+  </div>
+</div>
