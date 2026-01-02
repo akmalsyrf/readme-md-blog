@@ -1,0 +1,54 @@
+---
+import ChatHeader from './ChatHeader.astro';
+import ChatMessages from './ChatMessages.astro';
+import ChatInput from './ChatInput.astro';
+import type { Locale } from '../../utils/i18n';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'id' } = Astro.props;
+---
+
+<div id="chatbot-window" class="chatbot-window hidden">
+  <ChatHeader locale={locale} />
+  <ChatMessages locale={locale} />
+  <ChatInput locale={locale} />
+</div>
+
+<style>
+  .chatbot-window {
+    @apply fixed bottom-24 right-6 flex h-[600px] w-[400px] flex-col rounded-lg border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800;
+  }
+
+  .chatbot-window:not(.hidden) {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .chatbot-window.hidden {
+    display: none !important;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+</style>

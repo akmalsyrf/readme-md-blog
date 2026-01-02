@@ -30,24 +30,20 @@ const tags = Array.from(tagMap.entries())
 
 {
   tags.length > 0 ? (
-    <ul class="space-y-1">
+    <div class="flex flex-wrap gap-4">
       {tags.map(({ tag, count }) => {
         const tagPath = getLocalizedPath(`/tags/${tag}`, locale);
         return (
-          <li>
-            <a
-              href={tagPath}
-              class="flex items-center justify-between rounded px-3 py-2 text-base transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
-              <span class="text-gray-900 dark:text-gray-100">{tag}</span>
-              <span class="text-gray-600 dark:text-gray-400">
-                <strong>{count}</strong>
-              </span>
-            </a>
-          </li>
+          <a
+            href={tagPath}
+            class="inline-flex items-baseline rounded-lg bg-gray-100 px-4 py-2.5 text-base font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          >
+            <span>{tag}</span>
+            <sup class="ml-1.5 text-xs font-normal leading-none">{count}</sup>
+          </a>
         );
       })}
-    </ul>
+    </div>
   ) : (
     <p class="text-gray-600 dark:text-gray-400">{t.tags.noTags}</p>
   )

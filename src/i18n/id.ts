@@ -12,9 +12,9 @@ export default {
       description: 'Catatan oleh',
       name: 'Akmal',
       intro:
-        'Selamat datang di ruang kecil saya di internet. Di sini, saya berbagi pemikiran tentang apapun yang saya ingin bagikan. Terkadang mengenai software development, tapi kadang juga tidak.',
+        'Selamat datang di ruang kecil saya di internet. Di sini, saya berbagi pemikiran tentang apapun yang saya ingin bagikan. Terkadang mengenai software development, tapi kadang juga tidak. Kadang tentang Pengetahuan yang tidak populer, kadang yang populer aja.',
       message:
-        'Saya percaya bahwa berbagi pemikiran adalah cara terbaik untuk tumbuh bersama. Setiap artikel yang saya tulis adalah hasil dari pengalaman, lamunan, eksperimen, juga refleksi pribadi.',
+        'Saya percaya bahwa berbagi pemikiran adalah cara terbaik untuk tumbuh bersama. Setiap artikel yang saya tulis adalah hasil dari pengalaman, lamunan, eksperimen, bacaan, juga refleksi pribadi.',
       closing:
         'Terima kasih telah mampir. Saya harap Anda menemukan sesuatu yang bermanfaat di sini.',
     },
@@ -91,5 +91,19 @@ export default {
     telegram: 'Telegram',
     instagram: 'Instagram',
     copyLink: 'Salin Link',
+  },
+  chatbot: {
+    title: 'Asisten Chat',
+    welcome:
+      'Halo! Saya bisa membantu menjawab pertanyaan tentang catatan di Readme.md. Silakan tanyakan sesuatu!',
+    placeholder: 'Tulis pertanyaan...',
+    send: 'Kirim',
+    processing: 'Memproses...',
+    sources: 'Sumber',
+    error: 'Terjadi kesalahan',
+    errorMessage: 'Terjadi kesalahan saat mengirim pesan. Silakan coba lagi.',
+    toggleLabel: 'Buka/Tutup chatbot',
+    generatingRecommendations: 'Membuat rekomendasi pertanyaan...',
+    recommendations: 'Pertanyaan yang mungkin Anda tanyakan:',
   },
 } as const;

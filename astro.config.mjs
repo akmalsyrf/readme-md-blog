@@ -4,6 +4,7 @@ import tailwind from '@astrojs/tailwind';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://readme-md-blog.vercel.app',
+  output: 'hybrid', // Enable API routes while keeping static pages
   integrations: [
     tailwind()
   ],

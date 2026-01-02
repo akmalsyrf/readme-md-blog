@@ -11,9 +11,9 @@ export default {
       description: 'Notes by',
       name: 'Akmal',
       intro:
-        "Welcome to my little corner of the internet. Here, I share my thoughts on whatever comes to mind. Sometimes it's about software development, and sometimes it's not.",
+        "Welcome to my little corner of the internet. Here, I share my thoughts on whatever comes to mind. Sometimes it's about software development, and sometimes it's not. Sometimes it's about unpopular knowledge, and sometimes it's about popular things.",
       message:
-        'I believe that sharing thoughts is the best way to grow together. Every article I write is the result of experience, daydreaming, experiments, and personal reflection.',
+        'I believe that sharing thoughts is the best way to grow together. Every article I write is the result of experience, daydreaming, experiments, reading, and personal reflection.',
       closing: 'Thanks for stopping by. I hope you find something useful here.',
     },
   },
@@ -89,5 +89,19 @@ export default {
     telegram: 'Telegram',
     instagram: 'Instagram',
     copyLink: 'Copy Link',
+  },
+  chatbot: {
+    title: 'Chat Assistant',
+    welcome:
+      'Hello! I can help answer questions about the notes in Readme.md. Please ask me something!',
+    placeholder: 'Type your question...',
+    send: 'Send',
+    processing: 'Processing...',
+    sources: 'Sources',
+    error: 'An error occurred',
+    errorMessage: 'An error occurred while sending the message. Please try again.',
+    toggleLabel: 'Toggle chatbot',
+    generatingRecommendations: 'Generating question recommendations...',
+    recommendations: 'Questions you might ask:',
   },
 } as const;
