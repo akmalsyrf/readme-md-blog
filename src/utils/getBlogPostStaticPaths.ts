@@ -7,8 +7,8 @@ import type { Locale } from './i18n';
 export async function getBlogPostStaticPaths(locale: Locale) {
   const allPosts = await getCollection('notes');
   const localeSuffix = locale === 'id' ? '/id' : '/en';
-  const posts = allPosts.filter((post: CollectionEntry<'notes'>) =>
-    post.slug.endsWith(localeSuffix)
+  const posts = allPosts.filter(
+    (post: CollectionEntry<'notes'>) => post.data.isPublished && post.slug.endsWith(localeSuffix)
   );
 
   return posts.map((post: CollectionEntry<'notes'>) => {

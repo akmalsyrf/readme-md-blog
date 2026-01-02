@@ -6,9 +6,9 @@ export const GET: APIRoute = async ({ site }) => {
   const siteURL = site || new URL('https://readme-md-blog.vercel.app');
   const allPosts = await getCollection('notes');
 
-  // Get posts for both locales
-  const idPosts = allPosts.filter((post) => post.slug.endsWith('/id'));
-  const enPosts = allPosts.filter((post) => post.slug.endsWith('/en'));
+  // Get posts for both locales (only published posts)
+  const idPosts = allPosts.filter((post) => post.data.isPublished && post.slug.endsWith('/id'));
+  const enPosts = allPosts.filter((post) => post.data.isPublished && post.slug.endsWith('/en'));
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

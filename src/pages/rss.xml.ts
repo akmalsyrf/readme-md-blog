@@ -5,8 +5,9 @@ export const GET: APIRoute = async ({ site }) => {
   const siteURL = site || new URL('https://readme-md-blog.vercel.app');
   const allPosts = await getCollection('notes');
 
-  // Get posts for both locales, sorted by date
+  // Get posts for both locales, sorted by date (only published posts)
   const posts = allPosts
+    .filter((post) => post.data.isPublished)
     .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
     .slice(0, 20); // Latest 20 posts
 

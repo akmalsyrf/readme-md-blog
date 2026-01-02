@@ -8,12 +8,11 @@ const currentPath = Astro.url.pathname;
 const locale = getLocaleFromPath(currentPath);
 const t = getTranslations(locale);
 
-// Get blog posts - filter by locale
+// Get blog posts - filter by locale (only published)
 const allPosts = await getCollection('notes');
 const posts = allPosts
   .filter((post) => {
-    const slug = post.slug;
-    return slug.endsWith('/en');
+    return post.data.isPublished && post.slug.endsWith('/en');
   })
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 ---

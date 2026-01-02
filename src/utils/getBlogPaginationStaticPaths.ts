@@ -9,7 +9,9 @@ export async function getBlogPaginationStaticPaths(locale: Locale) {
   const allPosts = await getCollection('notes');
   const localeSuffix = locale === 'id' ? '/id' : '/en';
   const posts = allPosts
-    .filter((post: CollectionEntry<'notes'>) => post.slug.endsWith(localeSuffix))
+    .filter(
+      (post: CollectionEntry<'notes'>) => post.data.isPublished && post.slug.endsWith(localeSuffix)
+    )
     .sort(
       (a: CollectionEntry<'notes'>, b: CollectionEntry<'notes'>) =>
         b.data.pubDate.getTime() - a.data.pubDate.getTime()

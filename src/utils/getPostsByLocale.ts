@@ -8,6 +8,10 @@ export async function getPostsByLocale(locale: Locale): Promise<CollectionEntry<
   const allPosts = await getCollection('notes');
   return allPosts
     .filter((post: CollectionEntry<'notes'>) => {
+      // Only include published posts
+      if (!post.data.isPublished) {
+        return false;
+      }
       const slug = post.slug;
       if (locale === 'id') {
         return slug.endsWith('/id');

@@ -1,12 +1,10 @@
 ---
 title: 'The Magic of AI Agents: Notes from 2025'
-description: ''
+description: 'Reflections from 2025 on how AI agents are revolutionizing the way we write code.'
 pubDate: 2026-01-02
 author: 'Akmal'
 tags: ['random-thought', 'software-engineering']
 ---
-
-# The Magic of AI Agents: Notes from 2025
 
 Outside, the rain hasn't stopped, tapping against my boarding house window with a monotonous rhythm. Inside this small room, however, the atmosphere is far from gloomy. In fact, I’m in the middle of a breakthrough.
 

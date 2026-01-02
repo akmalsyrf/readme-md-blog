@@ -7,8 +7,8 @@ import Breadcrumb from '../../../components/common/Breadcrumb.astro';
 export async function getStaticPaths() {
   const allPosts = await getCollection('notes');
 
-  // Get all unique tags from English posts
-  const enPosts = allPosts.filter((post) => post.slug.endsWith('/en'));
+  // Get all unique tags from English posts (only published)
+  const enPosts = allPosts.filter((post) => post.data.isPublished && post.slug.endsWith('/en'));
   const enTagMap = new Set<string>();
 
   enPosts.forEach((post) => {
@@ -28,12 +28,12 @@ const currentPath = Astro.url.pathname;
 const locale = getLocaleFromPath(currentPath);
 const t = getTranslations(locale);
 
-// Get posts with this tag
+// Get posts with this tag (only published)
 const allPosts = await getCollection('notes');
 const posts = allPosts
   .filter((post) => {
     const slug = post.slug;
-    return slug.endsWith('/en') && post.data.tags?.includes(tag!);
+    return post.data.isPublished && slug.endsWith('/en') && post.data.tags?.includes(tag!);
   })
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 ---

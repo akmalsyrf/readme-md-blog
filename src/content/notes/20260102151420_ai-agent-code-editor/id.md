@@ -1,12 +1,10 @@
 ---
 title: 'Keajaiban AI Agent: Sebuah Catatan dari Tahun 2025'
-description: ''
+description: 'Renungan dari tahun 2025 tentang bagaimana AI agent mengubah cara kita menulis kode.'
 pubDate: 2026-01-02
 author: 'Akmal'
 tags: ['random-thought', 'software-engineering']
 ---
-
-# Keajaiban _AI Agent_: Sebuah Catatan dari Tahun 2025
 
 Hujan di luar belum berhenti, mengetuk jendela kamar kos dengan ritme yang monoton. Namun, di dalam ruangan kecil ini, suasananya jauh dari suram. Justru, saya sedang asyik-asyiknya.
 
