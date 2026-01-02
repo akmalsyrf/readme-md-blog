@@ -114,8 +114,8 @@ const tJson = JSON.stringify(t);
             </time>
             <span>•</span>
             <span>${
-              post.readingTime < 1 
-                ? t.notes.underOneMinute 
+              post.readingTime < 1
+                ? t.notes.underOneMinute
                 : `${Math.ceil(post.readingTime)} ${t.notes.minRead}`
             }</span>
           </div>

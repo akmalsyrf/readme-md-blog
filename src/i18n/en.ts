@@ -11,9 +11,9 @@ export default {
       description: 'Notes by',
       name: 'Akmal',
       intro:
-        'Welcome to my little corner of the internet. Here, I share thoughts about technology, software development, and my learning journey.',
+        "Welcome to my little corner of the internet. Here, I share my thoughts on whatever comes to mind. Sometimes it's about software development, and sometimes it's not.",
       message:
-        'I believe that sharing knowledge is the best way to grow together. Every article I write is a result of experience, experimentation, and personal reflection.',
+        'I believe that sharing thoughts is the best way to grow together. Every article I write is the result of experience, daydreaming, experiments, and personal reflection.',
       closing: 'Thanks for stopping by. I hope you find something useful here.',
     },
   },
@@ -46,7 +46,7 @@ export default {
   },
   search: {
     title: 'Search',
-    placeholder: 'Search posts...',
+    placeholder: 'Search notes...',
     noResults: 'No results found',
     results: 'results found',
   },
@@ -79,5 +79,15 @@ export default {
     description: 'Sorry, the page you are looking for does not exist or has been moved.',
     backHome: 'Back to Home',
     backNotes: 'Back to Notes',
+  },
+  share: {
+    title: 'Share',
+    facebook: 'Facebook',
+    twitter: 'Twitter',
+    linkedin: 'LinkedIn',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
+    instagram: 'Instagram',
+    copyLink: 'Copy Link',
   },
 } as const;

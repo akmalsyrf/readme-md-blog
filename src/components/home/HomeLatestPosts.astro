@@ -56,8 +56,8 @@ const t = getTranslations(locale);
                 <span>
                   {(() => {
                     const readingTime = calculateReadingTime(post.body);
-                    return readingTime < 1 
-                      ? t.notes.underOneMinute 
+                    return readingTime < 1
+                      ? t.notes.underOneMinute
                       : `${formatReadingTime(readingTime, locale)} ${t.notes.minRead}`;
                   })()}
                 </span>

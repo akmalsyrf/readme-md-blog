@@ -8,5 +8,9 @@ export default {
     extend: {},
   },
   plugins: [typography],
+  // Optimize for production
+  corePlugins: {
+    preflight: true,
+  },
 }
 

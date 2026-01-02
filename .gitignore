@@ -4,6 +4,7 @@ dist/
 
 # generated types
 .astro/
+src/env.d.ts
 
 # dependencies
 node_modules/

@@ -105,6 +105,17 @@ const { content: Content } = Astro.props;
   .prose img {
     @apply my-8 rounded-lg shadow-lg;
     @apply border border-gray-200 dark:border-gray-700;
+    @apply h-auto max-w-full;
+    content-visibility: auto;
+  }
+
+  /* Optimize image loading */
+  .prose picture {
+    @apply block;
+  }
+
+  .prose picture img {
+    @apply w-full;
   }
 
   /* Tables */

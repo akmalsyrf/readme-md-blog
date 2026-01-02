@@ -32,26 +32,26 @@ const basePath = locale === 'id' ? '/notes' : '/en/notes';
 
     {
       paginatedPosts.length > 0 ? (
-      <>
-        <div class="grid gap-6 md:grid-cols-2">
+        <>
+          <div class="grid gap-6 md:grid-cols-2">
             {paginatedPosts.map((post: CollectionEntry<'notes'>) => (
-            <BlogPostCard post={post} locale={locale} translations={t} />
-          ))}
-        </div>
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            basePath={basePath}
-            locale={locale}
-            translations={t}
-          />
-        )}
-      </>
-    ) : (
-      <p class="text-gray-600 dark:text-gray-400">
+              <BlogPostCard post={post} locale={locale} translations={t} />
+            ))}
+          </div>
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              basePath={basePath}
+              locale={locale}
+              translations={t}
+            />
+          )}
+        </>
+      ) : (
+        <p class="text-gray-600 dark:text-gray-400">
           {locale === 'id' ? 'Belum ada catatan.' : 'No notes yet.'}
-      </p>
+        </p>
       )
     }
   </div>

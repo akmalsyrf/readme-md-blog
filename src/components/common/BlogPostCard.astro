@@ -16,9 +16,8 @@ const t = translations.notes;
 const postSlug = post.slug.replace(/\/id$|\/en$/, '');
 const postPath = getLocalizedPath(`/notes/${postSlug}`, locale);
 const readingTime = calculateReadingTime(post.body);
-const readingTimeText = readingTime < 1 
-  ? t.underOneMinute 
-  : `${formatReadingTime(readingTime, locale)} ${t.minRead}`;
+const readingTimeText =
+  readingTime < 1 ? t.underOneMinute : `${formatReadingTime(readingTime, locale)} ${t.minRead}`;
 ---
 
 <article

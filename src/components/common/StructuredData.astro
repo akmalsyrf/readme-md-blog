@@ -35,7 +35,7 @@ const {
 function getStructuredData() {
   // Format image as array for better SEO (Google recommends this)
   const imageData = image ? (Array.isArray(image) ? image : [image]) : undefined;
-  
+
   const baseData = {
     '@context': 'https://schema.org',
     '@type': type,

@@ -8,6 +8,9 @@ dist/
 .output/
 .astro/
 
+# Generated types
+src/env.d.ts
+
 # Logs
 *.log
 npm-debug.log*

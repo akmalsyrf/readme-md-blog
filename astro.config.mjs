@@ -13,6 +13,22 @@ export default defineConfig({
     routing: {
       prefixDefaultLocale: false
     }
+  },
+  build: {
+    inlineStylesheets: 'auto',
+    assets: '_assets'
+  },
+  vite: {
+    build: {
+      cssMinify: true,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
+      }
+    }
   }
 });
 
