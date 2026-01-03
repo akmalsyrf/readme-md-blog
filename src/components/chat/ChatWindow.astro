@@ -19,7 +19,16 @@ const { locale = 'id' } = Astro.props;
 
 <style>
   .chatbot-window {
-    @apply fixed bottom-24 right-6 flex h-[600px] w-[400px] flex-col rounded-lg border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800;
+    @apply fixed bottom-24 right-6 flex h-[600px] max-h-[calc(100vh-8rem)] w-[400px] max-w-[calc(100vw-3rem)] flex-col rounded-lg border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800;
+  }
+
+  /* Mobile responsive styles */
+  @media (max-width: 640px) {
+    .chatbot-window {
+      @apply bottom-20 left-2 right-2 top-4 w-auto max-w-none;
+      height: calc(100vh - 8rem - env(safe-area-inset-top));
+      max-height: calc(100vh - 8rem - env(safe-area-inset-top));
+    }
   }
 
   .chatbot-window:not(.hidden) {
