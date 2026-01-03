@@ -39,6 +39,12 @@ export default {
     page: 'Page',
     of: 'of',
   },
+  navigation: {
+    previousPost: 'Previous Note',
+    nextPost: 'Next Note',
+    noPrevious: 'No previous note',
+    noNext: 'No next note',
+  },
   archive: {
     title: 'Archive',
     description: 'All notes sorted by date',
@@ -91,7 +97,7 @@ export default {
     copyLink: 'Copy Link',
   },
   chatbot: {
-    title: 'Chat Assistant',
+    title: 'AI Chat Assistant',
     welcome:
       'Hello! I can help answer questions about the notes in Readme.md. Please ask me something!',
     placeholder: 'Type your question...',

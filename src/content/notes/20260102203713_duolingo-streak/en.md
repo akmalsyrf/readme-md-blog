@@ -14,17 +14,19 @@ _“Don't let your streak go cold! Duo is waiting.”_
 
 The green owl. With those wide, round eyes and a smile that seems friendly but hides a veiled "threat" for those who are negligent. It has been four hundred and twelve days since I decided to surrender a small portion of my life to the ambition of learning two polar opposite languages: English and Japanese.
 
-<picture>
-<source srcset="/notes/20260102203713_duolingo-streak/duo.webp" type="image/webp">
-<img
-src="/notes/20260102203713_duolingo-streak/duo.png"
-alt="Duolingo Maskot"
-width="758"
-height="701"
-loading="lazy"
-decoding="async"
->
-</picture>
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102203713_duolingo-streak/duo.webp" type="image/webp">
+    <img
+      src="/notes/20260102203713_duolingo-streak/duo.png"
+      alt="Duolingo Maskot"
+      width="600"
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+</div>
 
 ### Chapter 1: The Blood Pact
 
@@ -72,18 +74,22 @@ However, for Japanese, I am self-aware. I don't force myself to be immediately f
 
 **Third, the "Just Keep Moving" Mentality.** There are nights when I am sick or utterly exhausted. In those moments, I don’t force a perfect score. I just open one light review session—even if it’s just repeating basic words. The important thing is to keep the momentum. As the saying goes, _"It doesn't matter how slowly you go as long as you do not stop."_
 
-<picture>
-  <source srcset="/notes/20260102203713_duolingo-streak/image.webp" type="image/webp">
-  <img 
-    src="/notes/20260102203713_duolingo-streak/image.png" 
-    alt="Profile Duolingo saya" 
-    width="600"  
-    loading="lazy"
-    decoding="async"
-  >
-</picture>
-
-_My Duolingo Profile_
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102203713_duolingo-streak/image.webp" type="image/webp">
+    <img 
+      src="/notes/20260102203713_duolingo-streak/image.png" 
+      alt="Profile Duolingo saya" 
+      width="300"  
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+  <p style="text-align: center; margin-top: 0.5rem; margin-bottom: 0;">
+    <em>My Duolingo Profile</em>
+  </p>
+</div>
 
 ### Chapter 4: Reflections at 400
 
@@ -103,15 +109,19 @@ So, for those of you out there struggling, do not fear the green bird. Let him t
 
 _Thank you, ありがとうございます, Duo._
 
-<picture>
-  <source srcset="/notes/20260102203713_duolingo-streak/image-2.webp" type="image/webp">
-  <img 
-    src="/notes/20260102203713_duolingo-streak/image-2.png" 
-    alt="Streak 2025" 
-    width="600"  
-    loading="lazy"
-    decoding="async"
-  >
-</picture>
-
-_My unbroken streak in 2025_
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102203713_duolingo-streak/image-2.webp" type="image/webp">
+    <img 
+      src="/notes/20260102203713_duolingo-streak/image-2.png" 
+      alt="Streak 2025" 
+      width="300"  
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+  <p style="text-align: center; margin-top: 0.5rem; margin-bottom: 0;">
+    <em>My unbroken streak in 2025</em>
+  </p>
+</div>

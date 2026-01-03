@@ -1,10 +1,13 @@
 ---
 import { getTranslations, type Locale } from '../../utils/i18n';
 import { extractHeadingsFromMarkdown } from '../../utils/extractHeadings';
+import { getAdjacentPosts } from '../../utils/getAdjacentPosts';
 import TableOfContents from './TableOfContents.astro';
 import Breadcrumb from '../common/Breadcrumb.astro';
 import BlogPostHeader from './BlogPostHeader.astro';
 import BlogPostContent from './BlogPostContent.astro';
+import ShareButtons from './ShareButtons.astro';
+import PostNavigation from './PostNavigation.astro';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -17,6 +20,12 @@ const t = getTranslations(locale);
 
 const { Content } = await post.render();
 const headings = extractHeadingsFromMarkdown(post.body);
+
+// Get adjacent posts
+const { previous, next } = await getAdjacentPosts(post, locale);
+
+// Get current URL for sharing
+const currentUrl = Astro.url.href;
 ---
 
 <article class="container mx-auto px-4 py-12">
@@ -35,5 +44,16 @@ const headings = extractHeadingsFromMarkdown(post.body);
     {headings.length > 0 && <TableOfContents headings={headings} locale={locale} t={t} />}
 
     <BlogPostContent content={Content} />
+
+    <PostNavigation previous={previous} next={next} locale={locale} />
+
+    <div class="flex justify-center border-t border-gray-200 dark:border-gray-700">
+      <ShareButtons
+        url={currentUrl}
+        title={post.data.title}
+        description={post.data.description}
+        locale={locale}
+      />
+    </div>
   </div>
 </article>

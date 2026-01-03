@@ -14,17 +14,19 @@ _“Don't let your streak go cold! Duo is waiting.”_
 
 Burung Hantu hijau itu rupanya. Dengan mata bulatnya yang lebar dan senyum yang tampak ramah namun menyimpan "ancaman" tersembunyi bagi mereka yang lalai. Sudah empat ratus dua belas hari sejak saya memutuskan untuk menyerahkan sebagian waktu saya pada ambisi mempelajari dua bahasa yang saling bertolak belakang: Inggris dan Jepang.
 
-<picture>
-<source srcset="/notes/20260102203713_duolingo-streak/duo.webp" type="image/webp">
-<img
-src="/notes/20260102203713_duolingo-streak/duo.png"
-alt="Duolingo Maskot"
-width="758"
-height="701"
-loading="lazy"
-decoding="async"
->
-</picture>
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102203713_duolingo-streak/duo.webp" type="image/webp">
+    <img
+      src="/notes/20260102203713_duolingo-streak/duo.png"
+      alt="Duolingo Maskot"
+      width="600"
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+</div>
 
 ### Bab 1: Perjanjian Berdarah
 
@@ -72,18 +74,22 @@ Namun untuk bahasa Jepang, saya sadar diri. Saya tidak memaksakan diri untuk lan
 
 **Ketiga, Mentalitas "Asal Jalan".** Ada malam-malam di mana saya sedang sakit atau sangat kelelahan. Di saat seperti itu, saya tidak memaksakan skor sempurna. Saya hanya membuka satu sesi _review_ ringan. Yang penting adalah menjaga momentum.
 
-<picture>
-  <source srcset="/notes/20260102203713_duolingo-streak/image.webp" type="image/webp">
-  <img 
-    src="/notes/20260102203713_duolingo-streak/image.png" 
-    alt="Profile Duolingo saya" 
-    width="600"  
-    loading="lazy"
-    decoding="async"
-  >
-</picture>
-
-_My Duolingo Profile_
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102203713_duolingo-streak/image.webp" type="image/webp">
+    <img 
+      src="/notes/20260102203713_duolingo-streak/image.png" 
+      alt="Profile Duolingo saya" 
+      width="300"  
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+  <p style="text-align: center; margin-top: 0.5rem; margin-bottom: 0;">
+    <em>Profil Duolingo saya</em>
+  </p>
+</div>
 
 ### Bab 4: Refleksi di Angka 400
 
@@ -101,15 +107,19 @@ Jadi, untuk Anda yang sedang berjuang di luar sana, jangan takut pada burung hij
 
 _Thank you, ありがとうございます, Duo._
 
-<picture>
-  <source srcset="/notes/20260102203713_duolingo-streak/image-2.webp" type="image/webp">
-  <img 
-    src="/notes/20260102203713_duolingo-streak/image-2.png" 
-    alt="Streak 2025" 
-    width="600"  
-    loading="lazy"
-    decoding="async"
-  >
-</picture>
-
-_Streak tanpa putus saya di 2025_
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102203713_duolingo-streak/image-2.webp" type="image/webp">
+    <img 
+      src="/notes/20260102203713_duolingo-streak/image-2.png" 
+      alt="Streak 2025" 
+      width="300"  
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+  <p style="text-align: center; margin-top: 0.5rem; margin-bottom: 0;">
+    <em>Streak tanpa putus saya di 2025</em>
+  </p>
+</div>

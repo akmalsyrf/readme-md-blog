@@ -26,17 +26,19 @@ Driven by an irrepressible curiosity, I decide that sleep is the wrong choice. I
 
 And this is the story it told. A story of an evolution that transcends the wildest imaginations of those who write code.
 
-<picture>
-  <source srcset="/notes/20260102151420_ai-agent-code-editor/image.webp" type="image/webp">
-  <img 
-    src="/notes/20260102151420_ai-agent-code-editor/image.png" 
-    alt="AI Agent Code Editor" 
-    width="758" 
-    height="701" 
-    loading="lazy"
-    decoding="async"
-  >
-</picture>
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102151420_ai-agent-code-editor/image.webp" type="image/webp">
+    <img 
+      src="/notes/20260102151420_ai-agent-code-editor/image.png" 
+      alt="AI Agent Code Editor" 
+      width="500"
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+</div>
 
 ---
 
@@ -93,16 +95,19 @@ I take a deep breath, place my fingers on the keyboard, and begin to type. Not a
 
 And the world changes, one prompt at a time.
 
-<picture>
-  <source srcset="/notes/20260102151420_ai-agent-code-editor/cursor-wrapped.webp" type="cursor-wrapped/webp">
-  <img 
-    src="/notes/20260102151420_ai-agent-code-editor/cursor-wrapped.png" 
-    alt="Cursor Wrapped saya di tahun ini" 
-    width="758" 
-    height="701" 
-    loading="lazy"
-    decoding="async"
-  >
-</picture>
-
-_My Cursor Wrapped in last 2025_
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102151420_ai-agent-code-editor/cursor-wrapped.webp" type="image/webp">
+    <img 
+      src="/notes/20260102151420_ai-agent-code-editor/cursor-wrapped.png" 
+      alt="Cursor Wrapped saya di tahun ini" 
+      width="500"
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+  <p style="text-align: center; margin-top: 0.5rem; margin-bottom: 0;">
+    <em>My Cursor Wrapped in last 2025</em>
+  </p>
+</div>

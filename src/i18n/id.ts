@@ -12,7 +12,7 @@ export default {
       description: 'Catatan oleh',
       name: 'Akmal',
       intro:
-        'Selamat datang di ruang kecil saya di internet. Di sini, saya berbagi pemikiran tentang apapun yang saya ingin bagikan. Terkadang mengenai software development, tapi kadang juga tidak. Kadang tentang Pengetahuan yang tidak populer, kadang yang populer aja.',
+        'Selamat datang di ruang kecil saya di internet. Di sini, saya berbagi pemikiran tentang apapun yang saya ingin bagikan. Terkadang mengenai software development, tapi kadang juga tidak. Kadang tentang pengetahuan yang tidak populer, kadang yang populer aja.',
       message:
         'Saya percaya bahwa berbagi pemikiran adalah cara terbaik untuk tumbuh bersama. Setiap artikel yang saya tulis adalah hasil dari pengalaman, lamunan, eksperimen, bacaan, juga refleksi pribadi.',
       closing:
@@ -40,6 +40,12 @@ export default {
     next: 'Selanjutnya',
     page: 'Halaman',
     of: 'dari',
+  },
+  navigation: {
+    previousPost: 'Catatan Sebelumnya',
+    nextPost: 'Catatan Selanjutnya',
+    noPrevious: 'Tidak ada catatan sebelumnya',
+    noNext: 'Tidak ada catatan selanjutnya',
   },
   archive: {
     title: 'Arsip',
@@ -93,7 +99,7 @@ export default {
     copyLink: 'Salin Link',
   },
   chatbot: {
-    title: 'Asisten Chat',
+    title: 'Asisten Chat AI',
     welcome:
       'Halo! Saya bisa membantu menjawab pertanyaan tentang catatan di Readme.md. Silakan tanyakan sesuatu!',
     placeholder: 'Tulis pertanyaan...',

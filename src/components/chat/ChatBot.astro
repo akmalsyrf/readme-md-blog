@@ -1,14 +1,13 @@
 ---
 import ChatButton from './ChatButton.astro';
 import ChatWindow from './ChatWindow.astro';
-import { getTranslations, type Locale } from '../../utils/i18n';
+import { translations, type Locale } from '../../utils/i18n';
 
 interface Props {
   locale?: Locale;
 }
 
 const { locale = 'id' } = Astro.props;
-const t = getTranslations(locale);
 ---
 
 <div id="chatbot-container" class="chatbot-container">
@@ -36,27 +35,26 @@ const t = getTranslations(locale);
     locale,
     translations: {
       id: {
-        welcome: t.chatbot.welcome,
-        placeholder: t.chatbot.placeholder,
-        send: t.chatbot.send,
-        processing: t.chatbot.processing,
-        sources: t.chatbot.sources,
-        error: t.chatbot.error,
-        errorMessage: t.chatbot.errorMessage,
-        generatingRecommendations: t.chatbot.generatingRecommendations,
-        recommendations: t.chatbot.recommendations,
+        welcome: translations.id.chatbot.welcome,
+        placeholder: translations.id.chatbot.placeholder,
+        send: translations.id.chatbot.send,
+        processing: translations.id.chatbot.processing,
+        sources: translations.id.chatbot.sources,
+        error: translations.id.chatbot.error,
+        errorMessage: translations.id.chatbot.errorMessage,
+        generatingRecommendations: translations.id.chatbot.generatingRecommendations,
+        recommendations: translations.id.chatbot.recommendations,
       },
       en: {
-        welcome:
-          'Hello! I can help answer questions about the notes in Readme.md. Please ask me something!',
-        placeholder: 'Type your question...',
-        send: 'Send',
-        processing: 'Processing...',
-        sources: 'Sources',
-        error: 'An error occurred',
-        errorMessage: 'An error occurred while sending the message. Please try again.',
-        generatingRecommendations: 'Generating question recommendations...',
-        recommendations: 'Questions you might ask:',
+        welcome: translations.en.chatbot.welcome,
+        placeholder: translations.en.chatbot.placeholder,
+        send: translations.en.chatbot.send,
+        processing: translations.en.chatbot.processing,
+        sources: translations.en.chatbot.sources,
+        error: translations.en.chatbot.error,
+        errorMessage: translations.en.chatbot.errorMessage,
+        generatingRecommendations: translations.en.chatbot.generatingRecommendations,
+        recommendations: translations.en.chatbot.recommendations,
       },
     },
   }}

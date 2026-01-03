@@ -26,17 +26,19 @@ Didorong oleh rasa penasaran yang tak terbendung itu, saya memutuskan bahwa tidu
 
 Dan inilah kisah yang diceritakannya. Kisah tentang sebuah evolusi yang melampaui imajinasi liar para penulis kode.
 
-<picture>
-  <source srcset="/notes/20260102151420_ai-agent-code-editor/image.webp" type="image/webp">
-  <img 
-    src="/notes/20260102151420_ai-agent-code-editor/image.png" 
-    alt="AI Agent Code Editor" 
-    width="758" 
-    height="701" 
-    loading="lazy"
-    decoding="async"
-  >
-</picture>
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102151420_ai-agent-code-editor/image.webp" type="image/webp">
+    <img 
+      src="/notes/20260102151420_ai-agent-code-editor/image.png" 
+      alt="AI Agent Code Editor" 
+      width="500"
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+</div>
 
 ---
 
@@ -93,16 +95,19 @@ Saya menarik nafas panjang, meletakkan jari di atas keyboard, dan mulai mengetik
 
 Dan dunia pun berubah, satu _prompt_ demi satu _prompt_.
 
-<picture>
-  <source srcset="/notes/20260102151420_ai-agent-code-editor/cursor-wrapped.webp" type="cursor-wrapped/webp">
-  <img 
-    src="/notes/20260102151420_ai-agent-code-editor/cursor-wrapped.png" 
-    alt="Cursor Wrapped saya di tahun ini" 
-    width="758" 
-    height="701" 
-    loading="lazy"
-    decoding="async"
-  >
-</picture>
-
-_Cursor Wrapped saya di akhir 2025_
+<div style="display: flex; flex-direction: column; align-items: center; margin: 2rem 0;">
+  <picture style="display: block;">
+    <source srcset="/notes/20260102151420_ai-agent-code-editor/cursor-wrapped.webp" type="image/webp">
+    <img 
+      src="/notes/20260102151420_ai-agent-code-editor/cursor-wrapped.png" 
+      alt="Cursor Wrapped saya di tahun ini" 
+      width="500"
+      loading="lazy"
+      decoding="async"
+      style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
+    >
+  </picture>
+  <p style="text-align: center; margin-top: 0.5rem; margin-bottom: 0;">
+    <em>Cursor Wrapped saya di akhir 2025</em>
+  </p>
+</div>
