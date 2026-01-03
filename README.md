@@ -1,23 +1,85 @@
 # Notes with Astro
 
-A modern notes/blog application built with Astro, featuring internationalization (i18n) and light/dark theme support.
+A modern notes/blog application built with Astro, featuring internationalization (i18n), AI-powered chatbot with RAG (Retrieval Augmented Generation), and comprehensive blog features.
 
 ## Features
 
+### Core Features
+
 - ✅ **Internationalization (i18n)**: Support for Indonesian (default) and English languages
-- ✅ **Light & Dark Theme**: Theme toggle with saved preferences
+- ✅ **Light & Dark Theme**: Theme toggle with saved preferences in localStorage
 - ✅ **Content Collections**: Notes content management using Astro Content Collections
-- ✅ **Responsive Design**: Responsive design using Tailwind CSS
-- ✅ **SEO Friendly**: SEO-friendly structure
+- ✅ **Responsive Design**: Fully responsive design using Tailwind CSS
+- ✅ **SEO Optimized**: SEO-friendly structure with structured data, sitemap, and RSS feed
 - ✅ **Social Links**: Links to GitHub, X (Twitter), and LinkedIn in the footer
 
+### Blog Features
+
+- ✅ **RSS Feed**: Automatic RSS feed generation at `/rss.xml`
+- ✅ **Sitemap**: Dynamic sitemap generation at `/sitemap.xml` with multilingual support
+- ✅ **Search**: Full-text search functionality across all notes
+- ✅ **Archive**: Archive page showing all published notes chronologically
+- ✅ **Tags System**: Tag-based categorization and filtering of notes
+- ✅ **Pagination**: Paginated blog listing for better performance
+- ✅ **Table of Contents**: Automatic TOC generation from headings
+- ✅ **Post Navigation**: Previous/Next post navigation
+- ✅ **Share Buttons**: Social media sharing buttons for posts
+- ✅ **Reading Time**: Automatic reading time calculation
+- ✅ **Image Modal**: Click-to-expand image viewing with modal
+- ✅ **Breadcrumb Navigation**: Breadcrumb navigation for better UX
+- ✅ **404 Page**: Custom 404 error page
+
+### AI Features
+
+- ✅ **AI Chatbot**: Interactive chatbot powered by Google Gemini AI
+- ✅ **RAG (Retrieval Augmented Generation)**: Context-aware responses using vector embeddings
+- ✅ **Smart Recommendations**: AI-generated question recommendations
+- ✅ **Conversation History**: Multi-turn conversation support
+- ✅ **Context Awareness**: Chatbot understands current page context
+- ✅ **Rate Limiting**: Built-in rate limiting for API protection
+- ✅ **Security**: Request validation, CORS support, and API key protection
+
+### Developer Features
+
+- ✅ **Image Optimization**: Script to optimize images to WebP format
+- ✅ **TypeScript**: Full TypeScript support
+- ✅ **ESLint & Prettier**: Code quality and formatting tools
+- ✅ **Husky & lint-staged**: Pre-commit hooks for code quality
+- ✅ **Vercel Deployment**: Optimized for Vercel serverless deployment (hybrid mode)
+
 ## Getting Started
+
+### Prerequisites
+
+- Node.js 20.x or higher
+- npm or yarn
 
 ### Installation
 
 ```bash
 npm install
 ```
+
+### Environment Variables
+
+Create a `.env` file in the root directory for AI chatbot features:
+
+```env
+# Required for AI Chatbot
+GEMINI_API_KEY=your_google_gemini_api_key_here
+
+# Optional: Customize Gemini model (default: gemini-2.5-flash)
+GEMINI_MODEL_NAME=gemini-2.5-flash
+
+# Optional: Admin API key for vector store initialization
+ADMIN_API_KEY=your_admin_key_here
+
+# Optional: Cloudflare AI (alternative to Gemini)
+CLOUDFLARE_ACCOUNT_ID=your_account_id
+CLOUDFLARE_API_TOKEN=your_api_token
+```
+
+**Note**: The chatbot will work without API keys, but AI features will be disabled. You can get a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey).
 
 ### Development
 
@@ -33,36 +95,99 @@ The application will run at `http://localhost:4321`
 npm run build
 ```
 
+This will:
+
+- Build the static site
+- Generate RSS feed and sitemap
+- Optimize assets for production
+- Fix Vercel runtime compatibility
+
 ### Preview
 
 ```bash
 npm run preview
 ```
 
+Preview the production build locally.
+
 ## Project Structure
 
 ```
-blog/
+readme-md/
 ├── src/
-│   ├── components/      # Reusable components
-│   │   ├── LanguageSwitcher.astro
-│   │   ├── SocialLinks.astro
-│   │   └── ThemeToggle.astro
-│   ├── config/          # Configuration
+│   ├── components/          # Reusable components
+│   │   ├── blog/           # Blog-specific components
+│   │   │   ├── BlogListing.astro
+│   │   │   ├── BlogPostContent.astro
+│   │   │   ├── BlogPostDetail.astro
+│   │   │   ├── BlogPostHeader.astro
+│   │   │   ├── PostNavigation.astro
+│   │   │   ├── ShareButtons.astro
+│   │   │   └── TableOfContents.astro
+│   │   ├── chat/           # Chatbot components
+│   │   │   ├── ChatBot.astro
+│   │   │   ├── ChatButton.astro
+│   │   │   ├── ChatHeader.astro
+│   │   │   ├── ChatInput.astro
+│   │   │   ├── ChatMessages.astro
+│   │   │   └── ChatWindow.astro
+│   │   ├── common/         # Common components
+│   │   │   ├── BlogPostCard.astro
+│   │   │   ├── Breadcrumb.astro
+│   │   │   ├── ImageModal.astro
+│   │   │   ├── LanguageSwitcher.astro
+│   │   │   ├── Pagination.astro
+│   │   │   ├── SEO.astro
+│   │   │   ├── SocialLinks.astro
+│   │   │   ├── StructuredData.astro
+│   │   │   └── ThemeToggle.astro
+│   │   ├── home/           # Homepage components
+│   │   ├── layout/        # Layout components
+│   │   ├── search/         # Search components
+│   │   └── tags/           # Tags components
+│   ├── config/             # Configuration files
+│   │   ├── notes.ts
 │   │   └── social.ts
-│   ├── content/        # Notes content
-│   │   └── notes/
-│   ├── i18n/          # Translation files
+│   ├── content/            # Content collections
+│   │   ├── config.ts
+│   │   └── notes/          # Notes content (id.md & en.md per note)
+│   ├── i18n/              # Translation files
 │   │   ├── id.ts
 │   │   └── en.ts
-│   ├── layouts/       # Page layouts
+│   ├── layouts/           # Page layouts
 │   │   └── BaseLayout.astro
-│   ├── pages/         # Pages
+│   ├── pages/             # Pages and routes
+│   │   ├── api/           # API routes
+│   │   │   └── chat.ts    # Chatbot API endpoint
+│   │   ├── en/            # English routes
+│   │   ├── notes/         # Notes routes
+│   │   ├── archive.astro
 │   │   ├── index.astro
-│   │   ├── notes/
-│   │   └── en/
-│   └── utils/         # Utility functions
-│       └── i18n.ts
+│   │   ├── rss.xml.ts     # RSS feed
+│   │   ├── sitemap.xml.ts # Sitemap
+│   │   ├── search.astro
+│   │   └── tags.astro
+│   └── utils/             # Utility functions
+│       ├── api/           # API utilities (CORS, rate limiting, security)
+│       ├── rag/           # RAG system utilities
+│       │   ├── chunkText.ts
+│       │   ├── cloudflareAI.ts
+│       │   ├── embedNotes.ts
+│       │   ├── ragQuery.ts
+│       │   └── vectorStore.ts
+│       ├── extractHeadings.ts
+│       ├── getAdjacentPosts.ts
+│       ├── getBlogPaginationStaticPaths.ts
+│       ├── getBlogPostStaticPaths.ts
+│       ├── getPostsByLocale.ts
+│       ├── i18n.ts
+│       └── readingTime.ts
+├── public/                # Static assets
+│   └── notes/            # Optimized note images
+├── scripts/              # Utility scripts
+│   ├── fix-vercel-runtime.js
+│   ├── new-note.js
+│   └── optimize-image.js
 ├── astro.config.mjs
 ├── package.json
 └── tailwind.config.mjs
@@ -121,14 +246,71 @@ tags: ['tag1', 'tag2']
 ---
 ```
 
+## Image Optimization
+
+Optimize images to WebP format for better performance:
+
+```bash
+npm run optimize-image <source> [target]
+```
+
+Examples:
+
+```bash
+# Auto-generate WebP from PNG
+npm run optimize-image src/image.png
+
+# Specify target path
+npm run optimize-image src/image.png public/notes/image.webp
+```
+
+The script will:
+
+- Convert images to WebP format
+- Optimize quality (85% by default)
+- Show size reduction statistics
+- Support PNG, JPG, JPEG, GIF, TIFF, BMP formats
+
+## AI Chatbot
+
+The application includes an AI-powered chatbot that uses RAG (Retrieval Augmented Generation) to answer questions based on your notes content.
+
+### Features
+
+- **Context-Aware**: Understands the current page you're viewing
+- **Smart Recommendations**: Suggests relevant questions based on content
+- **Conversation History**: Maintains context across multiple messages
+- **Multilingual**: Supports both Indonesian and English
+- **Rate Limited**: Built-in protection against abuse
+
+### Usage
+
+1. Click the chatbot button (bottom-right corner)
+2. Ask questions about your notes
+3. The chatbot will search through your content and provide relevant answers
+4. View source references for each answer
+
+### Initializing Vector Store
+
+The vector store is automatically initialized on first use. For manual initialization (admin only):
+
+```bash
+curl -X POST https://your-domain.com/api/chat \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ADMIN_API_KEY" \
+  -d '{"action": "initialize", "locale": "id"}'
+```
+
 ## i18n Routing
 
 - Indonesian (default): `/` and `/notes`
 - English: `/en` and `/en/notes`
 
+All routes support both languages with automatic locale detection.
+
 ## Theme
 
-The light/dark theme can be toggled using the button in the header. User preferences are saved in localStorage.
+The light/dark theme can be toggled using the button in the header. User preferences are saved in localStorage and persist across sessions.
 
 ## Social Links
 
@@ -155,6 +337,70 @@ export const socialLinks: SocialLink[] = [
 ```
 
 You can also add or remove social links as needed.
+
+## Deployment
+
+### Vercel (Recommended)
+
+This project is optimized for Vercel deployment with hybrid mode (static pages + API routes).
+
+1. Push your code to GitHub
+2. Import the project in Vercel
+3. Add environment variables in Vercel dashboard:
+   - `GEMINI_API_KEY`
+   - `ADMIN_API_KEY` (optional)
+   - `CLOUDFLARE_ACCOUNT_ID` (optional)
+   - `CLOUDFLARE_API_TOKEN` (optional)
+4. Deploy!
+
+The site URL is configured in `astro.config.mjs`. Update it to match your domain:
+
+```javascript
+export default defineConfig({
+  site: 'https://your-domain.com',
+  // ...
+});
+```
+
+### Other Platforms
+
+The project can be deployed to any platform that supports:
+
+- Node.js 20.x
+- Serverless functions (for API routes)
+- Static site hosting
+
+For static-only deployment, remove API routes or use a separate service for the chatbot API.
+
+## Available Scripts
+
+### Development
+
+- `npm run dev` - Start development server
+- `npm run start` - Alias for `dev`
+
+### Building
+
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+
+### Content Management
+
+- `npm run new-note "note-title"` - Create a new note with templates
+- `npm run optimize-image <source> [target]` - Optimize images to WebP
+
+### Code Quality
+
+- `npm run lint` - Check for linting errors
+- `npm run lint:fix` - Auto-fix linting errors
+- `npm run format` - Format all files with Prettier
+- `npm run format:check` - Check if files are formatted
+- `npm run type-check` - Run TypeScript type checking
+- `npm run all-checks` - Run lint, format check, and type check
+
+### Setup
+
+- `npm run prepare` - Set up Husky pre-commit hooks
 
 ## Linting & Formatting
 
@@ -194,6 +440,12 @@ This will set up Husky to run lint-staged on every commit. Staged files will be 
 
 ```bash
 npm run type-check
+```
+
+Or run all checks at once:
+
+```bash
+npm run all-checks
 ```
 
 ## Development Tools
