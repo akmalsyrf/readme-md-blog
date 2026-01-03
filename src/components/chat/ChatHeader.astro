@@ -1,0 +1,40 @@
+---
+import { getTranslations, type Locale } from '../../utils/i18n';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'id' } = Astro.props;
+const t = getTranslations(locale);
+---
+
+<div class="chatbot-header">
+  <h3 class="chatbot-header-title">{t.chatbot.title}</h3>
+  <button id="chatbot-close" aria-label="Close chat" class="chatbot-close-button">
+    <svg
+      class="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"
+      ></path>
+    </svg>
+  </button>
+</div>
+
+<style>
+  .chatbot-header {
+    @apply flex shrink-0 items-center justify-between rounded-t-lg border-b border-gray-200 bg-blue-600 px-4 py-3 dark:border-gray-700 dark:bg-blue-500;
+  }
+
+  .chatbot-header-title {
+    @apply text-lg font-semibold text-white;
+  }
+
+  .chatbot-close-button {
+    @apply rounded-full p-1 text-white transition-colors hover:bg-blue-700 dark:hover:bg-blue-600;
+  }
+</style>
