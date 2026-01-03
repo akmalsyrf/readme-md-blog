@@ -533,6 +533,28 @@ const t = getTranslations(locale);
       }
     };
 
+    // Get conversation history from localStorage for API
+    const getConversationHistory = () => {
+      try {
+        const savedHistory = localStorage.getItem(STORAGE_KEY);
+        if (!savedHistory) return [];
+
+        const messages = JSON.parse(savedHistory);
+        // Convert to API format: only include text and isUser flag
+        // We'll convert isUser to role format
+        return messages
+          .map((msg) => ({
+            role: msg.isUser ? 'user' : 'assistant',
+            content: msg.text,
+          }))
+          .slice(-10); // Limit to last 10 messages
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error getting conversation history:', error);
+        return [];
+      }
+    };
+
     // Handle form submission
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -550,6 +572,10 @@ const t = getTranslations(locale);
       addLoading();
 
       try {
+        // Get conversation history (before adding current question)
+        // This way the API gets the history without the current question
+        const conversationHistory = getConversationHistory();
+
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: {
@@ -558,6 +584,7 @@ const t = getTranslations(locale);
           body: JSON.stringify({
             question,
             locale,
+            conversationHistory,
           }),
         });
 

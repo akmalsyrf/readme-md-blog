@@ -3,6 +3,7 @@
  */
 
 import type { Locale } from '../i18n';
+import type { ConversationMessage } from './ragQuery';
 
 const accountId = (
   import.meta.env.CLOUDFLARE_ACCOUNT_ID ||
@@ -29,7 +30,8 @@ if (!accountId || !apiToken) {
 export async function generateWithCloudflare(
   prompt: string,
   systemInstruction: string,
-  _locale: Locale = 'id'
+  _locale: Locale = 'id',
+  conversationHistory?: ConversationMessage[]
 ): Promise<string> {
   if (!accountId || !apiToken) {
     throw new Error(
@@ -40,16 +42,32 @@ export async function generateWithCloudflare(
   try {
     const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${modelName}`;
 
-    const messages = [
+    // Build messages array with conversation history
+    const messages: Array<{ role: string; content: string }> = [
       {
         role: 'system',
         content: systemInstruction,
       },
-      {
-        role: 'user',
-        content: prompt,
-      },
     ];
+
+    // Add conversation history if available (limit to last 10 messages to avoid token limits)
+    if (conversationHistory && conversationHistory.length > 0) {
+      const recentHistory = conversationHistory.slice(-10); // Keep last 10 messages
+      for (const msg of recentHistory) {
+        if (msg.role === 'user' || msg.role === 'assistant') {
+          messages.push({
+            role: msg.role === 'user' ? 'user' : 'assistant',
+            content: msg.content,
+          });
+        }
+      }
+    }
+
+    // Add current prompt
+    messages.push({
+      role: 'user',
+      content: prompt,
+    });
 
     const response = await fetch(url, {
       method: 'POST',
@@ -60,7 +78,7 @@ export async function generateWithCloudflare(
       body: JSON.stringify({
         messages,
         max_tokens: 1000,
-        temperature: 0.7,
+        temperature: 0.5,
       }),
     });
 

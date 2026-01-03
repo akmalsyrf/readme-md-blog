@@ -6,7 +6,7 @@ import { getVectorStore } from './vectorStore';
 import { getQueryEmbedding } from './embedNotes';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { generateWithCloudflare, isCloudflareConfigured } from './cloudflareAI';
-import type { Locale } from '../i18n';
+import { getTranslations, type Locale } from '../i18n';
 
 const apiKey = (import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '').trim();
 const modelName = import.meta.env.GEMINI_MODEL_NAME || 'gemini-2.5-flash';
@@ -28,6 +28,11 @@ export interface RAGResponse {
   }>;
 }
 
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 /**
  * Query RAG system dengan user question
  */
@@ -39,7 +44,8 @@ export async function queryRAG(
     title?: string;
     noteId?: string;
     url?: string;
-  }
+  },
+  conversationHistory?: ConversationMessage[]
 ): Promise<RAGResponse> {
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY is not configured');
@@ -49,6 +55,9 @@ export async function queryRAG(
     throw new Error('Question cannot be empty');
   }
 
+  // Get translations early for use in both try and catch blocks
+  const t = getTranslations(locale);
+
   try {
     // Get query embedding with retry logic
     let queryEmbedding: number[];
@@ -57,9 +66,7 @@ export async function queryRAG(
     } catch (error) {
       // If embedding fails, provide a more helpful error message
       if (error instanceof Error && error.message.includes('fetch failed')) {
-        throw new Error(
-          'Network error: Unable to connect to API. Please check your internet connection and try again.'
-        );
+        throw new Error(t.rag.errorNetwork);
       }
       throw error;
     }
@@ -76,33 +83,38 @@ export async function queryRAG(
               return `[${idx + 1}] ${result.document.metadata.title}\n${result.document.text}`;
             })
             .join('\n\n---\n\n')
-        : 'No relevant context found.';
+        : t.rag.noContextFound;
 
     // Build prompt for Gemini and Cloudflare
-    const systemInstruction =
-      locale === 'id'
-        ? `Anda adalah asisten AI chatbot untuk blog app bernama "readme.md" yang ditulis oleh Akmal (https://github.com/akmalsyrf). Tugas Anda adalah membantu menjawab pertanyaan pengunjung tentang konten blog. Gunakan informasi dari konteks yang diberikan untuk menjawab pertanyaan. Jika informasi tidak tersedia di konteks, katakan bahwa Anda tidak memiliki informasi tersebut.
-
-Jawab dalam bahasa Indonesia dengan jelas dan informatif. Jangan menyebutkan nomor referensi [1], [2], dll dalam jawaban Anda karena sistem akan menampilkan link sumber secara terpisah.`
-        : `You are an AI chatbot assistant for a blog app named "readme.md" written by Akmal (https://github.com/akmalsyrf). Your task is to help answer visitors' questions about the blog content. Use the information from the provided context to answer the question. If the information is not available in the context, say that you don't have that information.
-
-Answer in English clearly and informatively. Do not mention reference numbers [1], [2], etc. in your answer as the system will display source links separately.`;
+    const systemInstruction = t.rag.systemInstruction;
 
     // Add current page context if available
     let pageContextInfo = '';
-    if (currentPageContext) {
-      if (currentPageContext.title) {
-        pageContextInfo =
-          locale === 'id'
-            ? `\n\nCatatan: User sedang melihat halaman "${currentPageContext.title}". Jika pertanyaan terkait dengan halaman ini, prioritaskan informasi dari halaman tersebut.`
-            : `\n\nNote: User is currently viewing the page "${currentPageContext.title}". If the question is related to this page, prioritize information from this page.`;
+    if (currentPageContext?.title) {
+      pageContextInfo = `\n\n${t.rag.pageContextNote.replace('{title}', currentPageContext.title)}`;
+    }
+
+    // Build conversation history for Gemini (chat format)
+    const history: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+
+    // Add conversation history if available (limit to last 10 messages to avoid token limits)
+    if (conversationHistory && conversationHistory.length > 0) {
+      const recentHistory = conversationHistory.slice(-10); // Keep last 10 messages
+      for (const msg of recentHistory) {
+        if (msg.role === 'user' || msg.role === 'assistant') {
+          history.push({
+            role: msg.role === 'user' ? 'user' : 'model',
+            parts: [{ text: msg.content }],
+          });
+        }
       }
     }
 
-    const userPrompt =
-      locale === 'id'
-        ? `Konteks dari blog notes:\n\n${context}${pageContextInfo}\n\nPertanyaan: ${question}\n\nJawablah pertanyaan berdasarkan konteks di atas. Jangan sertakan nomor referensi dalam jawaban Anda.`
-        : `Context from blog notes:\n\n${context}${pageContextInfo}\n\nQuestion: ${question}\n\nAnswer the question based on the context above. Do not include reference numbers in your answer.`;
+    // Add current question with context
+    const userPrompt = t.rag.userPromptTemplate
+      .replace('{context}', context)
+      .replace('{pageContext}', pageContextInfo)
+      .replace('{question}', question);
 
     // Generate response using Gemini with retry logic, fallback to Cloudflare if fails
     let answer: string;
@@ -113,20 +125,33 @@ Answer in English clearly and informatively. Do not mention reference numbers [1
         systemInstruction: systemInstruction,
       });
 
-      const result = await model.generateContent(userPrompt);
+      // Use chat format if we have history, otherwise use single prompt
+      let result;
+      if (history.length > 0) {
+        // Start chat with history
+        const chat = model.startChat({
+          history: history,
+        });
+        result = await chat.sendMessage(userPrompt);
+      } else {
+        // Single prompt (no history)
+        result = await model.generateContent(userPrompt);
+      }
+
       const response = result.response;
-      answer =
-        response.text() ||
-        (locale === 'id'
-          ? 'Maaf, saya tidak bisa menghasilkan jawaban.'
-          : 'Sorry, I could not generate an answer.');
+      answer = response.text() || t.rag.errorNoAnswer;
     } catch (error) {
       // Try Cloudflare Workers AI as fallback
       if (isCloudflareConfigured()) {
         try {
           // eslint-disable-next-line no-console
           console.log('Gemini failed, trying Cloudflare Workers AI as fallback...');
-          answer = await generateWithCloudflare(userPrompt, systemInstruction, locale);
+          answer = await generateWithCloudflare(
+            userPrompt,
+            systemInstruction,
+            locale,
+            conversationHistory
+          );
           // eslint-disable-next-line no-console
           console.log('Successfully used Cloudflare Workers AI fallback');
         } catch (fallbackError) {
@@ -137,12 +162,10 @@ Answer in English clearly and informatively. Do not mention reference numbers [1
           // Handle original Gemini errors
           if (error instanceof Error) {
             if (error.message.includes('fetch failed') || error.message.includes('network')) {
-              throw new Error(
-                'Network error: Unable to connect to AI services. Please check your internet connection and try again.'
-              );
+              throw new Error(t.rag.errorNetwork);
             }
             if (error.message.includes('429') || error.message.includes('quota')) {
-              throw new Error('API quota exceeded. Please wait a moment and try again');
+              throw new Error(t.rag.errorQuota);
             }
           }
           throw error;
@@ -151,12 +174,10 @@ Answer in English clearly and informatively. Do not mention reference numbers [1
         // No fallback available, throw original error
         if (error instanceof Error) {
           if (error.message.includes('fetch failed') || error.message.includes('network')) {
-            throw new Error(
-              'Network error: Unable to connect to Gemini API. Please check your internet connection and try again.'
-            );
+            throw new Error(t.rag.errorNetworkGemini);
           }
           if (error.message.includes('429') || error.message.includes('quota')) {
-            throw new Error('API quota exceeded. Please wait a moment and try again');
+            throw new Error(t.rag.errorQuota);
           }
         }
         throw error;
@@ -205,7 +226,7 @@ Answer in English clearly and informatively. Do not mention reference numbers [1
         error.message.includes('api key') ||
         error.message.includes('authentication')
       ) {
-        throw new Error('Invalid or missing GEMINI_API_KEY. Please check your .env file.');
+        throw new Error(t.rag.errorApiKey);
       }
       // Re-throw with better error message if it's already been improved
       if (error.message.includes('Network error') || error.message.includes('API quota')) {
@@ -213,7 +234,7 @@ Answer in English clearly and informatively. Do not mention reference numbers [1
       }
       throw error;
     }
-    throw new Error('Unknown error occurred while querying RAG');
+    throw new Error(t.rag.errorUnknown);
   }
 }
 
@@ -221,30 +242,8 @@ Answer in English clearly and informatively. Do not mention reference numbers [1
  * Get fallback question recommendations
  */
 function getFallbackRecommendations(locale: Locale, count: number): string[] {
-  const fallbackQuestions: Record<Locale, string[]> = {
-    id: [
-      'Apa saja topik yang dibahas di blog ini?',
-      'Bagaimana cara menggunakan fitur-fitur yang tersedia?',
-      'Apa yang menarik dari konten blog ini?',
-      'Bisa jelaskan tentang teknologi yang digunakan?',
-      'Apa tips dan trik yang bisa dipelajari?',
-      'Bagaimana cara memulai dengan konten ini?',
-      'Apa saja best practices yang direkomendasikan?',
-      'Bisa berikan contoh implementasi?',
-    ],
-    en: [
-      'What topics are covered in this blog?',
-      'How do I use the available features?',
-      'What is interesting about this blog content?',
-      'Can you explain the technologies used?',
-      'What tips and tricks can I learn?',
-      'How do I get started with this content?',
-      'What best practices are recommended?',
-      'Can you provide implementation examples?',
-    ],
-  };
-
-  const questions = fallbackQuestions[locale] || fallbackQuestions.id;
+  const t = getTranslations(locale);
+  const questions = t.rag.recommendations.fallback;
   return questions.slice(0, count);
 }
 
@@ -280,6 +279,14 @@ export async function generateRecommendations(
 
     // Get unique titles from documents (first chunk of each note)
     const allDocs = vectorStore.getAllDocuments(locale);
+
+    // If no documents found for this locale, return fallback questions
+    if (allDocs.length === 0) {
+      // eslint-disable-next-line no-console
+      console.log(`No documents found for locale '${locale}', using fallback questions`);
+      return fallbackQuestions;
+    }
+
     const uniqueTitles = new Set<string>();
     for (const doc of allDocs) {
       if (doc.metadata.chunkIndex === 0) {
@@ -289,24 +296,30 @@ export async function generateRecommendations(
     }
     const sampleTitles = Array.from(uniqueTitles);
 
+    // If no titles found, return fallback questions
+    if (sampleTitles.length === 0) {
+      // eslint-disable-next-line no-console
+      console.log(`No titles found for locale '${locale}', using fallback questions`);
+      return fallbackQuestions;
+    }
+
+    // Get translations
+    const t = getTranslations(locale);
+
     // Add current page context to prompt if available
     let pageContextInfo = '';
     if (currentPageContext?.title) {
-      pageContextInfo =
-        locale === 'id'
-          ? `\n\nCatatan penting: User sedang melihat halaman "${currentPageContext.title}". Prioritaskan untuk menghasilkan pertanyaan yang relevan dengan halaman ini, tetapi juga sertakan beberapa pertanyaan umum tentang blog.`
-          : `\n\nImportant note: User is currently viewing the page "${currentPageContext.title}". Prioritize generating questions relevant to this page, but also include some general questions about the blog.`;
+      pageContextInfo = `\n\n${t.rag.recommendations.pageContextNote.replace('{title}', currentPageContext.title)}`;
     }
 
-    const systemInstruction =
-      locale === 'id'
-        ? `Anda adalah asisten AI untuk blog "readme.md". Tugas Anda adalah menghasilkan ${count} pertanyaan singkat dan menarik yang mungkin ditanyakan pengunjung tentang konten blog. Setiap pertanyaan harus singkat (maksimal 10 kata), relevan dengan konten blog, dan dalam bahasa Indonesia.`
-        : `You are an AI assistant for the blog "readme.md". Your task is to generate ${count} short and interesting questions that visitors might ask about the blog content. Each question should be short (maximum 10 words), relevant to the blog content, and in English.`;
+    const systemInstruction = t.rag.recommendations.systemInstructionTemplate
+      .replace('{count}', count.toString())
+      .replace('{titles}', sampleTitles.join(', '));
 
-    const userPrompt =
-      locale === 'id'
-        ? `Berdasarkan judul-judul artikel berikut dari blog:\n\n${sampleTitles.join('\n')}${pageContextInfo}\n\nBuatkan ${count} pertanyaan singkat yang mungkin ditanyakan pengunjung. Format output: setiap pertanyaan dalam baris terpisah, tanpa nomor, tanpa bullet point.`
-        : `Based on the following article titles from the blog:\n\n${sampleTitles.join('\n')}${pageContextInfo}\n\nCreate ${count} short questions that visitors might ask. Output format: each question on a separate line, without numbers, without bullet points.`;
+    const userPrompt = t.rag.recommendations.userPromptTemplate
+      .replace('{titles}', sampleTitles.join('\n'))
+      .replace('{pageContext}', pageContextInfo)
+      .replace('{count}', count.toString());
 
     try {
       const text = await generateWithCloudflare(userPrompt, systemInstruction, locale);

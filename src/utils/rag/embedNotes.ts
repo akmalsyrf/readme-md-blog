@@ -16,39 +16,62 @@ if (!apiKey) {
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
+interface EmbedOptions {
+  clearExisting: boolean;
+  skipIfExists: boolean;
+}
+
+const DEFAULT_EMBED_OPTIONS: EmbedOptions = {
+  clearExisting: false,
+  skipIfExists: false,
+};
+
 /**
- * Load dan embed semua notes ke vector store
+ * Internal function to embed notes with configurable behavior
+ * @param locale - Locale to embed (required)
+ * @param options - Configuration options
+ * @param options.clearExisting - If true, clear all existing documents before embedding
+ * @param options.skipIfExists - If true, skip embedding if documents for this locale already exist
  */
-export async function embedNotes(locale?: Locale): Promise<void> {
+async function _embedNotesInternal(
+  locale: Locale,
+  options: EmbedOptions = DEFAULT_EMBED_OPTIONS
+): Promise<void> {
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY is not configured. Please set it in your .env file.');
   }
 
   const vectorStore = getVectorStore();
 
-  // Only clear if explicitly requested (for re-embedding)
-  // Otherwise, check if store already has data
-  const existingCount = vectorStore.getDocumentCount();
-  if (existingCount > 0) {
-    // eslint-disable-next-line no-console
-    console.log(
-      `Vector store already has ${existingCount} documents. Clearing for re-embedding...`
-    );
-    vectorStore.clear();
+  // Clear existing documents if requested
+  if (options.clearExisting) {
+    const existingCount = vectorStore.getDocumentCount();
+    if (existingCount > 0) {
+      // eslint-disable-next-line no-console
+      console.log(`Vector store has ${existingCount} documents. Clearing for re-embedding...`);
+      vectorStore.clear();
+    }
+  } else if (options.skipIfExists) {
+    // Check if documents for this locale already exist
+    const existingDocsForLocale = vectorStore.getAllDocuments(locale);
+    if (existingDocsForLocale.length > 0) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `Documents for locale '${locale}' already exist (${existingDocsForLocale.length} documents). Skipping embedding.`
+      );
+      return;
+    }
   }
 
   const allNotes = await getCollection('notes');
   const notes = allNotes.filter((note: CollectionEntry<'notes'>) => {
     if (!note.data.isPublished) return false;
     const slug = note.slug;
-    if (locale) {
-      return slug.endsWith(`/${locale}`);
-    }
-    return true; // Include all locales if no locale specified
+    return slug.endsWith(`/${locale}`);
   });
 
   // eslint-disable-next-line no-console
-  console.log(`Loading ${notes.length} notes for embedding...`);
+  console.log(`Loading ${notes.length} notes for locale '${locale}'...`);
   let totalChunks = 0;
 
   for (const note of notes) {
@@ -91,7 +114,7 @@ export async function embedNotes(locale?: Locale): Promise<void> {
           }
 
           const document: VectorDocument = {
-            id: `${noteId}-${i}`,
+            id: `${noteId}-${locale}-${i}`,
             embedding,
             text: chunk,
             metadata: {
@@ -129,8 +152,61 @@ export async function embedNotes(locale?: Locale): Promise<void> {
 
   // eslint-disable-next-line no-console
   console.log(
-    `✅ Completed: Embedded ${vectorStore.getDocumentCount()} chunks from ${notes.length} notes (${totalChunks} total chunks processed)`
+    `✅ Completed: Embedded ${notes.length} notes for locale '${locale}' (${totalChunks} total chunks processed)`
   );
+}
+
+/**
+ * Add notes for a specific locale to the vector store without clearing existing documents.
+ * This function will skip embedding if documents for the locale already exist.
+ *
+ * Use this when you want to add support for a new locale without affecting existing data.
+ *
+ * @param locale - The locale to embed (e.g., 'id' or 'en')
+ */
+export async function addNotesForLocale(locale: Locale): Promise<void> {
+  await _embedNotesInternal(locale, {
+    clearExisting: false,
+    skipIfExists: true,
+  });
+}
+
+/**
+ * Re-embed notes for a specific locale, clearing all existing documents first.
+ * This is useful for re-indexing after content updates.
+ *
+ * Use this for admin actions like re-indexing or fixing corrupted embeddings.
+ *
+ * @param locale - The locale to re-embed (e.g., 'id' or 'en')
+ */
+export async function reEmbedNotes(locale: Locale): Promise<void> {
+  await _embedNotesInternal(locale, {
+    clearExisting: true,
+    skipIfExists: false,
+  });
+}
+
+/**
+ * @deprecated Use `addNotesForLocale` instead. This function is kept for backward compatibility.
+ */
+export async function embedNotesForLocale(locale: Locale): Promise<void> {
+  return addNotesForLocale(locale);
+}
+
+/**
+ * @deprecated Use `reEmbedNotes` instead. This function is kept for backward compatibility.
+ * Re-embed all notes or notes for a specific locale, clearing all existing documents first.
+ *
+ * @param locale - Optional locale to re-embed. If not provided, embeds all locales.
+ */
+export async function embedNotes(locale?: Locale): Promise<void> {
+  if (!locale) {
+    // If no locale specified, re-embed both locales
+    await reEmbedNotes('id');
+    await reEmbedNotes('en');
+    return;
+  }
+  return reEmbedNotes(locale);
 }
 
 /**

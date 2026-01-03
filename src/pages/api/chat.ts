@@ -1,7 +1,12 @@
 import type { APIRoute } from 'astro';
-import { queryRAG, generateRecommendations } from '../../utils/rag/ragQuery';
-import { embedNotes } from '../../utils/rag/embedNotes';
+import {
+  queryRAG,
+  generateRecommendations,
+  type ConversationMessage,
+} from '../../utils/rag/ragQuery';
+import { addNotesForLocale, reEmbedNotes } from '../../utils/rag/embedNotes';
 import { getVectorStore } from '../../utils/rag/vectorStore';
+import type { Locale } from '../../utils/i18n';
 import { getClientIP, checkRateLimit, RATE_LIMIT_CONFIG } from '../../utils/api/rateLimit';
 import { getCORSHeaders } from '../../utils/api/cors';
 import {
@@ -100,7 +105,16 @@ export const POST: APIRoute = async ({ request }) => {
     }
     const body = parseResult.body;
 
-    const { question, locale, action, currentPage } = body;
+    const question = typeof body.question === 'string' ? body.question : undefined;
+    const locale = typeof body.locale === 'string' ? body.locale : undefined;
+    const action = typeof body.action === 'string' ? body.action : undefined;
+    const currentPage =
+      body.currentPage && typeof body.currentPage === 'object' && !Array.isArray(body.currentPage)
+        ? (body.currentPage as { title?: string; noteId?: string; url?: string })
+        : undefined;
+    const conversationHistory = Array.isArray(body.conversationHistory)
+      ? body.conversationHistory
+      : undefined;
 
     // Handle 'getRecommendations' action
     if (action === 'getRecommendations') {
@@ -110,12 +124,29 @@ export const POST: APIRoute = async ({ request }) => {
       const vectorStore = getVectorStore();
       const documentCount = vectorStore.getDocumentCount();
 
+      // Check if we have documents for the requested locale
+      const docsForLocale = vectorStore.getAllDocuments(detectedLocale);
+      const hasDocsForLocale = docsForLocale.length > 0;
+
       if (documentCount === 0) {
+        // Vector store is completely empty, add notes for the requested locale
         try {
-          await embedNotes(detectedLocale);
+          await addNotesForLocale(detectedLocale);
         } catch (error) {
           console.error('Error initializing vector store for recommendations:', error);
           // Continue anyway, will return empty recommendations
+        }
+      } else if (!hasDocsForLocale) {
+        // Vector store has documents but not for the requested locale
+        // Add notes for the requested locale without clearing existing documents
+        try {
+          console.log(
+            `Vector store has ${documentCount} documents but none for locale '${detectedLocale}'. Adding notes for this locale...`
+          );
+          await addNotesForLocale(detectedLocale);
+        } catch (error) {
+          console.error('Error adding notes for locale:', error);
+          // Continue anyway, will use fallback questions
         }
       }
 
@@ -189,9 +220,9 @@ export const POST: APIRoute = async ({ request }) => {
       }
 
       // Re-embed notes (admin only)
-      const detectedLocale = locale || 'id';
+      const detectedLocaleForInit: Locale = (locale === 'en' ? 'en' : 'id') as Locale;
       try {
-        await embedNotes(detectedLocale);
+        await reEmbedNotes(detectedLocaleForInit);
         return new Response(
           JSON.stringify({
             success: true,
@@ -221,17 +252,19 @@ export const POST: APIRoute = async ({ request }) => {
     // Initialize vector store if empty (automatic, but rate-limited)
     const vectorStore = getVectorStore();
     const documentCount = vectorStore.getDocumentCount();
+    const detectedLocaleForQuery: 'id' | 'en' = locale === 'en' ? 'en' : 'id';
 
     if (documentCount === 0) {
       // Embed notes on first request
       // This will make multiple API calls (one per chunk), so it may take time
       // eslint-disable-next-line no-console
       console.log('Vector store is empty, initializing with embeddings...');
-      const detectedLocale = locale || 'id';
       try {
-        await embedNotes(detectedLocale);
+        await addNotesForLocale(detectedLocaleForQuery);
         // eslint-disable-next-line no-console
-        console.log(`Vector store initialized with ${vectorStore.getDocumentCount()} documents`);
+        console.log(
+          `Vector store initialized with ${vectorStore.getDocumentCount()} documents for locale '${detectedLocaleForQuery}'`
+        );
       } catch (error) {
         console.error('Error embedding notes:', error);
         return new Response(
@@ -244,8 +277,27 @@ export const POST: APIRoute = async ({ request }) => {
         );
       }
     } else {
-      // eslint-disable-next-line no-console
-      console.log(`Using existing vector store with ${documentCount} documents`);
+      // Check if we have documents for the requested locale
+      const docsForLocale = vectorStore.getAllDocuments(detectedLocaleForQuery);
+      if (docsForLocale.length === 0) {
+        // eslint-disable-next-line no-console
+        console.log(`No documents found for locale '${detectedLocaleForQuery}', adding now...`);
+        try {
+          await addNotesForLocale(detectedLocaleForQuery);
+          // eslint-disable-next-line no-console
+          console.log(
+            `Added notes for locale '${detectedLocaleForQuery}'. Total documents: ${vectorStore.getDocumentCount()}`
+          );
+        } catch (error) {
+          console.error(`Error embedding notes for locale '${detectedLocaleForQuery}':`, error);
+          // Continue anyway, query will return no context found
+        }
+      } else {
+        // eslint-disable-next-line no-console
+        console.log(
+          `Using existing vector store with ${documentCount} documents (${docsForLocale.length} for locale '${detectedLocaleForQuery}')`
+        );
+      }
     }
 
     // Validate question (skip if action is getRecommendations)
@@ -287,8 +339,6 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const detectedLocale: 'id' | 'en' = locale === 'en' ? 'en' : 'id';
-
     try {
       // Prepare current page context if provided
       const currentPageContext = currentPage
@@ -299,7 +349,43 @@ export const POST: APIRoute = async ({ request }) => {
           }
         : undefined;
 
-      const response = await queryRAG(question.trim(), detectedLocale, 5, currentPageContext);
+      // Validate and prepare conversation history
+      let history: ConversationMessage[] | undefined;
+      if (conversationHistory && Array.isArray(conversationHistory)) {
+        // Validate conversation history format and limit to last 10 messages
+        history = conversationHistory
+          .slice(-10)
+          .filter((msg: unknown) => {
+            if (typeof msg === 'object' && msg !== null && 'role' in msg && 'content' in msg) {
+              const m = msg as { role: unknown; content: unknown };
+              return (
+                (m.role === 'user' || m.role === 'assistant') &&
+                typeof m.content === 'string' &&
+                m.content.trim().length > 0
+              );
+            }
+            return false;
+          })
+          .map((msg: unknown) => {
+            const m = msg as { role: string; content: string };
+            return {
+              role: m.role as 'user' | 'assistant',
+              content: m.content.trim(),
+            };
+          });
+        // Only use history if we have at least one valid message
+        if (history.length === 0) {
+          history = undefined;
+        }
+      }
+
+      const response = await queryRAG(
+        question.trim(),
+        detectedLocaleForQuery,
+        5,
+        currentPageContext,
+        history
+      );
       return new Response(JSON.stringify(response), {
         status: 200,
         headers: {

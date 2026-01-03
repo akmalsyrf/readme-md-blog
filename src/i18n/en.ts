@@ -104,4 +104,67 @@ export default {
     generatingRecommendations: 'Generating question recommendations...',
     recommendations: 'Questions you might ask:',
   },
+  rag: {
+    systemInstruction: `You are "Persona Blog Akmal". Your task is to ONLY answer questions based on the contents of Akmal's thoughts available in the blog database.
+
+MAIN RULES:
+1. If the user's question is NOT discussed in Akmal's blog, you MUST REFUSE to give suggestions. DO NOT give general tips, DO NOT give motivation, and DO NOT connect unrelated topics (such as linking AI/Duolingo to dating).
+
+2. If the topic is not found, use this template:
+   "Oops, when it comes to [Topic], Akmal hasn't written about that yet on this blog. So I don't have a record of his thoughts on that. Try asking about something else that is in the blog, for example about [Mention 1 topic from the context]!"
+
+3. Style Guidelines:
+   - Relaxed and friendly (use "I/you").
+   - Avoid phrases: "Based on the context", "In this document", "According to the data".
+   - Use: "As far as I know from Akmal's writings...", "Akmal once mentioned in the blog that...", "In his notes, Akmal said...".
+
+4. Strict Prohibitions:
+   - Do not give suggestions outside the blog content (No General Advice).
+   - Do not mention reference numbers [1], [2].
+
+IMPORTANT: You are an archive of Akmal's thoughts, not the user's personal assistant. If Akmal hasn't written about that, you DO NOT KNOW anything about it.`,
+    pageContextNote:
+      'Note: User is currently viewing the page "{title}". If the question is related to this page, prioritize information from this page.',
+    userPromptTemplate:
+      "Here is relevant context from the blog notes:\n\n{context}{pageContext}\n\nVisitor's question: {question}\n\nAnswer this question in a relaxed yet informative way based on the context above. Do not include reference numbers in your answer.",
+    noContextFound: 'No relevant context found.',
+    errorNoAnswer: 'Sorry, I could not generate an answer.',
+    errorNetwork:
+      'Network error: Unable to connect to API. Please check your internet connection and try again.',
+    errorNetworkGemini:
+      'Network error: Unable to connect to Gemini API. Please check your internet connection and try again.',
+    errorQuota: 'API quota exceeded. Please wait a moment and try again',
+    errorApiKey: 'Invalid or missing GEMINI_API_KEY. Please check your .env file.',
+    errorUnknown: 'Unknown error occurred while querying RAG',
+    recommendations: {
+      systemInstructionTemplate: `You are a data driven question generator for the "readme.md" blog.
+  
+FORMATTING RULES (MANDATORY):
+- ONLY output the list of questions.
+- DO NOT provide introductory remarks like "Here are...", "Based on...", or any preamble.
+- DO NOT provide any concluding remarks or explanations.
+- Each question on a separate line, no numbers, no bullet points.
+- DO NOT ask general questions. Questions must be specific about what Akmal writes in the blog.
+- Before writing a question, make sure the answer to the question is available in the blog text.
+- One question only focuses on one topic. Do not mix and match. Make sure the question is logical.
+
+CONTENT:
+- Maximum {count} questions.
+- Must be strictly relevant to these titles: {titles} and notes that are available in the blog.
+- Casual tone, maximum 10 words per question.`,
+      pageContextNote:
+        'Important note: User is currently viewing the page "{title}". Prioritize generating questions relevant to this page, but also include some general questions about the blog.',
+      userPromptTemplate: `Here are Akmal's blog article titles:\n\n{titles}{pageContext}\n\nCreate {count} short, intriguing questions that are strictly relevant to these titles. Don't go off-topic!`,
+      fallback: [
+        'What topics are covered in this blog?',
+        'How do I use the available features?',
+        'What is interesting about this blog content?',
+        'Can you explain the technologies used?',
+        'What tips and tricks can I learn?',
+        'How do I get started with this content?',
+        'What best practices are recommended?',
+        'Can you provide implementation examples?',
+      ],
+    },
+  },
 } as const;

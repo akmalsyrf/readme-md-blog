@@ -106,4 +106,67 @@ export default {
     generatingRecommendations: 'Membuat rekomendasi pertanyaan...',
     recommendations: 'Pertanyaan yang mungkin Anda tanyakan:',
   },
+  rag: {
+    systemInstruction: `Anda adalah "Persona Blog Akmal". Tugas Anda HANYA menjawab pertanyaan berdasarkan isi pikiran Akmal yang ada di database blog.
+
+ATURAN UTAMA:
+1. Jika pertanyaan user TIDAK ADA pembahasannya di blog Akmal, Anda HARUS MENOLAK memberikan saran. JANGAN memberikan tips umum, JANGAN memberikan motivasi, dan JANGAN menghubungkan topik yang tidak nyambung (seperti menghubungkan AI/Duolingo dengan kencan).
+
+2. Jika topik tidak ditemukan, gunakan template ini:
+   "Waduh, kalau soal [Topik], Akmal belum pernah nulis nih di blog ini. Jadi aku nggak punya rekaman pemikiran dia soal itu. Coba tanya hal lain yang ada di blognya yuk, misalnya soal [Sebutkan 1 topik dari konteks]!"
+
+3. Gaya Bahasa:
+   - Santai dan friendly (panggil "aku/kamu").
+   - Hindari kata: "Berdasarkan konteks", "Dalam dokumen ini", "Menurut data".
+   - Gunakan: "Setahuku dari tulisan Akmal...", "Akmal sempat cerita di blog kalau...", "Di catatannya, Akmal bilang...".
+
+4. Larangan Keras:
+   - Dilarang memberikan saran di luar isi blog (No General Advice).
+   - Dilarang menyebutkan angka referensi [1], [2].
+
+PENTING: Anda adalah arsip pemikiran Akmal, bukan asisten pribadi user. Jika Akmal tidak menulis tentang itu, Anda TIDAK TAHU apa-apa.`,
+    pageContextNote:
+      'Catatan: User sedang melihat halaman "{title}". Jika pertanyaan terkait dengan halaman ini, prioritaskan informasi dari halaman tersebut.',
+    userPromptTemplate:
+      'Berikut adalah konteks dari blog notes yang relevan:\n\n{context}{pageContext}\n\nPertanyaan pengunjung: {question}\n\nJawablah pertanyaan tersebut dengan santai namun informatif berdasarkan konteks di atas. Jangan sertakan nomor referensi dalam jawaban.',
+    noContextFound: 'No relevant context found.',
+    errorNoAnswer: 'Maaf, saya tidak bisa menghasilkan jawaban.',
+    errorNetwork:
+      'Network error: Unable to connect to API. Please check your internet connection and try again.',
+    errorNetworkGemini:
+      'Network error: Unable to connect to Gemini API. Please check your internet connection and try again.',
+    errorQuota: 'API quota exceeded. Please wait a moment and try again',
+    errorApiKey: 'Invalid or missing GEMINI_API_KEY. Please check your .env file.',
+    errorUnknown: 'Unknown error occurred while querying RAG',
+    recommendations: {
+      systemInstructionTemplate: `Anda adalah data driven question generator untuk blog "readme.md". 
+  
+ATURAN FORMANTING (WAJIB):
+- HANYA keluarkan daftar pertanyaan.
+- DILARANG memberikan kalimat pembuka seperti "Berikut adalah...", "Ini pertanyaannya:", atau kalimat apapun di awal.
+- DILARANG memberikan kalimat penutup atau penjelasan di akhir.
+- Satu baris satu pertanyaan, tanpa nomor, tanpa bullet point.
+- JANGAN bertanya hal umum. Pertanyaan harus spesifik tentang apa yang Akmal tulis di bawah ini.
+- Sebelum menulis pertanyaan, pastikan jawaban dari pertanyaan tersebut ada di dalam potongan teks blog.
+- Satu pertanyaan hanya fokus pada satu topik. Jangan mencampur aduk. Pastikan pertanyaan masuk akal.
+
+KONTEN:
+- Maksimal {count} pertanyaan.
+- Harus relevan dengan judul artikel: {titles}. dan catatan-catatan yang ada di blog.
+- Bahasa santai/casual, maksimal 10 kata.`,
+      pageContextNote:
+        'Catatan penting: User sedang melihat halaman "{title}". Prioritaskan untuk menghasilkan pertanyaan yang relevan dengan halaman ini, tetapi juga sertakan beberapa pertanyaan umum tentang blog.',
+      userPromptTemplate: `Ini adalah daftar judul artikel blog Akmal:\n\n{titles}{pageContext}\n\nBuatkan {count} pertanyaan singkat yang bikin orang penasaran buat klik, tapi tetap relevan sama judul di atas. Ingat, jangan melenceng dari topik judulnya ya!`,
+      fallback: [
+        'Apa saja topik yang dibahas di blog ini?',
+        'Bagaimana cara menggunakan fitur-fitur yang tersedia?',
+        'Apa yang menarik dari konten blog ini?',
+        'Bisa jelaskan tentang teknologi yang digunakan?',
+        'Apa tips dan trik yang bisa dipelajari?',
+        'Bagaimana cara memulai dengan konten ini?',
+        'Apa saja best practices yang direkomendasikan?',
+        'Bisa berikan contoh implementasi?',
+      ],
+    },
+  },
 } as const;
