@@ -38,6 +38,7 @@ And this is the story it told. A story of an evolution that transcends the wilde
       style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
     >
   </picture>
+    <em>Logo Cursor</em>
 </div>
 
 ---

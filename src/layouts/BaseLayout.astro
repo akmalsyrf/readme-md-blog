@@ -6,6 +6,7 @@ import Footer from '../components/layout/Footer.astro';
 import LayoutScripts from '../components/layout/LayoutScripts.astro';
 import LayoutStyles from '../components/layout/LayoutStyles.astro';
 import ChatBot from '../components/chat/ChatBot.astro';
+import ImageModal from '../components/common/ImageModal.astro';
 
 interface Props {
   title?: string;
@@ -61,5 +62,6 @@ const locale = getLocaleFromPath(currentPath);
     <LayoutStyles />
 
     <ChatBot locale={locale} />
+    <ImageModal />
   </body>
 </html>

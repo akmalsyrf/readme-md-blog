@@ -38,6 +38,9 @@ Dan inilah kisah yang diceritakannya. Kisah tentang sebuah evolusi yang melampau
       style="display: block; margin: 0 auto; max-width: 100%; height: auto;"
     >
   </picture>
+  <p style="text-align: center; margin-top: 0.5rem; margin-bottom: 0;">
+    <em>Logo Cursor</em>
+  </p>
 </div>
 
 ---
