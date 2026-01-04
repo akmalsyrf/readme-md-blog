@@ -49,6 +49,12 @@ const t = getTranslations(locale);
           >
             {t.nav.tags}
           </a>
+          <a
+            href={locale === 'id' ? '/others' : '/en/others'}
+            class="relative rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+          >
+            {t.nav.others}
+          </a>
         </div>
       </div>
       <div class="flex items-center gap-2 md:gap-3">
@@ -122,6 +128,12 @@ const t = getTranslations(locale);
             class="mobile-menu-link mobile-menu-item touch-manipulation rounded-lg px-4 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
           >
             {t.nav.tags}
+          </a>
+          <a
+            href={locale === 'id' ? '/others' : '/en/others'}
+            class="mobile-menu-link mobile-menu-item touch-manipulation rounded-lg px-4 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+          >
+            {t.nav.others}
           </a>
         </div>
         <div class="mt-4 border-t border-gray-200 pt-4 dark:border-gray-800">

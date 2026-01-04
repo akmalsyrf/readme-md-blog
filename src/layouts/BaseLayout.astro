@@ -1,5 +1,5 @@
 ---
-import { getLocaleFromPath } from '../utils/i18n';
+import { getLocaleFromPath, getTranslations } from '../utils/i18n';
 import Head from '../components/layout/Head.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
@@ -7,6 +7,7 @@ import LayoutScripts from '../components/layout/LayoutScripts.astro';
 import LayoutStyles from '../components/layout/LayoutStyles.astro';
 import ChatBot from '../components/chat/ChatBot.astro';
 import ImageModal from '../components/common/ImageModal.astro';
+import DeepResearchReportCanvas from '../components/others/DeepResearch/DeepResearchReportCanvas.astro';
 
 interface Props {
   title?: string;
@@ -31,6 +32,7 @@ const {
 } = Astro.props;
 const currentPath = Astro.url.pathname;
 const locale = getLocaleFromPath(currentPath);
+const t = getTranslations(locale);
 ---
 
 <!doctype html>
@@ -63,5 +65,6 @@ const locale = getLocaleFromPath(currentPath);
 
     <ChatBot locale={locale} />
     <ImageModal />
+    <DeepResearchReportCanvas locale={locale} t={t} />
   </body>
 </html>

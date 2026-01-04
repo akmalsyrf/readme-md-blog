@@ -1,0 +1,676 @@
+---
+import type { Locale } from '../../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  t: any;
+  apiEndpoint?: string;
+}
+
+const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
+---
+
+<div
+  id="deep-research-chat"
+  class="flex h-[calc(100vh-12rem)] min-h-[600px] flex-col rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
+>
+  <!-- Chat Header -->
+  <div
+    class="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700"
+  >
+    <div class="flex items-center gap-3">
+      <div
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500"
+      >
+        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+          ></path>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          {t.deepResearchChat.title}
+        </h2>
+        <p class="text-xs text-gray-500 dark:text-gray-400">{t.deepResearchChat.subtitle}</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span
+        class="inline-flex items-center rounded-full bg-amber-500 px-2 py-0.5 text-xs font-semibold text-white shadow-sm"
+      >
+        {t.deepResearchChat.underConstruction || 'Under Construction'}
+      </span>
+      <span
+        class="inline-flex items-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-2 py-0.5 text-xs font-semibold text-white shadow-sm"
+      >
+        {t.others.experimental}
+      </span>
+    </div>
+  </div>
+
+  <!-- Messages Container -->
+  <div id="deep-research-messages" class="flex-1 space-y-4 overflow-y-auto px-6 py-4">
+    <!-- Welcome Message -->
+    <div class="flex items-start space-x-3">
+      <div
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900"
+      >
+        <svg
+          class="h-5 w-5 text-blue-600 dark:text-blue-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+          ></path>
+        </svg>
+      </div>
+      <div class="flex-1 rounded-lg bg-gray-100 px-4 py-3 dark:bg-gray-700">
+        <p class="text-sm text-gray-700 dark:text-gray-300">{t.deepResearchChat.welcome}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Container -->
+  <div class="border-t border-gray-200 px-6 py-4 dark:border-gray-700">
+    <form id="deep-research-form" class="flex gap-3">
+      <textarea
+        id="deep-research-input"
+        rows="1"
+        placeholder={t.deepResearchChat.placeholder}
+        class="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
+      ></textarea>
+      <button
+        type="submit"
+        id="deep-research-submit"
+        class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-colors hover:from-purple-600 hover:to-pink-600 disabled:opacity-50"
+      >
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Load marked library -->
+<script type="module">
+  import { marked } from 'https://cdn.jsdelivr.net/npm/marked@17.0.1/+esm';
+  marked.setOptions({ breaks: true, gfm: true });
+  // @ts-ignore
+  window.marked = marked;
+</script>
+
+<script
+  define:vars={{
+    locale,
+    apiEndpoint,
+    translations: {
+      id: {
+        placeholder: t.deepResearchChat.placeholder,
+        send: t.deepResearchChat.send,
+        processing: t.deepResearchChat.processing,
+        error: t.deepResearchChat.error,
+        errorMessage: t.deepResearchChat.errorMessage,
+      },
+      en: {
+        placeholder: t.deepResearchChat.placeholder,
+        send: t.deepResearchChat.send,
+        processing: t.deepResearchChat.processing,
+        error: t.deepResearchChat.error,
+        errorMessage: t.deepResearchChat.errorMessage,
+      },
+    },
+  }}
+>
+  const t = translations[locale];
+  const form = document.getElementById('deep-research-form');
+  const input = document.getElementById('deep-research-input');
+  const submitBtn = document.getElementById('deep-research-submit');
+  const messagesContainer = document.getElementById('deep-research-messages');
+
+  if (!form || !input || !submitBtn || !messagesContainer) {
+    // Elements not found, will retry
+  } else {
+    // Render markdown
+    const renderMarkdown = (text) => {
+      try {
+        // @ts-ignore
+        if (typeof window !== 'undefined' && window.marked) {
+          // @ts-ignore
+          return window.marked.parse(text);
+        }
+        return text;
+      } catch (error) {
+        return text;
+      }
+    };
+
+    // Add message to DOM
+    const addMessage = (text, isUser = false) => {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+
+      if (!isUser) {
+        const avatar = document.createElement('div');
+        avatar.className =
+          'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900';
+        avatar.innerHTML = `
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        `;
+        messageDiv.appendChild(avatar);
+      }
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = `flex-1 rounded-lg px-4 py-3 ${
+        isUser
+          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+          : 'bg-gray-100 dark:bg-gray-700'
+      }`;
+
+      if (!isUser) {
+        const markdownContent = document.createElement('div');
+        markdownContent.className = 'prose prose-sm prose-slate max-w-none dark:prose-invert';
+        markdownContent.innerHTML = renderMarkdown(text);
+        contentDiv.appendChild(markdownContent);
+      } else {
+        const textP = document.createElement('p');
+        textP.className = 'text-sm text-white';
+        textP.textContent = text;
+        contentDiv.appendChild(textP);
+      }
+
+      messageDiv.appendChild(contentDiv);
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    };
+
+    // Load dummy chat history on page load
+    const loadDummyChatHistory = () => {
+      const dummyMessages = [
+        {
+          text:
+            locale === 'id'
+              ? 'Apa itu quantum computing dan bagaimana cara kerjanya?'
+              : 'What is quantum computing and how does it work?',
+          isUser: true,
+        },
+        {
+          text:
+            locale === 'id'
+              ? 'Saya akan melakukan penelitian mendalam tentang quantum computing untuk Anda. Ini akan memakan waktu beberapa saat...'
+              : 'I will conduct deep research on quantum computing for you. This will take a few moments...',
+          isUser: false,
+        },
+        {
+          text:
+            locale === 'id'
+              ? 'Baik, saya sudah selesai melakukan penelitian. Berikut adalah laporan lengkapnya:'
+              : 'Great! I have completed the research. Here is the full report:',
+          isUser: false,
+        },
+      ];
+
+      dummyMessages.forEach((msg) => {
+        addMessage(msg.text, msg.isUser);
+      });
+
+      // Show research card after a short delay
+      setTimeout(() => {
+        const researchCard = document.createElement('div');
+        researchCard.className = 'flex items-start space-x-3';
+
+        const cardTitle =
+          locale === 'id' ? 'Memahami Quantum Computing' : 'Understanding Quantum Computing';
+        const cardDate = new Date().toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', {
+          day: 'numeric',
+          month: 'short',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+        const buttonText = locale === 'id' ? 'Buka' : 'Open';
+
+        researchCard.innerHTML = `
+          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+            <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="group relative flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 transition-all hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 cursor-pointer" id="research-card-default">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
+                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="truncate text-base font-medium text-gray-900 dark:text-gray-100">${cardTitle}</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">${cardDate}</p>
+              </div>
+              <button id="research-card-open-btn" class="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600" data-report-id="default">
+                ${buttonText}
+              </button>
+            </div>
+          </div>
+        `;
+        messagesContainer.appendChild(researchCard);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Add click handler immediately after card is added to DOM
+        // Use requestAnimationFrame to ensure DOM is updated
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            const card = document.getElementById('research-card-default');
+            const openBtn = document.getElementById('research-card-open-btn');
+
+            if (card && openBtn) {
+              const dummyReport = `# Deep Research Report: Understanding Quantum Computing
+
+## Executive Summary
+
+Quantum computing represents a paradigm shift in computational capabilities, leveraging the principles of quantum mechanics to process information in fundamentally different ways compared to classical computers. This report provides a comprehensive analysis of quantum computing, its current state, potential applications, and future implications.
+
+## Introduction
+
+Quantum computing is an emerging technology that harnesses quantum mechanical phenomena such as superposition and entanglement to perform computations. Unlike classical bits that exist in either 0 or 1 states, quantum bits (qubits) can exist in a superposition of both states simultaneously, enabling exponential increases in computational power for certain types of problems.
+
+## Current State of Quantum Computing
+
+### Hardware Development
+
+Major technology companies including IBM, Google, Microsoft, and Amazon are investing heavily in quantum computing research. IBM's quantum processors have reached milestones with systems containing over 100 qubits, while Google achieved "quantum supremacy" in 2019 with their 53-qubit Sycamore processor.
+
+### Challenges
+
+Despite significant progress, quantum computing faces several critical challenges:
+
+1. **Quantum Decoherence**: Qubits are extremely fragile and lose their quantum state quickly due to environmental interference
+2. **Error Rates**: Current quantum systems have high error rates that require extensive error correction
+3. **Scalability**: Building larger, more stable quantum systems remains a significant engineering challenge
+4. **Temperature Requirements**: Most quantum systems require near-absolute zero temperatures to function
+
+## Potential Applications
+
+### Cryptography
+
+Quantum computing poses both threats and opportunities for cryptography. While quantum computers could potentially break current encryption methods, quantum cryptography offers new, theoretically unbreakable encryption techniques based on quantum key distribution.
+
+### Drug Discovery
+
+Quantum computers could simulate molecular interactions at the quantum level, dramatically accelerating drug discovery and development processes. This could lead to faster development of treatments for diseases like cancer, Alzheimer's, and COVID-19.
+
+### Financial Modeling
+
+Complex financial models involving risk analysis, portfolio optimization, and fraud detection could benefit from quantum computing's ability to process vast amounts of data and explore multiple scenarios simultaneously.
+
+### Artificial Intelligence
+
+Quantum machine learning algorithms could potentially solve optimization problems that are currently intractable for classical computers, leading to more powerful AI systems.
+
+### Climate Modeling
+
+Quantum computers could help model complex climate systems more accurately, potentially improving our understanding of climate change and enabling better predictions.
+
+## Technical Deep Dive
+
+### Quantum Gates
+
+Quantum gates are the fundamental building blocks of quantum circuits, analogous to logic gates in classical computing. Common quantum gates include:
+
+- **Pauli Gates**: X, Y, Z gates for qubit manipulation
+- **Hadamard Gate**: Creates superposition states
+- **CNOT Gate**: Creates entanglement between qubits
+- **Phase Gates**: Modify the phase of quantum states
+
+### Quantum Algorithms
+
+Several important quantum algorithms have been developed:
+
+1. **Shor's Algorithm**: Factors large numbers exponentially faster than classical algorithms
+2. **Grover's Algorithm**: Provides quadratic speedup for unstructured search problems
+3. **Quantum Fourier Transform**: Fundamental to many quantum algorithms
+4. **Variational Quantum Eigensolver**: Used for quantum chemistry simulations
+
+## Industry Landscape
+
+### Major Players
+
+- **IBM**: Leading in quantum hardware with accessible cloud-based quantum systems
+- **Google**: Achieved quantum supremacy and developing error-corrected quantum computers
+- **Microsoft**: Focusing on topological qubits and quantum software development
+- **Amazon**: Offering quantum computing services through AWS Braket
+- **IonQ**: Developing trapped-ion quantum computers
+- **Rigetti Computing**: Building superconducting quantum processors
+
+### Investment Trends
+
+Global investment in quantum computing has been growing rapidly, with billions of dollars invested annually. Governments worldwide are also increasing funding for quantum research, recognizing its strategic importance.
+
+## Future Outlook
+
+### Short-term (1-5 years)
+
+- Continued improvement in qubit count and stability
+- Development of better error correction methods
+- Increased accessibility through cloud platforms
+- More practical applications in optimization and simulation
+
+### Medium-term (5-10 years)
+
+- Quantum advantage demonstrated in real-world applications
+- Integration of quantum and classical computing systems
+- Development of quantum networks for secure communication
+- Breakthroughs in quantum machine learning
+
+### Long-term (10+ years)
+
+- Fault-tolerant quantum computers
+- Widespread adoption in various industries
+- Potential transformation of cryptography and security
+- New discoveries enabled by quantum simulation capabilities
+
+## Risks and Considerations
+
+### Security Implications
+
+The development of quantum computers capable of breaking current encryption could have significant security implications. Organizations need to begin preparing for "quantum-safe" cryptography.
+
+### Ethical Concerns
+
+As with any powerful technology, quantum computing raises ethical questions about:
+- Access and equity
+- Potential misuse
+- Environmental impact of quantum systems
+- Job displacement in certain sectors
+
+## Conclusion
+
+Quantum computing represents one of the most exciting frontiers in technology today. While still in early stages, the potential applications are vast and transformative. Success will require continued investment, collaboration between academia and industry, and careful consideration of the societal implications.
+
+The journey toward practical quantum computing is complex and challenging, but the potential rewards—from solving previously intractable problems to enabling new scientific discoveries—make it a pursuit worth undertaking.
+
+## References
+
+1. Arute, F., et al. (2019). "Quantum supremacy using a programmable superconducting processor." Nature, 574(7779), 505-510.
+
+2. Preskill, J. (2018). "Quantum Computing in the NISQ era and beyond." Quantum, 2, 79.
+
+3. National Academies of Sciences, Engineering, and Medicine. (2019). "Quantum Computing: Progress and Prospects." National Academies Press.
+
+4. IBM Quantum Network. (2024). "Quantum Computing Roadmap." IBM Research.
+
+5. Google AI Quantum. (2024). "Quantum Computing Research." Google Research.`;
+
+              const openReport = () => {
+                const title =
+                  locale === 'id'
+                    ? 'Memahami Quantum Computing'
+                    : 'Understanding Quantum Computing';
+
+                // Try to use global functions first (preferred method)
+                // @ts-ignore
+                if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
+                  // @ts-ignore
+                  window.displayDeepResearchReport(dummyReport, title);
+                  return;
+                }
+
+                // @ts-ignore
+                if (typeof window !== 'undefined' && window.openDeepResearchReport) {
+                  // @ts-ignore
+                  window.openDeepResearchReport('default');
+                  return;
+                }
+
+                // Fallback: try to access elements directly and use openModal
+                const canvas = document.getElementById('deep-research-report-canvas');
+                const reportContent = document.getElementById('deep-research-report-content');
+                const titleEl = document.getElementById('deep-research-report-title');
+
+                if (!canvas || !reportContent) {
+                  // Retry after a short delay
+                  setTimeout(() => {
+                    // @ts-ignore
+                    if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
+                      // @ts-ignore
+                      window.displayDeepResearchReport(dummyReport, title);
+                    }
+                  }, 200);
+                  return;
+                }
+
+                // Render markdown
+                let html = dummyReport;
+                // @ts-ignore
+                if (typeof window !== 'undefined' && window.marked) {
+                  try {
+                    // @ts-ignore
+                    html = window.marked.parse(dummyReport);
+                  } catch (error) {
+                    // Silent fail
+                  }
+                }
+
+                // Update content
+                reportContent.innerHTML = html;
+
+                // Update title
+                if (titleEl) {
+                  titleEl.textContent = title;
+                }
+
+                // Show modal using the same method as openModal
+                canvas.style.position = 'fixed';
+                canvas.style.top = '0';
+                canvas.style.left = '0';
+                canvas.style.right = '0';
+                canvas.style.bottom = '0';
+                canvas.style.width = '100vw';
+                canvas.style.height = '100vh';
+                canvas.style.zIndex = '99999';
+                canvas.style.margin = '0';
+                canvas.style.padding = '0';
+                canvas.classList.add('active');
+                canvas.style.display = 'flex';
+
+                // Hide header and other elements
+                const header = document.querySelector('header');
+                if (header) {
+                  header.style.visibility = 'hidden';
+                  header.style.pointerEvents = 'none';
+                }
+
+                const chatButton = document.getElementById('chatbot-toggle');
+                if (chatButton) {
+                  chatButton.style.visibility = 'hidden';
+                  chatButton.style.pointerEvents = 'none';
+                }
+
+                // Prevent body scroll
+                const scrollY = window.scrollY;
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.top = `-${scrollY}px`;
+                document.body.style.width = '100%';
+                document.body.style.height = '100%';
+              };
+
+              // Add event listeners - use both onclick and addEventListener for maximum compatibility
+              const handleButtonClick = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                openReport();
+                return false;
+              };
+
+              const handleCardClick = (e) => {
+                const target = e.target;
+                // Only trigger if clicking on card itself, not on button
+                if (target && target !== openBtn && !openBtn.contains(target)) {
+                  e.preventDefault();
+                  openReport();
+                  return false;
+                }
+              };
+
+              // Use both methods for maximum compatibility
+              openBtn.onclick = handleButtonClick;
+              openBtn.addEventListener('click', handleButtonClick);
+
+              card.onclick = handleCardClick;
+              card.addEventListener('click', handleCardClick);
+            }
+          }, 300);
+        });
+      }, 1500);
+    };
+
+    // Auto-resize textarea
+    const autoResize = () => {
+      input.style.height = 'auto';
+      const maxHeight = 120;
+      input.style.height = Math.min(input.scrollHeight, maxHeight) + 'px';
+    };
+
+    input.addEventListener('input', autoResize);
+
+    // Handle Enter key (Shift+Enter for new line, Enter to submit)
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        form.dispatchEvent(new Event('submit'));
+      }
+    });
+
+    // Load dummy chat history on page load
+    loadDummyChatHistory();
+
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const question = input.value.trim();
+      if (!question) return;
+
+      addMessage(question, true);
+      input.value = '';
+      input.style.height = 'auto';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg class="h-5 w-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      `;
+
+      // Add loading message
+      const loadingDiv = document.createElement('div');
+      loadingDiv.id = 'deep-research-loading';
+      loadingDiv.className = 'flex items-start space-x-3';
+      loadingDiv.innerHTML = `
+        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </div>
+        <div class="flex-1 rounded-lg bg-gray-100 px-4 py-3 dark:bg-gray-700">
+          <p class="text-sm text-gray-700 dark:text-gray-300">${t.processing}</p>
+        </div>
+      `;
+      messagesContainer.appendChild(loadingDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      try {
+        const response = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            question,
+            locale,
+          }),
+        });
+
+        // Remove loading
+        const loading = document.getElementById('deep-research-loading');
+        if (loading) loading.remove();
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: t.errorMessage }));
+          throw new Error(errorData.message || errorData.error || t.errorMessage);
+        }
+
+        const data = await response.json();
+        const answer = data.answer || data.message || t.errorMessage;
+        addMessage(answer, false);
+
+        // If response contains a report, display it in the canvas
+        if (data.report) {
+          // @ts-ignore
+          if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
+            // @ts-ignore
+            window.displayDeepResearchReport(data.report);
+          }
+        } else if (data.type === 'report' || answer.length > 500) {
+          // If answer is long, treat it as a report
+          // @ts-ignore
+          if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
+            // @ts-ignore
+            window.displayDeepResearchReport(answer);
+          }
+        }
+      } catch (error) {
+        const loading = document.getElementById('deep-research-loading');
+        if (loading) loading.remove();
+
+        const errorMessage = error instanceof Error ? error.message : t.errorMessage;
+        addMessage(`${t.error}: ${errorMessage}`, false);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+        `;
+        input.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  #deep-research-messages {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  }
+
+  #deep-research-messages::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #deep-research-messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #deep-research-messages::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
+  }
+
+  #deep-research-messages::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.7);
+  }
+</style>

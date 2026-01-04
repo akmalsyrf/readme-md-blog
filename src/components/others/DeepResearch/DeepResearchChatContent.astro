@@ -1,0 +1,17 @@
+---
+import type { Locale } from '../../../utils/i18n';
+import DeepResearchChat from './DeepResearchChat.astro';
+
+interface Props {
+  locale: Locale;
+  t: any;
+  apiEndpoint?: string;
+}
+
+const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
+---
+
+<div class="space-y-6">
+  <!-- Chat Interface -->
+  <DeepResearchChat locale={locale} t={t} apiEndpoint={apiEndpoint} />
+</div>

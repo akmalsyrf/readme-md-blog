@@ -1,0 +1,717 @@
+---
+import type { Locale } from '../../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  t: any;
+}
+
+const { locale, t } = Astro.props;
+---
+
+<div
+  id="deep-research-report-canvas"
+  class="deep-research-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Deep Research Report"
+>
+  <div class="deep-research-modal-backdrop"></div>
+  <div class="deep-research-modal-content">
+    <!-- Report Header -->
+    <div
+      class="deep-research-header flex flex-shrink-0 items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500"
+        >
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+            ></path>
+          </svg>
+        </div>
+        <div class="min-w-0 flex-1">
+          <h2
+            class="truncate text-lg font-semibold text-gray-900 dark:text-gray-100"
+            id="deep-research-report-title"
+          >
+            {t.deepResearchChat.reportTitle || 'Research Report'}
+          </h2>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          id="deep-research-toc-btn"
+          class="deep-research-btn flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50 hover:shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+          title={locale === 'id' ? 'Daftar Isi' : 'Table of Contents'}
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <span class="hidden sm:inline">{locale === 'id' ? 'Daftar Isi' : 'TOC'}</span>
+        </button>
+        <button
+          id="deep-research-share-btn"
+          class="deep-research-btn flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50 hover:shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+          title={locale === 'id' ? 'Bagikan & Ekspor' : 'Share & Export'}
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+            ></path>
+          </svg>
+          <span class="hidden sm:inline">{locale === 'id' ? 'Bagikan' : 'Share'}</span>
+        </button>
+        <button
+          id="deep-research-download-btn"
+          class="deep-research-btn flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50 hover:shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+          title={t.deepResearchChat.downloadReport || 'Download Report'}
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+          </svg>
+          <span class="hidden sm:inline">{t.deepResearchChat.download || 'Download'}</span>
+        </button>
+        <button
+          id="deep-research-close-report-btn"
+          class="deep-research-btn flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50 hover:shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+          title={t.deepResearchChat.closeReport || 'Close Report'}
+          aria-label="Close report"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Report Content -->
+    <div class="deep-research-report-scroll">
+      <div
+        id="deep-research-report-content"
+        class="prose prose-lg mx-auto max-w-3xl dark:prose-invert prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-gray-900 prose-h1:mb-4 prose-h1:mt-8 prose-h1:text-3xl prose-h1:text-gray-900 prose-h2:mb-3 prose-h2:mt-6 prose-h2:text-2xl prose-h2:text-gray-900 prose-h3:mb-2 prose-h3:mt-4 prose-h3:text-xl prose-h3:text-gray-900 prose-p:mb-4 prose-p:leading-relaxed prose-p:text-gray-800 prose-a:font-medium prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-blockquote:my-4 prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 prose-blockquote:py-2 prose-blockquote:pl-4 prose-blockquote:text-gray-800 prose-strong:text-gray-900 prose-code:rounded prose-code:bg-pink-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-mono prose-code:text-sm prose-code:text-pink-600 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-100 prose-pre:p-4 prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6 prose-ol:text-gray-800 prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6 prose-ul:text-gray-800 prose-li:my-2 prose-li:text-gray-800 prose-table:text-sm prose-th:bg-gray-100 prose-th:text-gray-900 prose-td:border-gray-200 prose-td:text-gray-800 prose-img:rounded-lg prose-img:shadow-lg prose-hr:my-8 prose-hr:border-gray-200 dark:prose-headings:text-gray-50 dark:prose-h1:text-gray-50 dark:prose-h2:text-gray-50 dark:prose-h3:text-gray-50 dark:prose-p:text-gray-200 dark:prose-a:text-blue-400 dark:prose-blockquote:border-blue-400 dark:prose-blockquote:bg-blue-900/20 dark:prose-blockquote:text-gray-200 dark:prose-strong:text-gray-50 dark:prose-code:bg-pink-900/40 dark:prose-code:text-pink-300 dark:prose-pre:border-gray-600 dark:prose-pre:bg-gray-800 dark:prose-ol:text-gray-200 dark:prose-ul:text-gray-200 dark:prose-li:text-gray-200 dark:prose-th:bg-gray-700 dark:prose-th:text-gray-50 dark:prose-td:border-gray-600 dark:prose-td:text-gray-200 dark:prose-hr:border-gray-600"
+      >
+        <!-- Report content will be inserted here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Load marked library -->
+<script type="module">
+  import { marked } from 'https://cdn.jsdelivr.net/npm/marked@17.0.1/+esm';
+  marked.setOptions({ breaks: true, gfm: true });
+  // @ts-ignore
+  window.marked = marked;
+</script>
+
+<script
+  define:vars={{
+    locale,
+  }}
+>
+  // Wait for DOM to be ready
+  const initReportCanvas = () => {
+    const canvas = document.getElementById('deep-research-report-canvas');
+    const reportContent = document.getElementById('deep-research-report-content');
+    const closeBtn = document.getElementById('deep-research-close-report-btn');
+    const downloadBtn = document.getElementById('deep-research-download-btn');
+    const tocBtn = document.getElementById('deep-research-toc-btn');
+    const shareBtn = document.getElementById('deep-research-share-btn');
+
+    if (!canvas || !reportContent || !closeBtn || !downloadBtn) {
+      // Retry if elements not found yet
+      setTimeout(initReportCanvas, 100);
+      return;
+    }
+    // Render markdown
+    const renderMarkdown = (text) => {
+      try {
+        // @ts-ignore
+        if (typeof window !== 'undefined' && window.marked) {
+          // @ts-ignore
+          return window.marked.parse(text);
+        }
+        return text;
+      } catch (error) {
+        return text;
+      }
+    };
+
+    // Open modal
+    const openModal = () => {
+      if (!canvas) {
+        return;
+      }
+
+      // Remove any hidden classes
+      canvas.classList.remove('hidden');
+
+      // Force modal to be on top
+      canvas.style.position = 'fixed';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.right = '0';
+      canvas.style.bottom = '0';
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
+      canvas.style.zIndex = '99999';
+      canvas.style.margin = '0';
+      canvas.style.padding = '0';
+      canvas.style.display = 'flex';
+
+      // Show modal - add active class
+      canvas.classList.add('active');
+
+      // Hide header and other high z-index elements
+      const header = document.querySelector('header');
+      if (header) {
+        header.style.visibility = 'hidden';
+        header.style.pointerEvents = 'none';
+      }
+
+      // Hide chatbot button if exists
+      const chatButton = document.getElementById('chatbot-toggle');
+      if (chatButton) {
+        chatButton.style.visibility = 'hidden';
+        chatButton.style.pointerEvents = 'none';
+      }
+
+      // Prevent body scroll
+      const scrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+    };
+
+    // Display report
+    const displayReport = (reportText, title) => {
+      if (!reportText || !reportText.trim()) {
+        return;
+      }
+
+      const html = renderMarkdown(reportText);
+      reportContent.innerHTML = html;
+
+      // Update title if provided
+      if (title) {
+        const titleEl = document.getElementById('deep-research-report-title');
+        if (titleEl) {
+          titleEl.textContent = title;
+        }
+      }
+
+      // Show modal
+      openModal();
+    };
+
+    // Default report content
+    const defaultReport = `# Deep Research Report: Understanding Quantum Computing
+
+## Executive Summary
+
+Quantum computing represents a paradigm shift in computational capabilities, leveraging the principles of quantum mechanics to process information in fundamentally different ways compared to classical computers. This report provides a comprehensive analysis of quantum computing, its current state, potential applications, and future implications.
+
+## Introduction
+
+Quantum computing is an emerging technology that harnesses quantum mechanical phenomena such as superposition and entanglement to perform computations. Unlike classical bits that exist in either 0 or 1 states, quantum bits (qubits) can exist in a superposition of both states simultaneously, enabling exponential increases in computational power for certain types of problems.
+
+## Current State of Quantum Computing
+
+### Hardware Development
+
+Major technology companies including IBM, Google, Microsoft, and Amazon are investing heavily in quantum computing research. IBM's quantum processors have reached milestones with systems containing over 100 qubits, while Google achieved "quantum supremacy" in 2019 with their 53-qubit Sycamore processor.
+
+### Challenges
+
+Despite significant progress, quantum computing faces several critical challenges:
+
+1. **Quantum Decoherence**: Qubits are extremely fragile and lose their quantum state quickly due to environmental interference
+2. **Error Rates**: Current quantum systems have high error rates that require extensive error correction
+3. **Scalability**: Building larger, more stable quantum systems remains a significant engineering challenge
+4. **Temperature Requirements**: Most quantum systems require near-absolute zero temperatures to function
+
+## Potential Applications
+
+### Cryptography
+
+Quantum computing poses both threats and opportunities for cryptography. While quantum computers could potentially break current encryption methods, quantum cryptography offers new, theoretically unbreakable encryption techniques based on quantum key distribution.
+
+### Drug Discovery
+
+Quantum computers could simulate molecular interactions at the quantum level, dramatically accelerating drug discovery and development processes. This could lead to faster development of treatments for diseases like cancer, Alzheimer's, and COVID-19.
+
+### Financial Modeling
+
+Complex financial models involving risk analysis, portfolio optimization, and fraud detection could benefit from quantum computing's ability to process vast amounts of data and explore multiple scenarios simultaneously.
+
+### Artificial Intelligence
+
+Quantum machine learning algorithms could potentially solve optimization problems that are currently intractable for classical computers, leading to more powerful AI systems.
+
+### Climate Modeling
+
+Quantum computers could help model complex climate systems more accurately, potentially improving our understanding of climate change and enabling better predictions.
+
+## Technical Deep Dive
+
+### Quantum Gates
+
+Quantum gates are the fundamental building blocks of quantum circuits, analogous to logic gates in classical computing. Common quantum gates include:
+
+- **Pauli Gates**: X, Y, Z gates for qubit manipulation
+- **Hadamard Gate**: Creates superposition states
+- **CNOT Gate**: Creates entanglement between qubits
+- **Phase Gates**: Modify the phase of quantum states
+
+### Quantum Algorithms
+
+Several important quantum algorithms have been developed:
+
+1. **Shor's Algorithm**: Factors large numbers exponentially faster than classical algorithms
+2. **Grover's Algorithm**: Provides quadratic speedup for unstructured search problems
+3. **Quantum Fourier Transform**: Fundamental to many quantum algorithms
+4. **Variational Quantum Eigensolver**: Used for quantum chemistry simulations
+
+## Industry Landscape
+
+### Major Players
+
+- **IBM**: Leading in quantum hardware with accessible cloud-based quantum systems
+- **Google**: Achieved quantum supremacy and developing error-corrected quantum computers
+- **Microsoft**: Focusing on topological qubits and quantum software development
+- **Amazon**: Offering quantum computing services through AWS Braket
+- **IonQ**: Developing trapped-ion quantum computers
+- **Rigetti Computing**: Building superconducting quantum processors
+
+### Investment Trends
+
+Global investment in quantum computing has been growing rapidly, with billions of dollars invested annually. Governments worldwide are also increasing funding for quantum research, recognizing its strategic importance.
+
+## Future Outlook
+
+### Short-term (1-5 years)
+
+- Continued improvement in qubit count and stability
+- Development of better error correction methods
+- Increased accessibility through cloud platforms
+- More practical applications in optimization and simulation
+
+### Medium-term (5-10 years)
+
+- Quantum advantage demonstrated in real-world applications
+- Integration of quantum and classical computing systems
+- Development of quantum networks for secure communication
+- Breakthroughs in quantum machine learning
+
+### Long-term (10+ years)
+
+- Fault-tolerant quantum computers
+- Widespread adoption in various industries
+- Potential transformation of cryptography and security
+- New discoveries enabled by quantum simulation capabilities
+
+## Risks and Considerations
+
+### Security Implications
+
+The development of quantum computers capable of breaking current encryption could have significant security implications. Organizations need to begin preparing for "quantum-safe" cryptography.
+
+### Ethical Concerns
+
+As with any powerful technology, quantum computing raises ethical questions about:
+- Access and equity
+- Potential misuse
+- Environmental impact of quantum systems
+- Job displacement in certain sectors
+
+## Conclusion
+
+Quantum computing represents one of the most exciting frontiers in technology today. While still in early stages, the potential applications are vast and transformative. Success will require continued investment, collaboration between academia and industry, and careful consideration of the societal implications.
+
+The journey toward practical quantum computing is complex and challenging, but the potential rewards—from solving previously intractable problems to enabling new scientific discoveries—make it a pursuit worth undertaking.
+
+## References
+
+1. Arute, F., et al. (2019). "Quantum supremacy using a programmable superconducting processor." Nature, 574(7779), 505-510.
+
+2. Preskill, J. (2018). "Quantum Computing in the NISQ era and beyond." Quantum, 2, 79.
+
+3. National Academies of Sciences, Engineering, and Medicine. (2019). "Quantum Computing: Progress and Prospects." National Academies Press.
+
+4. IBM Quantum Network. (2024). "Quantum Computing Roadmap." IBM Research.
+
+5. Google AI Quantum. (2024). "Quantum Computing Research." Google Research.`;
+
+    // Close report
+    const closeReport = () => {
+      if (!canvas) {
+        return;
+      }
+
+      canvas.classList.remove('active');
+      canvas.style.display = 'none';
+
+      // Show header and other elements again
+      const header = document.querySelector('header');
+      if (header) {
+        header.style.visibility = '';
+        header.style.pointerEvents = '';
+      }
+
+      // Show chatbot button again
+      const chatButton = document.getElementById('chatbot-toggle');
+      if (chatButton) {
+        chatButton.style.visibility = '';
+        chatButton.style.pointerEvents = '';
+      }
+
+      // Restore body scroll
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+      document.body.style.top = '';
+
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+
+      // Clear content
+      reportContent.innerHTML = '';
+    };
+
+    // Download as Markdown
+    const downloadMarkdown = () => {
+      const text = reportContent.innerText || reportContent.textContent || '';
+      if (!text.trim()) return;
+
+      // Try to get original markdown if available
+      const markdown = reportContent.dataset.markdown || text;
+
+      const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `deep-research-report-${new Date().toISOString().split('T')[0]}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    closeBtn.addEventListener('click', closeReport);
+
+    // Backdrop click
+    const backdrop = canvas.querySelector('.deep-research-modal-backdrop');
+    backdrop?.addEventListener('click', (e) => {
+      if (e.target === backdrop) {
+        closeReport();
+      }
+    });
+
+    // ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && canvas?.classList.contains('active')) {
+        closeReport();
+      }
+    });
+
+    downloadBtn.addEventListener('click', downloadMarkdown);
+
+    // Handle TOC and Share buttons
+    if (tocBtn) {
+      tocBtn.addEventListener('click', () => {
+        // TODO: Implement table of contents
+      });
+    }
+
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        // TODO: Implement share functionality
+      });
+    }
+
+    // Expose functions globally so they can be called from chat component
+    // @ts-ignore
+    window.displayDeepResearchReport = displayReport;
+    // @ts-ignore
+    window.openDeepResearchReport = () => {
+      // For now, use default report
+      // In the future, this could fetch different reports based on title
+      const title =
+        locale === 'id' ? 'Memahami Quantum Computing' : 'Understanding Quantum Computing';
+      displayReport(defaultReport, title);
+    };
+  };
+
+  // Initialize immediately and also on DOM ready
+  // This ensures functions are available as soon as possible
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initReportCanvas);
+  } else {
+    initReportCanvas();
+  }
+
+  // Also try to initialize after a short delay to catch any edge cases
+  setTimeout(initReportCanvas, 100);
+</script>
+
+<style>
+  .deep-research-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    min-width: 100vw !important;
+    min-height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    z-index: 99999 !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    overflow: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .deep-research-modal.active {
+    display: flex !important;
+  }
+
+  .deep-research-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .deep-research-modal-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    background-color: white;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+    animation: deepResearchModalFadeIn 0.3s ease-out;
+  }
+
+  .dark .deep-research-modal-content {
+    background-color: rgb(15, 23, 42) !important;
+  }
+
+  .deep-research-header {
+    position: sticky;
+    top: 0;
+    z-index: 15;
+    box-shadow:
+      0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+
+  .dark .deep-research-header {
+    box-shadow:
+      0 1px 3px 0 rgba(0, 0, 0, 0.5),
+      0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    background-color: rgb(30, 41, 59) !important;
+    border-color: rgb(51, 65, 85) !important;
+  }
+
+  /* Force dark mode styling - use html.dark for higher specificity */
+  html.dark .deep-research-modal-content {
+    background-color: rgb(15, 23, 42) !important;
+  }
+
+  html.dark .deep-research-header {
+    background-color: rgb(30, 41, 59) !important;
+    border-color: rgb(51, 65, 85) !important;
+  }
+
+  html.dark .deep-research-report-scroll {
+    background-color: rgb(15, 23, 42) !important;
+  }
+
+  /* Ensure prose content has proper dark mode background */
+  html.dark .deep-research-report-content {
+    color: rgb(229, 231, 235) !important;
+  }
+
+  html.dark .deep-research-report-content p {
+    color: rgb(229, 231, 235) !important;
+  }
+
+  html.dark .deep-research-report-content h1,
+  html.dark .deep-research-report-content h2,
+  html.dark .deep-research-report-content h3 {
+    color: rgb(243, 244, 246) !important;
+  }
+
+  .deep-research-btn {
+    transition: all 0.2s ease;
+  }
+
+  .deep-research-btn:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 768px) {
+    .deep-research-header {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .deep-research-header h2 {
+      font-size: 1rem;
+    }
+
+    .deep-research-header button {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    .deep-research-header button span {
+      display: none;
+    }
+
+    .deep-research-header .flex.items-center.gap-3 {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  .deep-research-report-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    padding: 2rem;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (max-width: 768px) {
+    .deep-research-report-scroll {
+      padding: 1.5rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .deep-research-report-scroll {
+      padding: 1rem;
+    }
+  }
+
+  .dark .deep-research-report-scroll {
+    scrollbar-color: rgba(156, 163, 175, 0.6) transparent;
+    background-color: rgb(15, 23, 42) !important;
+  }
+
+  html.dark .deep-research-report-scroll {
+    background-color: rgb(15, 23, 42) !important;
+  }
+
+  .deep-research-report-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .deep-research-report-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .dark .deep-research-report-scroll::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.8);
+  }
+
+  .deep-research-report-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 4px;
+  }
+
+  .deep-research-report-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.7);
+  }
+
+  .dark .deep-research-report-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.6);
+    border-radius: 4px;
+  }
+
+  .dark .deep-research-report-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.8);
+  }
+
+  @keyframes deepResearchModalFadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .deep-research-modal.active {
+      animation: fadeIn 0.2s ease-out;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>

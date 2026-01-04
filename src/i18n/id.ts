@@ -25,6 +25,7 @@ export default {
     archive: 'Arsip',
     search: 'Cari',
     tags: 'Tag',
+    others: 'Lainnya',
   },
   notes: {
     title: 'Catatan',
@@ -65,6 +66,35 @@ export default {
     noTags: 'Tidak ada tag',
     backToTags: 'Kembali ke Tag',
     noPosts: 'Tidak ada catatan dengan tag ini',
+  },
+  others: {
+    title: 'Lainnya',
+    description: 'Halaman lainnya',
+    experimental: 'Eksperimental',
+    tryNow: 'Coba sekarang',
+    menuItems: {
+      deepResearchChatbot: {
+        title: 'Deep Research Chatbot',
+        description: 'Chatbot untuk melakukan penelitian mendalam dengan AI',
+      },
+    },
+  },
+  deepResearchChat: {
+    title: 'Deep Research Chatbot',
+    subtitle: 'Penelitian mendalam dengan AI',
+    welcome:
+      'Halo! Saya adalah Deep Research Chatbot. Saya dapat membantu Anda melakukan penelitian mendalam tentang topik apa pun. Silakan ajukan pertanyaan Anda!',
+    placeholder: 'Tulis pertanyaan penelitian Anda...',
+    send: 'Kirim',
+    processing: 'Memproses penelitian...',
+    error: 'Terjadi kesalahan',
+    errorMessage: 'Terjadi kesalahan saat mengirim pesan. Silakan coba lagi.',
+    reportTitle: 'Laporan Penelitian',
+    underConstruction: 'Sedang dalam pengembangan',
+    reportSubtitle: 'Hasil penelitian mendalam',
+    downloadReport: 'Unduh Laporan',
+    download: 'Unduh',
+    closeReport: 'Tutup Laporan',
   },
   theme: {
     toggle: 'Toggle tema',

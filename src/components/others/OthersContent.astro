@@ -1,0 +1,51 @@
+---
+import MenuItemCard from './MenuItemCard.astro';
+import { getLocalizedPath, type Locale } from '../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  t: any;
+}
+
+const { locale, t } = Astro.props;
+
+// Define menu items configuration
+const menuItems = [
+  {
+    key: 'deepResearchChatbot',
+    path: '/deep-research-chat',
+    showBadge: true,
+  },
+  // Add more menu items here in the future
+  // Example:
+  // {
+  //   key: 'anotherMenuItem',
+  //   path: '/another-page',
+  //   showBadge: false,
+  // },
+];
+---
+
+<div class="space-y-6">
+  <!-- Menu Items -->
+  <div class="grid gap-4 md:grid-cols-2">
+    {
+      menuItems.map((item) => {
+        const menuItem = t.others.menuItems[item.key];
+        if (!menuItem) return null;
+
+        const href = getLocalizedPath(item.path, locale);
+
+        return (
+          <MenuItemCard
+            title={menuItem.title}
+            description={menuItem.description}
+            href={href}
+            badgeText={item.showBadge ? t.others.experimental : undefined}
+            actionText={t.others.tryNow}
+          />
+        );
+      })
+    }
+  </div>
+</div>

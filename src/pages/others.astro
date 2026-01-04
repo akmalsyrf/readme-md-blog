@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getTranslations, getLocaleFromPath } from '../utils/i18n';
+import OthersContent from '../components/others/OthersContent.astro';
+
+const currentPath = Astro.url.pathname;
+const locale = getLocaleFromPath(currentPath);
+const t = getTranslations(locale);
+---
+
+<BaseLayout title={t.others.title} description={t.others.description}>
+  <div class="container mx-auto px-4 py-12">
+    <div class="mx-auto max-w-4xl">
+      <h1 class="mb-4 text-4xl font-bold">{t.others.title}</h1>
+      <p class="mb-8 text-gray-600 dark:text-gray-400">{t.others.description}</p>
+
+      <OthersContent locale={locale} t={t} />
+    </div>
+  </div>
+</BaseLayout>

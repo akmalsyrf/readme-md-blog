@@ -23,6 +23,7 @@ export default {
     archive: 'Archive',
     search: 'Search',
     tags: 'Tags',
+    others: 'Others',
   },
   notes: {
     title: 'Notes',
@@ -63,6 +64,35 @@ export default {
     noTags: 'No tags',
     backToTags: 'Back to Tags',
     noPosts: 'No posts with this tag',
+  },
+  others: {
+    title: 'Others',
+    description: 'Other pages',
+    experimental: 'Experimental',
+    tryNow: 'Try now',
+    menuItems: {
+      deepResearchChatbot: {
+        title: 'Deep Research Chatbot',
+        description: 'Chatbot for conducting deep research with AI',
+      },
+    },
+  },
+  deepResearchChat: {
+    title: 'Deep Research Chatbot',
+    subtitle: 'Deep research with AI',
+    welcome:
+      'Hello! I am the Deep Research Chatbot. I can help you conduct deep research on any topic. Please ask your question!',
+    placeholder: 'Type your research question...',
+    send: 'Send',
+    processing: 'Processing research...',
+    error: 'An error occurred',
+    errorMessage: 'An error occurred while sending the message. Please try again.',
+    reportTitle: 'Research Report',
+    underConstruction: 'Under Construction',
+    reportSubtitle: 'Deep research results',
+    downloadReport: 'Download Report',
+    download: 'Download',
+    closeReport: 'Close Report',
   },
   theme: {
     toggle: 'Toggle theme',
