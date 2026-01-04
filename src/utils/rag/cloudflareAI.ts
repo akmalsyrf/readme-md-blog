@@ -169,6 +169,57 @@ export async function generateWithCloudflare(
 }
 
 /**
+ * Generate text using Cloudflare Workers AI with streaming simulation
+ * Note: Cloudflare Workers AI REST API doesn't support true streaming,
+ * so we simulate it by chunking the response
+ */
+export async function* generateWithCloudflareStream(
+  prompt: string,
+  systemInstruction: string,
+  locale: Locale = 'id',
+  conversationHistory?: ConversationMessage[]
+): AsyncGenerator<{ type: 'thinking' | 'answer'; content: string }, void, unknown> {
+  if (!accountId || !apiToken) {
+    throw new Error(
+      'Cloudflare Workers AI is not configured. Please set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN.'
+    );
+  }
+
+  // Get full response first (Cloudflare doesn't support true streaming)
+  const fullResponse = await generateWithCloudflare(
+    prompt,
+    systemInstruction,
+    locale,
+    conversationHistory
+  );
+
+  // Simulate streaming by chunking the response
+  const CHUNK_SIZE = 20; // Characters per chunk
+  const THINKING_CHUNKS = 3; // First 3 chunks as thinking
+  let chunkCount = 0;
+  let accumulatedText = '';
+
+  // Split response into chunks
+  for (let i = 0; i < fullResponse.length; i += CHUNK_SIZE) {
+    const chunk = fullResponse.substring(i, i + CHUNK_SIZE);
+    accumulatedText += chunk;
+    chunkCount++;
+
+    // Show first few chunks as thinking
+    if (chunkCount <= THINKING_CHUNKS) {
+      yield { type: 'thinking', content: accumulatedText };
+      // Small delay to simulate real streaming
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    } else {
+      // Rest as answer
+      yield { type: 'answer', content: accumulatedText };
+      // Small delay to simulate real streaming
+      await new Promise((resolve) => setTimeout(resolve, 30));
+    }
+  }
+}
+
+/**
  * Check if Cloudflare Workers AI is configured
  */
 export function isCloudflareConfigured(): boolean {

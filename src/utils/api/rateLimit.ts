@@ -69,3 +69,30 @@ export const RATE_LIMIT_CONFIG = {
   WINDOW: RATE_LIMIT_WINDOW,
   MAX_REQUESTS: RATE_LIMIT_MAX_REQUESTS,
 };
+
+/**
+ * Validate rate limit and return error response if exceeded
+ */
+export async function validateRateLimit(
+  clientIP: string,
+  corsHeaders: Record<string, string>
+): Promise<Response | null> {
+  const rateLimit = checkRateLimit(clientIP);
+  if (!rateLimit.allowed) {
+    // Dynamic import to avoid circular dependency
+    const { createErrorResponse } = await import('./response');
+    return createErrorResponse(
+      'Rate limit exceeded',
+      'Too many requests. Please try again later.',
+      429,
+      {
+        ...corsHeaders,
+        'Retry-After': String(Math.ceil((rateLimit.resetTime - Date.now()) / 1000)),
+        'X-RateLimit-Limit': String(RATE_LIMIT_CONFIG.MAX_REQUESTS),
+        'X-RateLimit-Remaining': '0',
+        'X-RateLimit-Reset': String(Math.ceil(rateLimit.resetTime / 1000)),
+      }
+    );
+  }
+  return null;
+}

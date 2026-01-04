@@ -4,23 +4,22 @@
 
 import { getVectorStore } from './vectorStore';
 import { getQueryEmbedding } from './embedNotes';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { generateWithCloudflare, isCloudflareConfigured } from './cloudflareAI';
+import {
+  generateWithCloudflare,
+  generateWithCloudflareStream,
+  isCloudflareConfigured,
+} from './cloudflareAI';
+import { generateWithGeminiStream, isGeminiConfigured } from './geminiAI';
 import { getTranslations, type Locale } from '../i18n';
+import type { ConversationMessage } from '../api/conversation';
 
-const apiKey = (import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '').trim();
-const modelName = import.meta.env.GEMINI_MODEL_NAME || 'gemini-2.5-flash';
+// Re-export for backward compatibility
+export type { ConversationMessage };
 
-if (!apiKey) {
-  // eslint-disable-next-line no-console
-  console.warn('⚠️  GEMINI_API_KEY is not set in ragQuery.ts');
-}
-
-const genAI = new GoogleGenerativeAI(apiKey);
-
-export interface RAGResponse {
-  answer: string;
-  sources: Array<{
+export interface StreamingChunk {
+  type: 'thinking' | 'answer' | 'done' | 'error';
+  content: string;
+  sources?: Array<{
     title: string;
     noteId: string;
     chunk: string;
@@ -28,15 +27,252 @@ export interface RAGResponse {
   }>;
 }
 
-export interface ConversationMessage {
-  role: 'user' | 'assistant';
-  content: string;
+export interface Source {
+  title: string;
+  noteId: string;
+  chunk: string;
+  score: number;
 }
 
 /**
- * Query RAG system dengan user question
+ * Format sources from search results
  */
-export async function queryRAG(
+function formatSources(
+  results: Array<{
+    document: { metadata: { title: string; noteId: string }; text: string };
+    score: number;
+  }>
+): Source[] {
+  const sourcesMap = new Map<string, Source>();
+
+  for (const result of results) {
+    const noteId = result.document.metadata.noteId;
+    const existing = sourcesMap.get(noteId);
+
+    if (!existing || result.score > existing.score) {
+      sourcesMap.set(noteId, {
+        title: result.document.metadata.title,
+        noteId: noteId,
+        chunk: result.document.text.substring(0, 200) + '...',
+        score: result.score,
+      });
+    }
+  }
+
+  return Array.from(sourcesMap.values()).sort((a, b) => b.score - a.score);
+}
+
+/**
+ * Build context from retrieved documents
+ */
+function buildContext(
+  results: Array<{ document: { metadata: { title: string }; text: string } }>,
+  noContextMessage: string
+): string {
+  if (results.length === 0) {
+    return noContextMessage;
+  }
+
+  return results
+    .map((result, idx) => {
+      return `[${idx + 1}] ${result.document.metadata.title}\n${result.document.text}`;
+    })
+    .join('\n\n---\n\n');
+}
+
+/**
+ * Build user prompt with context
+ */
+function buildUserPrompt(
+  context: string,
+  pageContextInfo: string,
+  question: string,
+  promptTemplate: string
+): string {
+  return promptTemplate
+    .replace('{context}', context)
+    .replace('{pageContext}', pageContextInfo)
+    .replace('{question}', question);
+}
+
+/**
+ * Try Gemini streaming
+ */
+async function* tryGeminiStreaming(
+  userPrompt: string,
+  systemInstruction: string,
+  conversationHistory: ConversationMessage[] | undefined
+): AsyncGenerator<{ type: 'thinking' | 'answer'; content: string }, void, unknown> {
+  if (!isGeminiConfigured()) {
+    return;
+  }
+
+  try {
+    for await (const chunk of generateWithGeminiStream(
+      userPrompt,
+      systemInstruction,
+      conversationHistory
+    )) {
+      yield chunk;
+    }
+  } catch (error) {
+    // Log the error for debugging
+    // eslint-disable-next-line no-console
+    console.error('Gemini streaming failed:', error);
+    if (error instanceof Error) {
+      // eslint-disable-next-line no-console
+      console.error('Error message:', error.message);
+      // eslint-disable-next-line no-console
+      console.error('Error name:', error.name);
+    }
+    throw error; // Re-throw to trigger fallback
+  }
+}
+
+/**
+ * Try Cloudflare streaming with non-streaming fallback
+ */
+async function* tryCloudflareStreaming(
+  userPrompt: string,
+  systemInstruction: string,
+  locale: Locale,
+  conversationHistory: ConversationMessage[] | undefined,
+  results: Array<{
+    document: { metadata: { title: string; noteId: string }; text: string };
+    score: number;
+  }>
+): AsyncGenerator<StreamingChunk, void, unknown> {
+  // eslint-disable-next-line no-console
+  console.log('Trying Cloudflare Workers AI as fallback...');
+
+  try {
+    let finalAnswer = '';
+    for await (const chunk of generateWithCloudflareStream(
+      userPrompt,
+      systemInstruction,
+      locale,
+      conversationHistory
+    )) {
+      finalAnswer = chunk.content;
+      yield chunk;
+    }
+
+    yield {
+      type: 'done',
+      content: finalAnswer,
+      sources: formatSources(results),
+    };
+  } catch (streamError) {
+    // If streaming fails, fallback to non-streaming
+    // eslint-disable-next-line no-console
+    console.log('Cloudflare streaming failed, using non-streaming fallback...', streamError);
+    const answer = await generateWithCloudflare(
+      userPrompt,
+      systemInstruction,
+      locale,
+      conversationHistory
+    );
+
+    yield {
+      type: 'done',
+      content: answer,
+      sources: formatSources(results),
+    };
+  }
+}
+
+/**
+ * Handle LLM streaming with fallback to Cloudflare
+ */
+async function* handleLLMStreaming(
+  userPrompt: string,
+  systemInstruction: string,
+  locale: Locale,
+  conversationHistory: ConversationMessage[] | undefined,
+  results: Array<{
+    document: { metadata: { title: string; noteId: string }; text: string };
+    score: number;
+  }>
+): AsyncGenerator<StreamingChunk, void, unknown> {
+  // Try Gemini first
+  try {
+    for await (const chunk of tryGeminiStreaming(
+      userPrompt,
+      systemInstruction,
+      conversationHistory
+    )) {
+      yield chunk;
+    }
+    return; // Success, exit
+  } catch {
+    // Fall through to Cloudflare fallback
+  }
+
+  // Fallback to Cloudflare Workers AI
+  if (isCloudflareConfigured()) {
+    try {
+      for await (const chunk of tryCloudflareStreaming(
+        userPrompt,
+        systemInstruction,
+        locale,
+        conversationHistory,
+        results
+      )) {
+        yield chunk;
+      }
+      return; // Success, exit
+    } catch (fallbackError) {
+      // eslint-disable-next-line no-console
+      console.error('Both Gemini and Cloudflare Workers AI failed:', fallbackError);
+      yield {
+        type: 'error',
+        content: fallbackError instanceof Error ? fallbackError.message : 'Unknown error',
+      };
+      return;
+    }
+  }
+
+  // No providers available
+  yield {
+    type: 'error',
+    content: 'No AI provider configured. Please set GEMINI_API_KEY or Cloudflare credentials.',
+  };
+}
+
+/**
+ * Handle errors and return appropriate error chunks
+ */
+function* handleError(
+  error: unknown,
+  t: ReturnType<typeof getTranslations>
+): Generator<StreamingChunk, void, unknown> {
+  if (error instanceof Error) {
+    if (
+      error.message.includes('API_KEY') ||
+      error.message.includes('api key') ||
+      error.message.includes('authentication')
+    ) {
+      yield { type: 'error', content: t.rag.errorApiKey };
+      return;
+    }
+    if (error.message.includes('fetch failed') || error.message.includes('network')) {
+      yield { type: 'error', content: t.rag.errorNetwork };
+      return;
+    }
+    if (error.message.includes('429') || error.message.includes('quota')) {
+      yield { type: 'error', content: t.rag.errorQuota };
+      return;
+    }
+    yield { type: 'error', content: error.message };
+    return;
+  }
+  yield { type: 'error', content: t.rag.errorUnknown };
+}
+
+/**
+ * Query RAG system dengan streaming support untuk thinking process
+ */
+export async function* queryRAGStream(
   question: string,
   locale: Locale = 'id',
   topK: number = 5,
@@ -46,46 +282,30 @@ export async function queryRAG(
     url?: string;
   },
   conversationHistory?: ConversationMessage[]
-): Promise<RAGResponse> {
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not configured');
-  }
-
+): AsyncGenerator<StreamingChunk, void, unknown> {
   if (!question || question.trim() === '') {
-    throw new Error('Question cannot be empty');
+    yield { type: 'error', content: 'Question cannot be empty' };
+    return;
   }
 
-  // Get translations early for use in both try and catch blocks
   const t = getTranslations(locale);
 
   try {
-    // Get query embedding with retry logic
+    // Get query embedding
     let queryEmbedding: number[];
     try {
       queryEmbedding = await getQueryEmbedding(question);
     } catch (error) {
-      // If embedding fails, provide a more helpful error message
-      if (error instanceof Error && error.message.includes('fetch failed')) {
-        throw new Error(t.rag.errorNetwork);
-      }
-      throw error;
+      yield* handleError(error, t);
+      return;
     }
 
     // Search vector store
     const vectorStore = getVectorStore();
     const results = vectorStore.search(queryEmbedding, topK, locale);
 
-    // Build context from retrieved documents
-    const context =
-      results.length > 0
-        ? results
-            .map((result, idx) => {
-              return `[${idx + 1}] ${result.document.metadata.title}\n${result.document.text}`;
-            })
-            .join('\n\n---\n\n')
-        : t.rag.noContextFound;
-
-    // Build prompt for Gemini and Cloudflare
+    // Build context and prompt
+    const context = buildContext(results, t.rag.noContextFound);
     const systemInstruction = t.rag.systemInstruction;
 
     // Add current page context if available
@@ -94,147 +314,46 @@ export async function queryRAG(
       pageContextInfo = `\n\n${t.rag.pageContextNote.replace('{title}', currentPageContext.title)}`;
     }
 
-    // Build conversation history for Gemini (chat format)
-    const history: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+    const userPrompt = buildUserPrompt(
+      context,
+      pageContextInfo,
+      question,
+      t.rag.userPromptTemplate
+    );
 
-    // Add conversation history if available (limit to last 10 messages to avoid token limits)
-    if (conversationHistory && conversationHistory.length > 0) {
-      const recentHistory = conversationHistory.slice(-10); // Keep last 10 messages
-      for (const msg of recentHistory) {
-        if (msg.role === 'user' || msg.role === 'assistant') {
-          history.push({
-            role: msg.role === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.content }],
-          });
-        }
+    // Handle LLM streaming with fallback
+    let finalAnswer = '';
+    for await (const chunk of handleLLMStreaming(
+      userPrompt,
+      systemInstruction,
+      locale,
+      conversationHistory,
+      results
+    )) {
+      if (chunk.type === 'done') {
+        // Final chunk with sources
+        yield chunk;
+        return;
       }
+      if (chunk.type === 'error') {
+        yield chunk;
+        return;
+      }
+      // Track final answer for sources
+      if (chunk.type === 'answer') {
+        finalAnswer = chunk.content;
+      }
+      yield chunk;
     }
 
-    // Add current question with context
-    const userPrompt = t.rag.userPromptTemplate
-      .replace('{context}', context)
-      .replace('{pageContext}', pageContextInfo)
-      .replace('{question}', question);
-
-    // Generate response using Gemini with retry logic, fallback to Cloudflare if fails
-    let answer: string;
-
-    try {
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        systemInstruction: systemInstruction,
-      });
-
-      // Use chat format if we have history, otherwise use single prompt
-      let result;
-      if (history.length > 0) {
-        // Start chat with history
-        const chat = model.startChat({
-          history: history,
-        });
-        result = await chat.sendMessage(userPrompt);
-      } else {
-        // Single prompt (no history)
-        result = await model.generateContent(userPrompt);
-      }
-
-      const response = result.response;
-      answer = response.text() || t.rag.errorNoAnswer;
-    } catch (error) {
-      // Try Cloudflare Workers AI as fallback
-      if (isCloudflareConfigured()) {
-        try {
-          // eslint-disable-next-line no-console
-          console.log('Gemini failed, trying Cloudflare Workers AI as fallback...');
-          answer = await generateWithCloudflare(
-            userPrompt,
-            systemInstruction,
-            locale,
-            conversationHistory
-          );
-          // eslint-disable-next-line no-console
-          console.log('Successfully used Cloudflare Workers AI fallback');
-        } catch (fallbackError) {
-          // Both providers failed
-          // eslint-disable-next-line no-console
-          console.error('Both Gemini and Cloudflare Workers AI failed:', fallbackError);
-
-          // Handle original Gemini errors
-          if (error instanceof Error) {
-            if (error.message.includes('fetch failed') || error.message.includes('network')) {
-              throw new Error(t.rag.errorNetwork);
-            }
-            if (error.message.includes('429') || error.message.includes('quota')) {
-              throw new Error(t.rag.errorQuota);
-            }
-          }
-          throw error;
-        }
-      } else {
-        // No fallback available, throw original error
-        if (error instanceof Error) {
-          if (error.message.includes('fetch failed') || error.message.includes('network')) {
-            throw new Error(t.rag.errorNetworkGemini);
-          }
-          if (error.message.includes('429') || error.message.includes('quota')) {
-            throw new Error(t.rag.errorQuota);
-          }
-        }
-        throw error;
-      }
-    }
-
-    // Format sources and deduplicate by noteId
-    // Keep only the highest scoring chunk for each unique noteId
-    const sourcesMap = new Map<
-      string,
-      {
-        title: string;
-        noteId: string;
-        chunk: string;
-        score: number;
-      }
-    >();
-
-    for (const result of results) {
-      const noteId = result.document.metadata.noteId;
-      const existing = sourcesMap.get(noteId);
-
-      // If this noteId doesn't exist yet, or this result has a higher score, use it
-      if (!existing || result.score > existing.score) {
-        sourcesMap.set(noteId, {
-          title: result.document.metadata.title,
-          noteId: noteId,
-          chunk: result.document.text.substring(0, 200) + '...',
-          score: result.score,
-        });
-      }
-    }
-
-    // Convert map to array and sort by score (highest first)
-    const sources = Array.from(sourcesMap.values()).sort((a, b) => b.score - a.score);
-
-    return {
-      answer,
-      sources,
+    // If we get here without 'done', send done with sources
+    yield {
+      type: 'done',
+      content: finalAnswer,
+      sources: formatSources(results),
     };
   } catch (error) {
-    if (error instanceof Error) {
-      // Check for API key related errors
-      if (
-        error.message.includes('API_KEY') ||
-        error.message.includes('api key') ||
-        error.message.includes('authentication')
-      ) {
-        throw new Error(t.rag.errorApiKey);
-      }
-      // Re-throw with better error message if it's already been improved
-      if (error.message.includes('Network error') || error.message.includes('API quota')) {
-        throw error;
-      }
-      throw error;
-    }
-    throw new Error(t.rag.errorUnknown);
+    yield* handleError(error, t);
   }
 }
 

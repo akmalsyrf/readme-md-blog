@@ -1,5 +1,34 @@
 import { MAX_REQUEST_SIZE } from './security';
 
+/**
+ * Extract and validate request body fields
+ */
+export function extractRequestBodyFields(body: unknown): {
+  question?: string;
+  locale?: string;
+  action?: string;
+  stream: boolean;
+  currentPage?: { title?: string; noteId?: string; url?: string };
+  conversationHistory?: unknown;
+} {
+  if (typeof body !== 'object' || body === null) {
+    return { stream: false };
+  }
+
+  const b = body as Record<string, unknown>;
+  return {
+    question: typeof b.question === 'string' ? b.question : undefined,
+    locale: typeof b.locale === 'string' ? b.locale : undefined,
+    action: typeof b.action === 'string' ? b.action : undefined,
+    stream: typeof b.stream === 'boolean' ? b.stream : false,
+    currentPage:
+      b.currentPage && typeof b.currentPage === 'object' && !Array.isArray(b.currentPage)
+        ? (b.currentPage as { title?: string; noteId?: string; url?: string })
+        : undefined,
+    conversationHistory: b.conversationHistory,
+  };
+}
+
 // Parse and validate request body
 export async function parseRequestBody(request: Request): Promise<
   | {

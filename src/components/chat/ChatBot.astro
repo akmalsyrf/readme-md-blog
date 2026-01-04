@@ -215,6 +215,149 @@ const { locale = 'id' } = Astro.props;
       }
     };
 
+    // Update or create streaming message
+    let currentStreamingMessage = null;
+    let currentThinkingContainer = null;
+    let currentAnswerContainer = null;
+
+    const createStreamingMessage = () => {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'flex items-start space-x-2 mb-6';
+      messageDiv.id = 'chatbot-streaming-message';
+
+      const avatar = document.createElement('div');
+      avatar.className =
+        'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900';
+      avatar.innerHTML = `
+        <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+      `;
+      messageDiv.appendChild(avatar);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'flex-1 rounded-lg px-4 py-3 bg-gray-100 dark:bg-gray-700';
+
+      // Thinking container
+      const thinkingContainer = document.createElement('div');
+      thinkingContainer.className = 'mb-3 chatbot-thinking-container';
+      thinkingContainer.style.display = 'none';
+      contentDiv.appendChild(thinkingContainer);
+
+      // Answer container
+      const answerContainer = document.createElement('div');
+      answerContainer.className =
+        'prose prose-sm prose-slate max-w-none dark:prose-invert chatbot-answer-container';
+      contentDiv.appendChild(answerContainer);
+
+      messageDiv.appendChild(contentDiv);
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      currentStreamingMessage = messageDiv;
+      currentThinkingContainer = thinkingContainer;
+      currentAnswerContainer = answerContainer;
+
+      return { messageDiv, thinkingContainer, answerContainer };
+    };
+
+    const updateStreamingThinking = (text) => {
+      // Ensure streaming message is created
+      if (!currentStreamingMessage) {
+        createStreamingMessage();
+      }
+
+      if (!currentThinkingContainer) {
+        const { thinkingContainer } = createStreamingMessage();
+        currentThinkingContainer = thinkingContainer;
+      }
+
+      // Show thinking container
+      currentThinkingContainer.style.display = 'block';
+
+      // Update or create thinking step
+      let thinkingStep = currentThinkingContainer.querySelector('.chatbot-thinking-step-content');
+      if (!thinkingStep) {
+        // Create new thinking step container with icon
+        const stepWrapper = document.createElement('div');
+        stepWrapper.className =
+          'flex items-start gap-2 mb-2 p-2 rounded bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800';
+
+        // Add thinking icon
+        const icon = document.createElement('div');
+        icon.className =
+          'flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-purple-200 dark:bg-purple-800 mt-0.5';
+        icon.innerHTML = `
+          <svg class="h-3 w-3 text-purple-600 dark:text-purple-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        `;
+        stepWrapper.appendChild(icon);
+
+        thinkingStep = document.createElement('p');
+        thinkingStep.className =
+          'text-xs text-purple-700 dark:text-purple-300 italic chatbot-thinking-step-content flex-1';
+        stepWrapper.appendChild(thinkingStep);
+        currentThinkingContainer.appendChild(stepWrapper);
+      }
+
+      // Update thinking text
+      thinkingStep.textContent = text || 'Memproses...';
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    };
+
+    const updateStreamingAnswer = (text) => {
+      if (!currentAnswerContainer) {
+        const { answerContainer } = createStreamingMessage();
+        currentAnswerContainer = answerContainer;
+      }
+
+      const html = renderMarkdown(text);
+      currentAnswerContainer.innerHTML = html;
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    };
+
+    const finalizeStreamingMessage = (sources) => {
+      if (!currentStreamingMessage) return;
+
+      // Add sources if available
+      if (sources && sources.length > 0) {
+        const contentDiv = currentStreamingMessage.querySelector('.flex-1');
+        const sourcesDiv = document.createElement('div');
+        sourcesDiv.className = 'mt-3 border-t border-gray-300 pt-3 dark:border-gray-600';
+
+        const sourcesTitle = document.createElement('p');
+        sourcesTitle.className = 'mb-2 text-xs font-semibold text-gray-600 dark:text-gray-400';
+        sourcesTitle.textContent = t.sources + ':';
+        sourcesDiv.appendChild(sourcesTitle);
+
+        const sourcesList = document.createElement('ul');
+        sourcesList.className = 'space-y-1';
+        sources.forEach((source) => {
+          const sourceItem = document.createElement('li');
+          sourceItem.className = 'text-xs text-gray-600 dark:text-gray-400';
+          const link = document.createElement('a');
+          link.href = `/${locale}/notes/${source.noteId}`;
+          link.className = 'hover:text-blue-600 dark:hover:text-blue-400 underline';
+          link.textContent = source.title;
+          sourceItem.appendChild(link);
+          sourcesList.appendChild(sourceItem);
+        });
+        sourcesDiv.appendChild(sourcesList);
+        contentDiv.appendChild(sourcesDiv);
+      }
+
+      // Save to localStorage
+      const answerText = currentAnswerContainer ? currentAnswerContainer.innerText : '';
+      saveChatHistory(answerText, false, sources);
+      saveChatState();
+
+      // Reset streaming state
+      currentStreamingMessage = null;
+      currentThinkingContainer = null;
+      currentAnswerContainer = null;
+    };
+
     // Add message to DOM (internal function, can skip saving)
     const addMessageToDOM = (text, isUser = false, sources, saveToStorage = true) => {
       const messageDiv = document.createElement('div');
@@ -553,7 +696,7 @@ const { locale = 'id' } = Astro.props;
       }
     };
 
-    // Handle form submission
+    // Handle form submission with streaming support
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const question = input.value.trim();
@@ -566,12 +709,16 @@ const { locale = 'id' } = Astro.props;
       submitBtn.disabled = true;
       submitBtn.textContent = t.processing;
 
+      // Reset streaming state
+      currentStreamingMessage = null;
+      currentThinkingContainer = null;
+      currentAnswerContainer = null;
+
       // Add loading indicator
       addLoading();
 
       try {
         // Get conversation history (before adding current question)
-        // This way the API gets the history without the current question
         const conversationHistory = getConversationHistory();
 
         const response = await fetch('/api/chat', {
@@ -583,27 +730,171 @@ const { locale = 'id' } = Astro.props;
             question,
             locale,
             conversationHistory,
+            stream: true, // Enable streaming
           }),
         });
 
-        removeLoading();
-
         if (!response.ok) {
+          removeLoading();
           const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
           throw new Error(errorData.message || errorData.error || t.errorMessage);
         }
 
-        const data = await response.json();
+        // Handle streaming response
+        if (response.body) {
+          // Create streaming message immediately and show processing state
+          createStreamingMessage();
+          if (currentThinkingContainer) {
+            currentThinkingContainer.style.display = 'block';
+            const thinkingStep = currentThinkingContainer.querySelector(
+              '.chatbot-thinking-step-content'
+            );
+            if (!thinkingStep) {
+              const stepWrapper = document.createElement('div');
+              stepWrapper.className =
+                'flex items-start gap-2 mb-2 p-2 rounded bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800';
+              const icon = document.createElement('div');
+              icon.className =
+                'flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-purple-200 dark:bg-purple-800 mt-0.5';
+              icon.innerHTML = `
+                <svg class="h-3 w-3 text-purple-600 dark:text-purple-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              `;
+              stepWrapper.appendChild(icon);
+              const thinkingStepContent = document.createElement('p');
+              thinkingStepContent.className =
+                'text-xs text-purple-700 dark:text-purple-300 italic chatbot-thinking-step-content flex-1';
+              thinkingStepContent.textContent = t.processing;
+              stepWrapper.appendChild(thinkingStepContent);
+              currentThinkingContainer.appendChild(stepWrapper);
+            }
+          }
+          // Remove loading indicator now that streaming message is created
+          removeLoading();
 
-        if (data.error) {
-          addMessage(`${t.error}: ${data.message || data.error}`, false);
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          let done = false;
+          let hasReceivedData = false;
+
+          while (!done) {
+            const result = await reader.read();
+            done = result.done;
+            if (done) break;
+            const { value } = result;
+
+            buffer += decoder.decode(value, { stream: true });
+
+            // SSE events are separated by \n\n
+            const events = buffer.split('\n\n');
+            // Keep the last incomplete event in buffer
+            buffer = events.pop() || '';
+
+            for (const event of events) {
+              if (!event.trim()) continue;
+
+              // Find data line
+              const lines = event.split('\n');
+              for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                  try {
+                    const jsonStr = line.slice(6).trim();
+                    if (!jsonStr) continue;
+
+                    const data = JSON.parse(jsonStr);
+
+                    if (data.type === 'thinking') {
+                      hasReceivedData = true;
+                      updateStreamingThinking(data.content);
+                    } else if (data.type === 'answer') {
+                      hasReceivedData = true;
+                      // Hide thinking when answer starts
+                      if (currentThinkingContainer) {
+                        currentThinkingContainer.style.display = 'none';
+                      }
+                      updateStreamingAnswer(data.content);
+                    } else if (data.type === 'done') {
+                      hasReceivedData = true;
+                      // Hide thinking when done
+                      if (currentThinkingContainer) {
+                        currentThinkingContainer.style.display = 'none';
+                      }
+                      updateStreamingAnswer(data.content);
+                      finalizeStreamingMessage(data.sources);
+                    } else if (data.type === 'error') {
+                      hasReceivedData = true;
+                      removeLoading();
+                      // Clean up streaming state on error
+                      if (currentStreamingMessage) {
+                        currentStreamingMessage.remove();
+                        currentStreamingMessage = null;
+                        currentThinkingContainer = null;
+                        currentAnswerContainer = null;
+                      }
+                      addMessage(`${t.error}: ${data.content}`, false);
+                    }
+                  } catch (parseError) {
+                    // Skip invalid JSON
+                    // eslint-disable-next-line no-console
+                    console.error('Error parsing SSE data:', parseError, line);
+                  }
+                }
+              }
+            }
+          }
+
+          // Process remaining buffer
+          if (buffer.trim()) {
+            const lines = buffer.split('\n');
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const jsonStr = line.slice(6).trim();
+                  if (jsonStr) {
+                    const data = JSON.parse(jsonStr);
+                    hasReceivedData = true;
+                    if (data.type === 'done') {
+                      finalizeStreamingMessage(data.sources);
+                    }
+                  }
+                } catch (parseError) {
+                  // Ignore parse errors for incomplete data
+                }
+              }
+            }
+          }
+
+          // If stream ended without receiving any data, show error
+          if (!hasReceivedData && currentStreamingMessage) {
+            currentStreamingMessage.remove();
+            currentStreamingMessage = null;
+            currentThinkingContainer = null;
+            currentAnswerContainer = null;
+            addMessage(`${t.error}: ${t.errorMessage}`, false);
+          }
         } else {
-          addMessage(data.answer || '', false, data.sources);
+          // Fallback to non-streaming if body is not available
+          const data = await response.json();
+          if (data.error) {
+            addMessage(`${t.error}: ${data.message || data.error}`, false);
+          } else {
+            addMessage(data.answer || '', false, data.sources);
+          }
         }
       } catch (error) {
         removeLoading();
         const errorMessage = error instanceof Error ? error.message : t.errorMessage;
         addMessage(`${t.error}: ${errorMessage}`, false);
+
+        // Clean up streaming state on error
+        if (currentStreamingMessage) {
+          currentStreamingMessage.remove();
+          currentStreamingMessage = null;
+          currentThinkingContainer = null;
+          currentAnswerContainer = null;
+        }
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = t.send;
@@ -684,5 +975,43 @@ const { locale = 'id' } = Astro.props;
 
   .chatbot-messages .prose table {
     @apply mb-2 text-xs;
+  }
+
+  /* Thinking process styles */
+  .chatbot-thinking-step {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  .chatbot-thinking-container {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  .chatbot-thinking-container > div {
+    animation: slideInLeft 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Smooth transitions for streaming content */
+  .chatbot-answer-container {
+    animation: fadeIn 0.2s ease-in;
   }
 </style>

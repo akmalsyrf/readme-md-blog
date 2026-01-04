@@ -114,3 +114,44 @@ export function validateQuestion(question: unknown): { valid: boolean; error?: s
 
   return { valid: true };
 }
+
+/**
+ * Validate API key configuration and return error response if invalid
+ */
+export async function validateApiKeyConfig(
+  corsHeaders: Record<string, string>
+): Promise<Response | null> {
+  const apiKeyValidation = validateApiKey();
+  if (!apiKeyValidation.valid) {
+    // Dynamic import to avoid circular dependency
+    const { createErrorResponse } = await import('./response');
+    return createErrorResponse(
+      apiKeyValidation.error || 'API key not configured',
+      'GEMINI_API_KEY is not set. Please configure it in your .env file.',
+      500,
+      corsHeaders
+    );
+  }
+  return null;
+}
+
+/**
+ * Check request size and return error response if too large
+ */
+export async function checkRequestSize(
+  contentLength: string | null,
+  corsHeaders: Record<string, string>
+): Promise<Response | null> {
+  const sizeValidation = validateRequestSize(contentLength);
+  if (!sizeValidation.valid) {
+    // Dynamic import to avoid circular dependency
+    const { createErrorResponse } = await import('./response');
+    return createErrorResponse(
+      sizeValidation.error || 'Request too large',
+      `Request body must be smaller than ${MAX_REQUEST_SIZE / 1024}KB`,
+      413,
+      corsHeaders
+    );
+  }
+  return null;
+}
