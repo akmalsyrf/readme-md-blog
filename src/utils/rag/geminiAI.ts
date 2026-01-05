@@ -65,35 +65,25 @@ async function getGeminiStream(
 
 /**
  * Process stream chunks and determine thinking vs answer
+ *
+ * Note: For RAG chatbot, we skip the thinking phase and go directly to answer
+ * since the model doesn't naturally produce a separate thinking phase.
+ * If thinking phase is desired, it should be requested via prompt engineering.
  */
 async function* processStreamChunks(
   stream: AsyncIterable<{ text: () => string }>
 ): AsyncGenerator<{ type: 'thinking' | 'answer'; content: string }, void, unknown> {
   let fullAnswer = '';
-  let chunkCount = 0;
-  let hasTransitionedToAnswer = false;
-  const THINKING_CHUNKS = 4; // Show first 4 chunks as thinking
-  const THINKING_THRESHOLD = 180; // Characters threshold for thinking
 
   for await (const chunk of stream) {
     const chunkText = chunk.text();
     if (!chunkText) continue;
 
-    chunkCount++;
     fullAnswer += chunkText;
 
-    // Show first chunks as thinking to simulate reasoning process
-    const shouldShowAsThinking =
-      chunkCount <= THINKING_CHUNKS || fullAnswer.length < THINKING_THRESHOLD;
-
-    if (shouldShowAsThinking && !hasTransitionedToAnswer) {
-      yield { type: 'thinking', content: fullAnswer };
-    } else {
-      if (!hasTransitionedToAnswer) {
-        hasTransitionedToAnswer = true;
-      }
-      yield { type: 'answer', content: fullAnswer };
-    }
+    // Directly yield as answer - no artificial thinking phase
+    // The thinking phase simulation was arbitrary and not based on actual model output
+    yield { type: 'answer', content: fullAnswer };
   }
 }
 

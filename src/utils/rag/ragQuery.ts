@@ -339,8 +339,9 @@ export async function* queryRAGStream(
         yield chunk;
         return;
       }
-      // Track final answer for sources
-      if (chunk.type === 'answer') {
+      // Track final answer for sources - update for both thinking and answer chunks
+      // since thinking chunks also contain the accumulated content
+      if (chunk.type === 'answer' || chunk.type === 'thinking') {
         finalAnswer = chunk.content;
       }
       yield chunk;

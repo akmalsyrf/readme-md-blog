@@ -195,27 +195,19 @@ export async function* generateWithCloudflareStream(
 
   // Simulate streaming by chunking the response
   const CHUNK_SIZE = 20; // Characters per chunk
-  const THINKING_CHUNKS = 3; // First 3 chunks as thinking
-  let chunkCount = 0;
   let accumulatedText = '';
 
   // Split response into chunks
+  // Note: No thinking phase - directly stream as answer since Cloudflare doesn't
+  // produce a natural thinking phase and artificial simulation was arbitrary
   for (let i = 0; i < fullResponse.length; i += CHUNK_SIZE) {
     const chunk = fullResponse.substring(i, i + CHUNK_SIZE);
     accumulatedText += chunk;
-    chunkCount++;
 
-    // Show first few chunks as thinking
-    if (chunkCount <= THINKING_CHUNKS) {
-      yield { type: 'thinking', content: accumulatedText };
-      // Small delay to simulate real streaming
-      await new Promise((resolve) => setTimeout(resolve, 50));
-    } else {
-      // Rest as answer
-      yield { type: 'answer', content: accumulatedText };
-      // Small delay to simulate real streaming
-      await new Promise((resolve) => setTimeout(resolve, 30));
-    }
+    // Directly yield as answer
+    yield { type: 'answer', content: accumulatedText };
+    // Small delay to simulate real streaming
+    await new Promise((resolve) => setTimeout(resolve, 30));
   }
 }
 
