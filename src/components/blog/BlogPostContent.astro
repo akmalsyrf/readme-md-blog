@@ -6,9 +6,51 @@ interface Props {
 const { content: Content } = Astro.props;
 ---
 
-<div class="prose prose-lg prose-slate max-w-none dark:prose-invert">
+<div class="prose prose-lg prose-slate max-w-none dark:prose-invert" id="blog-post-content">
   <Content />
 </div>
+
+{/* KaTeX scripts for math rendering */}
+<script
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.12/dist/katex.min.js"
+  integrity="sha384-VkqWq8xtm5YQk1BBXczQ8/Sx+DlCzF8cuS43bZwmtVXzRFtyLTqTCdP7MKmKo+KN"
+  crossorigin="anonymous"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.12/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+  crossorigin="anonymous"></script>
+<script is:inline>
+  // Render math formulas after KaTeX loads
+  (function () {
+    function renderMath() {
+      if (typeof renderMathInElement !== 'undefined') {
+        const contentElement = document.getElementById('blog-post-content');
+        if (contentElement) {
+          // eslint-disable-next-line no-undef
+          renderMathInElement(contentElement, {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '$', right: '$', display: false },
+              { left: '\\[', right: '\\]', display: true },
+              { left: '\\(', right: '\\)', display: false },
+            ],
+            throwOnError: false,
+          });
+        }
+      } else {
+        // Retry if KaTeX not loaded yet
+        setTimeout(renderMath, 100);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderMath);
+    } else {
+      // DOM already loaded, try immediately
+      renderMath();
+    }
+  })();
+</script>
 
 <style>
   /* Enhanced typography styling */
@@ -158,5 +200,27 @@ const { content: Content } = Astro.props;
   /* First paragraph styling */
   .prose > p:first-of-type {
     @apply text-lg text-gray-800 dark:text-gray-200;
+  }
+
+  /* Math formula styling */
+  .prose .katex {
+    @apply text-gray-900 dark:text-gray-100;
+    font-size: 1.1em;
+  }
+
+  .prose .katex-display {
+    @apply my-6 overflow-x-auto overflow-y-hidden;
+    @apply px-4;
+  }
+
+  .prose .katex-display > .katex {
+    @apply text-base;
+    display: inline-block;
+    text-align: initial;
+  }
+
+  /* Ensure math formulas don't break layout */
+  .prose .katex-display {
+    @apply break-inside-avoid;
   }
 </style>

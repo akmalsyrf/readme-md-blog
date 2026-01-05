@@ -19,7 +19,8 @@
     "prepare": "husky install",
     "all-checks": "npm run lint && npm run format:check && npm run type-check",
     "new-note": "node scripts/new-note.js",
-    "optimize-image": "node scripts/optimize-image.js"
+    "optimize-image": "node scripts/optimize-image.js",
+    "optimize-images": "node scripts/optimize-images-folder.js"
   },
   "dependencies": {
     "@astrojs/tailwind": "^5.1.0",

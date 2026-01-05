@@ -33,6 +33,12 @@ module.exports = {
         ],
       },
     },
+    {
+      files: ['scripts/**/*.js'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
   ],
   rules: {
     'no-console': 'warn',
