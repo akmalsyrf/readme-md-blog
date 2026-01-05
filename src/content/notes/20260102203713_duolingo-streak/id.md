@@ -42,7 +42,7 @@ Saya memulainya dari nol mutlak. Dua bulan pertama adalah ritual penyiksaan seka
 
 ### Bab 2: Labirin Kanji dan Jebakan Preposisi
 
-Memasuki hari ke-100, medan perang mulai berubah. Bahasa Jepang tidak lagi semanis _sushi_. Ia berubah menjadi hutan _Kanji_ yang gelap dan menyesatkan. Di sinilah saya mulai menyadari bahwa menghafal bentuk saja tidak cukup. Saya harus menghadapi kenyataan pahit bahwa satu karakter bisa memiliki kepribadian ganda—atau bahkan lima.
+Memasuki hari ke-100, medan perang mulai berubah. Bahasa Jepang tidak lagi semanis _matcha_. Ia berubah menjadi hutan _Kanji_ yang gelap dan menyesatkan. Di sinilah saya mulai menyadari bahwa menghafal bentuk saja tidak cukup. Saya harus menghadapi kenyataan pahit bahwa satu karakter bisa memiliki kepribadian ganda—atau bahkan lima.
 
 Ambil contoh karakter sederhana ini: **日**.
 

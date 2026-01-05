@@ -6,8 +6,6 @@ author: 'Akmal'
 tags: ['python', 'neural-network', 'machine-learning', 'jupyter-notebook', 'math']
 ---
 
-# Deep Dive: How to Build a Neural Network from Scratch
-
 Hello everyone! Still with me here. This time, I want to dissect an old project of mine on GitHub. This project wasn't just about copying and pasting code—it was an effort to understand every line of logic behind a **Neural Network**.
 
 The main inspiration came from the [Machine Learning 101 playlist by Mr. Ridwan Ilyas](https://www.youtube.com/playlist?list=PLo6nZTcpSz2p5oKKkg6ZWHx4Pw7ToYVtD). He taught something fundamental: **don't be a blind library user; understand the math.**

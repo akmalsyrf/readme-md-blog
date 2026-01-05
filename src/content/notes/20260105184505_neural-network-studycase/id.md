@@ -6,8 +6,6 @@ author: 'Akmal'
 tags: ['python', 'neural-network', 'machine-learning', 'jupyter-notebook', 'math']
 ---
 
-# Deep Dive: Bagaimana Cara Membangun Neural Network dari Nol
-
 Halo semua! Masih bersama saya di sini. Kali ini, saya ingin membedah lebih dalam proyek lama yang saya buat di GitHub. Proyek ini bukan sekadar _copy-paste_ kode, melainkan usaha untuk memahami setiap baris logika di balik **Neural Network**.
 
 Inspirasi utamanya datang dari playlist [Machine Learning 101 milik Bapak Ridwan Ilyas](https://www.youtube.com/playlist?list=PLo6nZTcpSz2p5oKKkg6ZWHx4Pw7ToYVtD). Beliau mengajarkan sesuatu yang fundamental: **jangan jadi pengguna library yang buta, pahamilah matematikanya.**

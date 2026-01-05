@@ -42,7 +42,7 @@ I started from absolute zero. The first two months were a ritual of both torture
 
 ### Chapter 2: The Kanji Labyrinth and the Preposition Trap
 
-As I hit the 100-day mark, the battlefield began to shift. Japanese was no longer as sweet as _sushi_. It turned into a dark and misleading forest of _Kanji_. This was where I realized that memorizing shapes wasn't enough. I had to face the harsh reality that a single character could have a split personality—or even five.
+As I hit the 100-day mark, the battlefield began to shift. Japanese was no longer as sweet as _matcha_. It turned into a dark and misleading forest of _Kanji_. This was where I realized that memorizing shapes wasn't enough. I had to face the harsh reality that a single character could have a split personality—or even five.
 
 Take this simple character as an example: **日**.
 
