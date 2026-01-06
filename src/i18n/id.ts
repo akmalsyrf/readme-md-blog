@@ -79,7 +79,7 @@ export default {
       },
       bahlilfication: {
         title: 'Bahlilfication',
-        description: 'Ubah gambar atau gambar apa pun menjadi "Bahlil"',
+        description: 'Ubah gambar atau gambar tangan apa pun menjadi "Bahlil"',
       },
       spineldb: {
         title: 'SpinelDB',

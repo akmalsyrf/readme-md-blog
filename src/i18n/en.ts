@@ -77,7 +77,7 @@ export default {
       },
       bahlilfication: {
         title: 'Bahlilfication',
-        description: 'Transform any image or drawing into "Bahlil"',
+        description: 'Transform any image or hand drawing into "Bahlil"',
       },
       spineldb: {
         title: 'SpinelDB',
