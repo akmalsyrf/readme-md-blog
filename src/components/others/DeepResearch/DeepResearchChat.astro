@@ -12,55 +12,18 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
 
 <div
   id="deep-research-chat"
-  class="flex h-[calc(100vh-12rem)] min-h-[600px] flex-col rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
+  class="flex h-[calc(100vh-12rem)] min-h-[400px] flex-col rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800 sm:min-h-[600px]"
 >
   <!-- Chat Header -->
   <div
-    class="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700"
+    class="flex flex-col gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between sm:gap-0 sm:px-6 sm:py-4"
   >
-    <div class="flex items-center gap-3">
+    <div class="flex min-w-0 items-center gap-2 sm:gap-3">
       <div
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500"
-      >
-        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-          ></path>
-        </svg>
-      </div>
-      <div>
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {t.deepResearchChat.title}
-        </h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400">{t.deepResearchChat.subtitle}</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-2">
-      <span
-        class="inline-flex items-center rounded-full bg-amber-500 px-2 py-0.5 text-xs font-semibold text-white shadow-sm"
-      >
-        {t.deepResearchChat.underConstruction || 'Under Construction'}
-      </span>
-      <span
-        class="inline-flex items-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-2 py-0.5 text-xs font-semibold text-white shadow-sm"
-      >
-        {t.others.experimental}
-      </span>
-    </div>
-  </div>
-
-  <!-- Messages Container -->
-  <div id="deep-research-messages" class="flex-1 space-y-4 overflow-y-auto px-6 py-4">
-    <!-- Welcome Message -->
-    <div class="flex items-start space-x-3">
-      <div
-        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900"
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 sm:h-10 sm:w-10"
       >
         <svg
-          class="h-5 w-5 text-blue-600 dark:text-blue-400"
+          class="h-4 w-4 text-white sm:h-6 sm:w-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -73,25 +36,74 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
           ></path>
         </svg>
       </div>
-      <div class="flex-1 rounded-lg bg-gray-100 px-4 py-3 dark:bg-gray-700">
-        <p class="text-sm text-gray-700 dark:text-gray-300">{t.deepResearchChat.welcome}</p>
+      <div class="min-w-0 flex-1">
+        <h2 class="truncate text-base font-semibold text-gray-900 dark:text-gray-100 sm:text-lg">
+          {t.deepResearchChat.title}
+        </h2>
+        <p class="truncate text-xs text-gray-500 dark:text-gray-400">
+          {t.deepResearchChat.subtitle}
+        </p>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span
+        class="inline-flex items-center whitespace-nowrap rounded-full bg-amber-500 px-2 py-0.5 text-xs font-semibold text-white shadow-sm"
+      >
+        {t.deepResearchChat.underConstruction || 'Under Construction'}
+      </span>
+      <span
+        class="inline-flex items-center whitespace-nowrap rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-2 py-0.5 text-xs font-semibold text-white shadow-sm"
+      >
+        {t.others.experimental}
+      </span>
+    </div>
+  </div>
+
+  <!-- Messages Container -->
+  <div
+    id="deep-research-messages"
+    class="flex-1 space-y-3 overflow-y-auto px-3 py-3 sm:space-y-4 sm:px-6 sm:py-4"
+  >
+    <!-- Welcome Message -->
+    <div class="flex items-start space-x-2 sm:space-x-3">
+      <div
+        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900 sm:h-8 sm:w-8"
+      >
+        <svg
+          class="h-4 w-4 text-blue-600 dark:text-blue-400 sm:h-5 sm:w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+          ></path>
+        </svg>
+      </div>
+      <div class="flex-1 rounded-lg bg-gray-100 px-3 py-2 dark:bg-gray-700 sm:px-4 sm:py-3">
+        <p class="text-xs text-gray-700 dark:text-gray-300 sm:text-sm">
+          {t.deepResearchChat.welcome}
+        </p>
       </div>
     </div>
   </div>
 
   <!-- Input Container -->
-  <div class="border-t border-gray-200 px-6 py-4 dark:border-gray-700">
-    <form id="deep-research-form" class="flex gap-3">
+  <div class="border-t border-gray-200 px-3 py-3 dark:border-gray-700 sm:px-6 sm:py-4">
+    <form id="deep-research-form" class="flex gap-2 sm:gap-3">
       <textarea
         id="deep-research-input"
         rows="1"
         placeholder={t.deepResearchChat.placeholder}
-        class="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
+        class="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 sm:px-4 sm:py-2"
       ></textarea>
       <button
         type="submit"
         id="deep-research-submit"
-        class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-colors hover:from-purple-600 hover:to-pink-600 disabled:opacity-50"
+        class="flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-colors hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 sm:h-10 sm:w-10"
       >
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -161,14 +173,14 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
     // Add message to DOM
     const addMessage = (text, isUser = false) => {
       const messageDiv = document.createElement('div');
-      messageDiv.className = `flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+      messageDiv.className = `flex items-start space-x-2 sm:space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
 
       if (!isUser) {
         const avatar = document.createElement('div');
         avatar.className =
-          'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900';
+          'flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900';
         avatar.innerHTML = `
-          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
           </svg>
         `;
@@ -176,7 +188,7 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
       }
 
       const contentDiv = document.createElement('div');
-      contentDiv.className = `flex-1 rounded-lg px-4 py-3 ${
+      contentDiv.className = `flex-1 rounded-lg px-3 py-2 sm:px-4 sm:py-3 ${
         isUser
           ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
           : 'bg-gray-100 dark:bg-gray-700'
@@ -184,12 +196,13 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
 
       if (!isUser) {
         const markdownContent = document.createElement('div');
-        markdownContent.className = 'prose prose-sm prose-slate max-w-none dark:prose-invert';
+        markdownContent.className =
+          'prose prose-sm prose-slate max-w-none dark:prose-invert text-xs sm:text-sm';
         markdownContent.innerHTML = renderMarkdown(text);
         contentDiv.appendChild(markdownContent);
       } else {
         const textP = document.createElement('p');
-        textP.className = 'text-sm text-white';
+        textP.className = 'text-xs sm:text-sm text-white break-words';
         textP.textContent = text;
         contentDiv.appendChild(textP);
       }
@@ -245,23 +258,23 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
         const buttonText = locale === 'id' ? 'Buka' : 'Open';
 
         researchCard.innerHTML = `
-          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
-            <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+            <svg class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
-          <div class="flex-1">
-            <div class="group relative flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 transition-all hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 cursor-pointer" id="research-card-default">
-              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
-                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex-1 min-w-0">
+            <div class="group relative flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-xl border border-gray-200 bg-white p-3 sm:p-4 transition-all hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 cursor-pointer" id="research-card-default">
+              <div class="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
+                <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="truncate text-base font-medium text-gray-900 dark:text-gray-100">${cardTitle}</h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">${cardDate}</p>
+                <h3 class="truncate text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">${cardTitle}</h3>
+                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">${cardDate}</p>
               </div>
-              <button id="research-card-open-btn" class="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600" data-report-id="default">
+              <button id="research-card-open-btn" class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 sm:py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 touch-manipulation" data-report-id="default">
                 ${buttonText}
               </button>
             </div>
@@ -542,7 +555,8 @@ The journey toward practical quantum computing is complex and challenging, but t
     // Auto-resize textarea
     const autoResize = () => {
       input.style.height = 'auto';
-      const maxHeight = 120;
+      // Smaller max height on mobile
+      const maxHeight = window.innerWidth < 640 ? 100 : 120;
       input.style.height = Math.min(input.scrollHeight, maxHeight) + 'px';
     };
 
@@ -578,15 +592,15 @@ The journey toward practical quantum computing is complex and challenging, but t
       // Add loading message
       const loadingDiv = document.createElement('div');
       loadingDiv.id = 'deep-research-loading';
-      loadingDiv.className = 'flex items-start space-x-3';
+      loadingDiv.className = 'flex items-start space-x-2 sm:space-x-3';
       loadingDiv.innerHTML = `
-        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
-          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+          <svg class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
         </div>
-        <div class="flex-1 rounded-lg bg-gray-100 px-4 py-3 dark:bg-gray-700">
-          <p class="text-sm text-gray-700 dark:text-gray-300">${t.processing}</p>
+        <div class="flex-1 rounded-lg bg-gray-100 px-3 py-2 sm:px-4 sm:py-3 dark:bg-gray-700">
+          <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300">${t.processing}</p>
         </div>
       `;
       messagesContainer.appendChild(loadingDiv);
@@ -672,5 +686,29 @@ The journey toward practical quantum computing is complex and challenging, but t
 
   #deep-research-messages::-webkit-scrollbar-thumb:hover {
     background-color: rgba(156, 163, 175, 0.7);
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 640px) {
+    #deep-research-chat {
+      border-radius: 0.5rem;
+    }
+
+    /* Ensure touch targets are at least 44x44px */
+    #deep-research-submit {
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    /* Better text wrapping on mobile */
+    #deep-research-messages .prose {
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Prevent horizontal overflow */
+    #deep-research-messages {
+      overflow-x: hidden;
+    }
   }
 </style>

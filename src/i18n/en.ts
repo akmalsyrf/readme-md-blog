@@ -75,6 +75,14 @@ export default {
         title: 'Deep Research Chatbot',
         description: 'Chatbot for conducting deep research with AI',
       },
+      bahlilfication: {
+        title: 'Bahlilfication',
+        description: 'Transform any image or drawing into "Bahlil"',
+      },
+      spineldb: {
+        title: 'SpinelDB',
+        description: 'A Modern, Redis-Compatible In-Memory Database in Rust',
+      },
     },
   },
   deepResearchChat: {
