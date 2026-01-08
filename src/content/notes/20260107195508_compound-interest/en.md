@@ -320,6 +320,8 @@ Here's the comparison in a visual chart:
 
 > **Note:** Look at the difference in year 20. The principal you invested is "only" 1.2 Billion, but your money has grown to more than 3.3 Billion. More than half of your wealth comes from interest working on its own while you sleep.
 
+You can also simulate your financial goals with a compound interest calculator, many of them are available online. One you can try is [here](https://bennix.id/compound-interest-calculator/)
+
 ---
 
 ## Why Should Gen Z Care?

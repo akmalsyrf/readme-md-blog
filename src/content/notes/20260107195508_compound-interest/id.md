@@ -320,6 +320,8 @@ Berikut perbandingannya dalam visual grafis:
 
 > **Catatan:** Lihat selisih di tahun ke-20. Modal yang kamu setor "hanya" 1,2 Miliar, tapi uangmu berkembang menjadi lebih dari 3,3 Miliar. Lebih dari separuh kekayaanmu berasal dari bunga yang bekerja sendiri saat kamu tidur.
 
+Kamu juga bisa men-simulasikan tujuan keuanganmu dengan kalkulator _compound interest_, ada banyak yang menyediakannya di internet. Salah satu yg bisa kamu coba adalah [disini](https://bennix.id/compound-interest-calculator/)
+
 ---
 
 ## Mengapa Gen Z Harus Peduli?
