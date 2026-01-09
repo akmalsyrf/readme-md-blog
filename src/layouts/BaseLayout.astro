@@ -66,5 +66,35 @@ const t = getTranslations(locale);
     <ChatBot locale={locale} />
     <ImageModal />
     <DeepResearchReportCanvas locale={locale} t={t} />
+
+    <!-- Initialize vector store on page load -->
+    <script define:vars={{ locale }}>
+      // Initialize vector store in the background when page loads
+      // This pre-initializes the vector store so chat doesn't have to wait
+      (function () {
+        // Only run once per page load
+        if (window.__vectorStoreInitStarted) return;
+        window.__vectorStoreInitStarted = true;
+
+        // Call init-vectors API silently in the background
+        fetch('/api/init-vectors', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ locale }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Do nothing
+            }
+          })
+          // eslint-disable-next-line no-unused-vars
+          .catch((error) => {
+            // Do nothing
+          });
+      })();
+    </script>
   </body>
 </html>

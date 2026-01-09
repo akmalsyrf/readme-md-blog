@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { queryRAGStream, generateRecommendations } from '../../utils/rag/ragQuery';
-import { addNotesForLocale, reEmbedNotes } from '../../utils/rag/embedNotes';
+import { reEmbedNotes } from '../../utils/rag/embedNotes';
 import { getVectorStore } from '../../utils/rag/vectorStore';
 import type { Locale } from '../../utils/i18n';
 import { getClientIP, checkRateLimit, validateRateLimit } from '../../utils/api/rateLimit';
@@ -29,33 +29,6 @@ if (!apiKey || apiKey.trim() === '') {
 }
 
 /**
- * Ensure vector store has documents for locale
- */
-async function ensureVectorStoreForLocale(
-  locale: 'id' | 'en',
-  vectorStore: ReturnType<typeof getVectorStore>
-): Promise<void> {
-  const documentCount = vectorStore.getDocumentCount();
-  const docsForLocale = vectorStore.getAllDocuments(locale);
-  const hasDocsForLocale = docsForLocale.length > 0;
-
-  if (documentCount === 0 || !hasDocsForLocale) {
-    try {
-      if (documentCount > 0) {
-        // eslint-disable-next-line no-console
-        console.log(
-          `Vector store has ${documentCount} documents but none for locale '${locale}'. Adding notes for this locale...`
-        );
-      }
-      await addNotesForLocale(locale);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error initializing vector store for recommendations:', error);
-    }
-  }
-}
-
-/**
  * Handle getRecommendations action
  */
 async function handleGetRecommendations(
@@ -65,9 +38,6 @@ async function handleGetRecommendations(
   rateLimitRemaining: number
 ): Promise<Response> {
   const detectedLocale: 'id' | 'en' = locale === 'en' ? 'en' : 'id';
-  const vectorStore = getVectorStore();
-
-  await ensureVectorStoreForLocale(detectedLocale, vectorStore);
 
   try {
     const currentPageContext = currentPage
@@ -151,6 +121,8 @@ async function handleInitialize(
 
 /**
  * Initialize vector store for query if needed
+ * Note: Chunking/embedding is now handled by /api/init-vectors endpoint
+ * This function only checks if data exists and returns error if not initialized
  */
 async function initializeVectorStoreForQuery(
   locale: string | undefined,
@@ -162,45 +134,35 @@ async function initializeVectorStoreForQuery(
 
   if (documentCount === 0) {
     // eslint-disable-next-line no-console
-    console.log('Vector store is empty, initializing with embeddings...');
-    try {
-      await addNotesForLocale(detectedLocaleForQuery);
-      // eslint-disable-next-line no-console
-      console.log(
-        `Vector store initialized with ${vectorStore.getDocumentCount()} documents for locale '${detectedLocaleForQuery}'`
-      );
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error embedding notes:', error);
-      return createErrorResponse(
-        'Failed to initialize vector store',
-        error instanceof Error ? error.message : 'Unknown error',
-        500,
-        corsHeaders
-      );
-    }
-  } else {
-    const docsForLocale = vectorStore.getAllDocuments(detectedLocaleForQuery);
-    if (docsForLocale.length === 0) {
-      // eslint-disable-next-line no-console
-      console.log(`No documents found for locale '${detectedLocaleForQuery}', adding now...`);
-      try {
-        await addNotesForLocale(detectedLocaleForQuery);
-        // eslint-disable-next-line no-console
-        console.log(
-          `Added notes for locale '${detectedLocaleForQuery}'. Total documents: ${vectorStore.getDocumentCount()}`
-        );
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(`Error embedding notes for locale '${detectedLocaleForQuery}':`, error);
-      }
-    } else {
-      // eslint-disable-next-line no-console
-      console.log(
-        `Using existing vector store with ${documentCount} documents (${docsForLocale.length} for locale '${detectedLocaleForQuery}')`
-      );
-    }
+    console.log(
+      `Vector store is empty. Please wait for initialization via /api/init-vectors endpoint.`
+    );
+    return createErrorResponse(
+      'Vector store not initialized',
+      'Vector store is being initialized. Please try again in a moment.',
+      503, // Service Unavailable
+      corsHeaders
+    );
   }
+
+  const docsForLocale = vectorStore.getAllDocuments(detectedLocaleForQuery);
+  if (docsForLocale.length === 0) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `No documents found for locale '${detectedLocaleForQuery}'. Vector store may still be initializing.`
+    );
+    return createErrorResponse(
+      'Vector store not initialized for locale',
+      `Vector store is being initialized for locale '${detectedLocaleForQuery}'. Please try again in a moment.`,
+      503, // Service Unavailable
+      corsHeaders
+    );
+  }
+
+  // eslint-disable-next-line no-console
+  console.log(
+    `Using existing vector store with ${documentCount} documents (${docsForLocale.length} for locale '${detectedLocaleForQuery}')`
+  );
 
   return null;
 }

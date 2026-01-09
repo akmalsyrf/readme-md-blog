@@ -423,6 +423,12 @@ export async function generateRecommendations(
       return fallbackQuestions;
     }
 
+    // Randomize titles order to make recommendations more unpredictable
+    for (let i = sampleTitles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [sampleTitles[i], sampleTitles[j]] = [sampleTitles[j], sampleTitles[i]];
+    }
+
     // Get translations
     const t = getTranslations(locale);
 
@@ -445,11 +451,22 @@ export async function generateRecommendations(
       const text = await generateWithCloudflare(userPrompt, systemInstruction, locale);
 
       // Parse recommendations from response
-      const recommendations = text
+      const allRecommendations = text
         .split('\n')
         .map((line) => line.trim())
-        .filter((line) => line.length > 0 && !/^\d+[.)]/.test(line)) // Remove numbered items
-        .slice(0, count);
+        .filter((line) => line.length > 0 && !/^\d+[.)]/.test(line)); // Remove numbered items
+
+      // Randomize recommendations before slicing to make them more unpredictable
+      const shuffledRecommendations = [...allRecommendations];
+      for (let i = shuffledRecommendations.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledRecommendations[i], shuffledRecommendations[j]] = [
+          shuffledRecommendations[j],
+          shuffledRecommendations[i],
+        ];
+      }
+
+      const recommendations = shuffledRecommendations.slice(0, count);
 
       // Return generated recommendations if available, otherwise fallback
       return recommendations.length > 0 ? recommendations : fallbackQuestions;

@@ -70,11 +70,19 @@ async function _embedNotesInternal(
     return slug.endsWith(`/${locale}`);
   });
 
+  // Randomize note order to make recommendations more unpredictable
+  // Using Fisher-Yates shuffle algorithm
+  const shuffledNotes = [...notes];
+  for (let i = shuffledNotes.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledNotes[i], shuffledNotes[j]] = [shuffledNotes[j], shuffledNotes[i]];
+  }
+
   // eslint-disable-next-line no-console
-  console.log(`Loading ${notes.length} notes for locale '${locale}'...`);
+  console.log(`Loading ${shuffledNotes.length} notes for locale '${locale}'...`);
   let totalChunks = 0;
 
-  for (const note of notes) {
+  for (const note of shuffledNotes) {
     try {
       const noteLocale = note.slug.endsWith('/en') ? 'en' : 'id';
       const noteId = note.slug.replace(/\/\w+$/, ''); // Remove /id or /en suffix
