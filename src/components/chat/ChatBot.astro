@@ -306,6 +306,9 @@ const { locale = 'id' } = Astro.props;
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     };
 
+    // Debounce timer for streaming math rendering
+    let streamingMathTimeout = null;
+
     const updateStreamingAnswer = (text) => {
       if (!currentAnswerContainer) {
         const { answerContainer } = createStreamingMessage();
@@ -315,6 +318,20 @@ const { locale = 'id' } = Astro.props;
       const html = renderMarkdown(text);
       currentAnswerContainer.innerHTML = html;
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Debounce math rendering during streaming (render every 500ms)
+      if (streamingMathTimeout) {
+        clearTimeout(streamingMathTimeout);
+      }
+      streamingMathTimeout = setTimeout(() => {
+        if (typeof window.renderChatbotMath === 'function' && currentAnswerContainer) {
+          // Check if content has math delimiters before rendering
+          const hasMath = /\$[^$]+\$|\$\$[^$]+\$\$|\\\[|\\\(/.test(text);
+          if (hasMath) {
+            window.renderChatbotMath(currentAnswerContainer);
+          }
+        }
+      }, 500);
     };
 
     const finalizeStreamingMessage = (sources) => {
@@ -351,6 +368,25 @@ const { locale = 'id' } = Astro.props;
       const answerText = currentAnswerContainer ? currentAnswerContainer.innerText : '';
       saveChatHistory(answerText, false, sources);
       saveChatState();
+
+      // Clear streaming math timeout
+      if (streamingMathTimeout) {
+        clearTimeout(streamingMathTimeout);
+        streamingMathTimeout = null;
+      }
+
+      // Render math formulas if KaTeX is available
+      if (typeof window.renderChatbotMath === 'function') {
+        // Render math in the streaming message that was just finalized
+        setTimeout(() => {
+          if (currentAnswerContainer) {
+            window.renderChatbotMath(currentAnswerContainer);
+          } else {
+            // Fallback to full container
+            window.renderChatbotMath();
+          }
+        }, 150);
+      }
 
       // Reset streaming state
       currentStreamingMessage = null;
@@ -391,6 +427,45 @@ const { locale = 'id' } = Astro.props;
         const html = renderMarkdown(text);
         markdownContent.innerHTML = html;
         contentDiv.appendChild(markdownContent);
+
+        // Render math immediately after markdown is rendered
+        // Check if text contains math delimiters (including escaped $)
+        const mathPattern = /\$[^$\n]+\$|\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)/;
+        const hasMath = mathPattern.test(text);
+        if (hasMath) {
+          // Use multiple strategies to ensure math is rendered
+          const renderMath = () => {
+            if (typeof window.renderChatbotMath === 'function') {
+              window.renderChatbotMath(markdownContent);
+            } else if (typeof renderMathInElement !== 'undefined') {
+              // Fallback: direct call if function not available but KaTeX is
+              try {
+                // eslint-disable-next-line no-undef
+                renderMathInElement(markdownContent, {
+                  delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false },
+                    { left: '\\[', right: '\\]', display: true },
+                    { left: '\\(', right: '\\)', display: false },
+                  ],
+                  throwOnError: false,
+                  strict: false,
+                });
+              } catch (e) {
+                // eslint-disable-next-line no-console
+                console.warn('Math render error:', e);
+              }
+            }
+          };
+
+          // Try immediately, then with delays
+          renderMath();
+          setTimeout(renderMath, 50);
+          setTimeout(renderMath, 200);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(renderMath);
+          });
+        }
       } else {
         // User messages remain as plain text
         const textP = document.createElement('p');
@@ -429,6 +504,17 @@ const { locale = 'id' } = Astro.props;
       messagesContainer.appendChild(messageDiv);
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
+      // Math rendering is already handled in the markdown rendering section above
+      // This is a fallback in case math wasn't detected earlier
+      if (!isUser && typeof window.renderChatbotMath === 'function') {
+        const markdownContent = messageDiv.querySelector('.prose');
+        if (markdownContent) {
+          setTimeout(() => {
+            window.renderChatbotMath(markdownContent);
+          }, 200);
+        }
+      }
+
       // Hide recommendations after first message
       if (!hasMessages) {
         hasMessages = true;
@@ -465,6 +551,13 @@ const { locale = 'id' } = Astro.props;
 
             hasMessages = true;
             recommendationsContainer.innerHTML = '';
+
+            // Render math formulas after loading history
+            setTimeout(() => {
+              if (typeof window.renderChatbotMath === 'function') {
+                window.renderChatbotMath();
+              }
+            }, 100);
           }
         }
 

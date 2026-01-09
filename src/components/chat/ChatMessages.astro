@@ -93,4 +93,152 @@ const t = getTranslations(locale);
   .chatbot-messages::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400 dark:bg-gray-500;
   }
+
+  /* KaTeX math formula styling */
+  .chatbot-messages .katex {
+    @apply text-gray-900 dark:text-gray-100;
+    font-size: 1em;
+  }
+
+  .chatbot-messages .katex-display {
+    @apply my-4 overflow-x-auto overflow-y-hidden;
+    @apply px-2;
+  }
+
+  .chatbot-messages .katex-display > .katex {
+    @apply text-sm;
+    display: inline-block;
+    text-align: initial;
+  }
+
+  /* Ensure math formulas don't break layout */
+  .chatbot-messages .katex-display {
+    @apply break-inside-avoid;
+  }
+
+  /* Inline math styling */
+  .chatbot-messages .katex:not(.katex-display) {
+    @apply text-gray-800 dark:text-gray-200;
+  }
 </style>
+
+{/* KaTeX scripts for math rendering */}
+<script is:inline>
+  // Initialize render function before scripts load
+  (function () {
+    let renderTimeout = null;
+    let retryCount = 0;
+    const MAX_RETRIES = 50; // 5 seconds max wait
+    let mathObserver = null;
+
+    function renderChatbotMath(element = null) {
+      // Clear any pending timeout
+      if (renderTimeout) {
+        clearTimeout(renderTimeout);
+        renderTimeout = null;
+      }
+
+      // Check if KaTeX is loaded
+      if (typeof renderMathInElement === 'undefined') {
+        retryCount++;
+        if (retryCount < MAX_RETRIES) {
+          renderTimeout = setTimeout(() => renderChatbotMath(element), 100);
+        }
+        return;
+      }
+
+      // Reset retry count on success
+      retryCount = 0;
+
+      // Use provided element or find messages container
+      const targetElement = element || document.getElementById('chatbot-messages');
+      if (targetElement) {
+        try {
+          // eslint-disable-next-line no-undef
+          renderMathInElement(targetElement, {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '$', right: '$', display: false },
+              { left: '\\[', right: '\\]', display: true },
+              { left: '\\(', right: '\\)', display: false },
+            ],
+            throwOnError: false,
+            strict: false,
+          });
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.warn('Error rendering math:', error);
+        }
+      }
+    }
+
+    // Setup MutationObserver to auto-render math when new content is added
+    function setupMathObserver() {
+      const messagesContainer = document.getElementById('chatbot-messages');
+      if (!messagesContainer || mathObserver) return;
+
+      mathObserver = new MutationObserver((mutations) => {
+        let shouldRender = false;
+        mutations.forEach((mutation) => {
+          if (mutation.addedNodes.length > 0) {
+            // Check if any added node contains text that might have math
+            mutation.addedNodes.forEach((node) => {
+              if (node.nodeType === 1) {
+                // Element node
+                const text = node.textContent || '';
+                // Check if text contains math delimiters (including escaped $)
+                const mathPattern =
+                  /\$[^$\n]+\$|\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)/;
+                if (mathPattern.test(text)) {
+                  shouldRender = true;
+                }
+              }
+            });
+          }
+        });
+
+        if (shouldRender && typeof renderMathInElement !== 'undefined') {
+          // Debounce rendering
+          setTimeout(() => {
+            if (typeof window.renderChatbotMath === 'function') {
+              window.renderChatbotMath();
+            }
+          }, 100);
+        }
+      });
+
+      mathObserver.observe(messagesContainer, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
+    // Make function available globally for ChatBot to call
+    window.renderChatbotMath = renderChatbotMath;
+
+    // Initialize when DOM is ready
+    function init() {
+      renderChatbotMath();
+      setupMathObserver();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      // DOM already ready, but wait a bit for scripts to load
+      setTimeout(init, 100);
+    }
+  })();
+</script>
+<script
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.12/dist/katex.min.js"
+  integrity="sha384-VkqWq8xtm5YQk1BBXczQ8/Sx+DlCzF8cuS43bZwmtVXzRFtyLTqTCdP7MKmKo+KN"
+  crossorigin="anonymous"
+  defer></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.12/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+  crossorigin="anonymous"
+  defer
+  onload="if (typeof window.renderChatbotMath === 'function') { window.renderChatbotMath(); }"
+></script>
