@@ -1,0 +1,112 @@
+---
+import type { Locale } from '../../../utils/i18n';
+import { getTranslations, translations } from '../../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  apiBaseUrl: string;
+}
+
+const { locale, apiBaseUrl } = Astro.props;
+const t = getTranslations(locale);
+---
+
+<select
+  id="deep-research-focus"
+  class="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 sm:px-3 sm:text-sm"
+  title={t.deepResearchChat.focus.selectPlaceholder}
+>
+  <option value="">{t.deepResearchChat.focus.loading}</option>
+</select>
+
+<script
+  define:vars={{
+    locale,
+    apiBaseUrl,
+    translations: {
+      id: {
+        selectFocus: translations.id.deepResearchChat.focus.selectFocus,
+      },
+      en: {
+        selectFocus: translations.en.deepResearchChat.focus.selectFocus,
+      },
+    },
+  }}
+>
+  const focusSelect = document.getElementById('deep-research-focus');
+
+  if (focusSelect) {
+    // Load focuses from API
+    const loadFocuses = async () => {
+      try {
+        const focusesUrl = `${apiBaseUrl}/research/focuses`;
+
+        const response = await fetch(focusesUrl);
+        if (!response.ok) {
+          throw new Error('Failed to load focuses');
+        }
+
+        const data = await response.json();
+        const focuses = data.focuses || [];
+
+        // Clear loading option
+        focusSelect.innerHTML = '';
+
+        // Add default option
+        const t = translations[locale];
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = t.selectFocus;
+        focusSelect.appendChild(defaultOption);
+
+        // Add focus options
+        focuses.forEach((focus) => {
+          const option = document.createElement('option');
+          option.value = focus.value;
+          option.textContent = focus.name;
+          option.title = focus.description || focus.name;
+          focusSelect.appendChild(option);
+        });
+
+        // Set default to GENERAL if available
+        const generalOption = Array.from(focusSelect.options).find(
+          (opt) => opt.value === 'GENERAL'
+        );
+        if (generalOption) {
+          focusSelect.value = 'GENERAL';
+        }
+      } catch (error) {
+        console.error('Error loading focuses:', error);
+        // Set default option on error
+        focusSelect.innerHTML = '';
+        const errorOption = document.createElement('option');
+        errorOption.value = 'GENERAL';
+        errorOption.textContent = 'GENERAL';
+        focusSelect.appendChild(errorOption);
+        focusSelect.value = 'GENERAL';
+      }
+    };
+
+    // Load focuses on component mount
+    loadFocuses();
+  }
+</script>
+
+<style>
+  /* Focus dropdown on mobile */
+  #deep-research-focus {
+    min-width: 100px;
+    max-width: 120px;
+    font-size: 0.75rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    #deep-research-focus {
+      min-width: 120px;
+      max-width: 150px;
+      font-size: 0.875rem;
+    }
+  }
+</style>

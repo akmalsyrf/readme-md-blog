@@ -2,6 +2,7 @@
 import ChatButton from './ChatButton.astro';
 import ChatWindow from './ChatWindow.astro';
 import { translations, type Locale } from '../../utils/i18n';
+import { STORAGE_KEYS } from '../../utils/storageConfig';
 
 interface Props {
   locale?: Locale;
@@ -33,6 +34,10 @@ const { locale = 'id' } = Astro.props;
 <script
   define:vars={{
     locale,
+    storageKeys: {
+      chatbotHistory: STORAGE_KEYS.CHATBOT_HISTORY,
+      chatbotState: STORAGE_KEYS.CHATBOT_STATE,
+    },
     translations: {
       id: {
         welcome: translations.id.chatbot.welcome,
@@ -88,9 +93,9 @@ const { locale = 'id' } = Astro.props;
     // eslint-disable-next-line no-console
     console.error('ChatBot: Required DOM elements not found');
   } else {
-    // Storage keys
-    const STORAGE_KEY = 'chatbot_history';
-    const STORAGE_STATE_KEY = 'chatbot_state';
+    // Storage keys from config
+    const STORAGE_KEY = storageKeys.chatbotHistory;
+    const STORAGE_STATE_KEY = storageKeys.chatbotState;
 
     // Check if this is a full page refresh (not navigation)
     const checkNavigationType = () => {

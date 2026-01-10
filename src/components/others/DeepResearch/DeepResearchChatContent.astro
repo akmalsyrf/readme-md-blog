@@ -8,7 +8,17 @@ interface Props {
   apiEndpoint?: string;
 }
 
-const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
+// Get API endpoint from env variable
+const apiBaseUrl = (
+  import.meta.env.API_DEEP_RESEARCH_BASE_URL ||
+  process.env.API_DEEP_RESEARCH_BASE_URL ||
+  ''
+).trim();
+const defaultApiEndpoint = apiBaseUrl
+  ? `${apiBaseUrl}/research`
+  : 'https://api-deep-research-backend.vercel.app/research';
+
+const { locale, t, apiEndpoint = defaultApiEndpoint } = Astro.props;
 ---
 
 <div class="space-y-6">

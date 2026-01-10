@@ -103,6 +103,32 @@ export default {
     downloadReport: 'Unduh Laporan',
     download: 'Unduh',
     closeReport: 'Tutup Laporan',
+    focus: {
+      selectPlaceholder: 'Pilih fokus penelitian',
+      loading: 'Memuat fokus...',
+      selectFocus: 'Pilih Fokus',
+      selectFirst: 'Silakan pilih fokus penelitian terlebih dahulu',
+    },
+    status: {
+      starting: 'Memulai penelitian tentang',
+      complete: 'Penelitian selesai!',
+      restoring: 'Memulihkan progress penelitian sebelumnya...',
+      noData:
+        'Tidak ada data yang diterima dari server. Silakan coba lagi atau periksa koneksi internet Anda.',
+      noFinalReport: 'Data diterima tetapi laporan final tidak ditemukan. Silakan coba lagi.',
+      incomplete: 'Laporan mungkin tidak lengkap - periksa bagian yang hilang',
+    },
+    report: {
+      open: 'Buka Laporan',
+      sources: 'sumber',
+      characters: 'karakter',
+    },
+    reportCanvas: {
+      tableOfContents: 'Daftar Isi',
+      toc: 'Daftar Isi',
+      shareExport: 'Bagikan & Ekspor',
+      share: 'Bagikan',
+    },
   },
   theme: {
     toggle: 'Toggle tema',

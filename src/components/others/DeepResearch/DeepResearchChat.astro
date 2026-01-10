@@ -1,5 +1,8 @@
 ---
 import type { Locale } from '../../../utils/i18n';
+import { translations } from '../../../utils/i18n';
+import { STORAGE_KEYS } from '../../../utils/storageConfig';
+import DeepResearchFocusSelect from './DeepResearchFocusSelect.astro';
 
 interface Props {
   locale: Locale;
@@ -7,7 +10,16 @@ interface Props {
   apiEndpoint?: string;
 }
 
-const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
+// Get API endpoint from env variable
+const apiBaseUrl = (
+  import.meta.env.API_DEEP_RESEARCH_BASE_URL ||
+  process.env.API_DEEP_RESEARCH_BASE_URL ||
+  ''
+).trim();
+const defaultApiBaseUrl = apiBaseUrl || 'https://api-deep-research-backend.vercel.app';
+const defaultApiEndpoint = `${defaultApiBaseUrl}/research`;
+
+const { locale, t, apiEndpoint = defaultApiEndpoint } = Astro.props;
 ---
 
 <div
@@ -94,12 +106,15 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
   <!-- Input Container -->
   <div class="border-t border-gray-200 px-3 py-3 dark:border-gray-700 sm:px-6 sm:py-4">
     <form id="deep-research-form" class="flex gap-2 sm:gap-3">
-      <textarea
-        id="deep-research-input"
-        rows="1"
-        placeholder={t.deepResearchChat.placeholder}
-        class="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 sm:px-4 sm:py-2"
-      ></textarea>
+      <div class="flex flex-1 gap-2 sm:gap-3">
+        <DeepResearchFocusSelect locale={locale} apiBaseUrl={defaultApiBaseUrl} />
+        <textarea
+          id="deep-research-input"
+          rows="1"
+          placeholder={t.deepResearchChat.placeholder}
+          class="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 sm:px-4 sm:py-2"
+        ></textarea>
+      </div>
       <button
         type="submit"
         id="deep-research-submit"
@@ -125,24 +140,250 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
   window.marked = marked;
 </script>
 
+<!-- Load deep research utilities -->
+<script type="module">
+  // Deep Research API utility functions
+  const parseSSELine = (line) => {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) return null;
+    let jsonLine = trimmedLine;
+    if (jsonLine.startsWith('data: ')) {
+      jsonLine = jsonLine.substring(6);
+    }
+    if (!jsonLine || jsonLine.startsWith(':') || jsonLine === '' || jsonLine.startsWith('event:')) {
+      return null;
+    }
+    return jsonLine;
+  };
+
+  const parseStreamChunk = (jsonLine) => {
+    try {
+      return JSON.parse(jsonLine);
+    } catch {
+      return null;
+    }
+  };
+
+  const validateResponse = async (response) => {
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = { message: errorText || 'Unknown error occurred' };
+      }
+      throw new Error(errorData.message || errorData.error || 'Unknown error occurred');
+    }
+    if (!response.body) {
+      throw new Error('Response body is empty');
+    }
+  };
+
+  const createDeepResearchRequest = async (apiEndpoint, request) => {
+    const response = await fetch(apiEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+    await validateResponse(response);
+    return response;
+  };
+
+  const processStreamingResponse = async (response, onChunk) => {
+    if (!response.body) {
+      throw new Error('Response body is empty');
+    }
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let hasReceivedData = false;
+    try {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        hasReceivedData = true;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        for (const line of lines) {
+          const jsonLine = parseSSELine(line);
+          if (!jsonLine) continue;
+          const chunk = parseStreamChunk(jsonLine);
+          if (chunk) {
+            onChunk(chunk);
+          }
+        }
+      }
+      if (!hasReceivedData) {
+        throw new Error('No data received from server');
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  };
+
+  // Expose utilities globally
+  // @ts-ignore
+  window.deepResearchUtils = {
+    createDeepResearchRequest,
+    processStreamingResponse,
+  };
+</script>
+
+<!-- Load deep research utilities -->
+<script type="module">
+  // Deep Research API utility functions (inline to avoid import issues in client-side)
+  const parseSSELine = (line) => {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) return null;
+    let jsonLine = trimmedLine;
+    if (jsonLine.startsWith('data: ')) {
+      jsonLine = jsonLine.substring(6);
+    }
+    if (!jsonLine || jsonLine.startsWith(':') || jsonLine === '' || jsonLine.startsWith('event:')) {
+      return null;
+    }
+    return jsonLine;
+  };
+
+  const parseStreamChunk = (jsonLine) => {
+    try {
+      return JSON.parse(jsonLine);
+    } catch {
+      return null;
+    }
+  };
+
+  const validateResponse = async (response) => {
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = { message: errorText || 'Unknown error occurred' };
+      }
+      throw new Error(errorData.message || errorData.error || 'Unknown error occurred');
+    }
+    if (!response.body) {
+      throw new Error('Response body is empty');
+    }
+  };
+
+  const createDeepResearchRequest = async (apiEndpoint, request) => {
+    const response = await fetch(apiEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+    await validateResponse(response);
+    return response;
+  };
+
+  const processStreamingResponse = async (response, onChunk) => {
+    if (!response.body) {
+      throw new Error('Response body is empty');
+    }
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let hasReceivedData = false;
+    try {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        hasReceivedData = true;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        for (const line of lines) {
+          const jsonLine = parseSSELine(line);
+          if (!jsonLine) continue;
+          const chunk = parseStreamChunk(jsonLine);
+          if (chunk) {
+            onChunk(chunk);
+          }
+        }
+      }
+      if (!hasReceivedData) {
+        throw new Error('No data received from server');
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  };
+
+  // Expose utilities globally
+  // @ts-ignore
+  window.deepResearchUtils = {
+    createDeepResearchRequest,
+    processStreamingResponse,
+  };
+</script>
+
 <script
   define:vars={{
     locale,
     apiEndpoint,
+    storageKeys: {
+      chatHistory: STORAGE_KEYS.DEEP_RESEARCH_CHAT_HISTORY,
+      reports: STORAGE_KEYS.DEEP_RESEARCH_REPORTS,
+      streamData: STORAGE_KEYS.DEEP_RESEARCH_STREAM_DATA,
+      requestState: STORAGE_KEYS.DEEP_RESEARCH_REQUEST_STATE,
+    },
     translations: {
       id: {
-        placeholder: t.deepResearchChat.placeholder,
-        send: t.deepResearchChat.send,
-        processing: t.deepResearchChat.processing,
-        error: t.deepResearchChat.error,
-        errorMessage: t.deepResearchChat.errorMessage,
+        placeholder: translations.id.deepResearchChat.placeholder,
+        send: translations.id.deepResearchChat.send,
+        processing: translations.id.deepResearchChat.processing,
+        error: translations.id.deepResearchChat.error,
+        errorMessage: translations.id.deepResearchChat.errorMessage,
+        focus: {
+          selectFirst: translations.id.deepResearchChat.focus.selectFirst,
+        },
+        status: {
+          starting: translations.id.deepResearchChat.status.starting,
+          complete: translations.id.deepResearchChat.status.complete,
+          restoring: translations.id.deepResearchChat.status.restoring,
+          noData: translations.id.deepResearchChat.status.noData,
+          noFinalReport: translations.id.deepResearchChat.status.noFinalReport,
+          incomplete: translations.id.deepResearchChat.status.incomplete,
+        },
+        report: {
+          open: translations.id.deepResearchChat.report.open,
+          sources: translations.id.deepResearchChat.report.sources,
+          characters: translations.id.deepResearchChat.report.characters,
+        },
       },
       en: {
-        placeholder: t.deepResearchChat.placeholder,
-        send: t.deepResearchChat.send,
-        processing: t.deepResearchChat.processing,
-        error: t.deepResearchChat.error,
-        errorMessage: t.deepResearchChat.errorMessage,
+        placeholder: translations.en.deepResearchChat.placeholder,
+        send: translations.en.deepResearchChat.send,
+        processing: translations.en.deepResearchChat.processing,
+        error: translations.en.deepResearchChat.error,
+        errorMessage: translations.en.deepResearchChat.errorMessage,
+        focus: {
+          selectFirst: translations.en.deepResearchChat.focus.selectFirst,
+        },
+        status: {
+          starting: translations.en.deepResearchChat.status.starting,
+          complete: translations.en.deepResearchChat.status.complete,
+          restoring: translations.en.deepResearchChat.status.restoring,
+          noData: translations.en.deepResearchChat.status.noData,
+          noFinalReport: translations.en.deepResearchChat.status.noFinalReport,
+          incomplete: translations.en.deepResearchChat.status.incomplete,
+        },
+        report: {
+          open: translations.en.deepResearchChat.report.open,
+          sources: translations.en.deepResearchChat.report.sources,
+          characters: translations.en.deepResearchChat.report.characters,
+        },
       },
     },
   }}
@@ -156,6 +397,25 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
   if (!form || !input || !submitBtn || !messagesContainer) {
     // Elements not found, will retry
   } else {
+    // Storage keys from config
+    const STORAGE_KEY = storageKeys.chatHistory;
+    const STORAGE_REPORTS_KEY = storageKeys.reports;
+    const STORAGE_STREAM_KEY = storageKeys.streamData;
+    const STORAGE_REQUEST_STATE_KEY = storageKeys.requestState;
+
+    // Check if this is a full page refresh (not navigation)
+    const checkNavigationType = () => {
+      try {
+        const navEntries = performance.getEntriesByType('navigation');
+        if (navEntries && navEntries.length > 0) {
+          const navEntry = navEntries[0];
+          return navEntry.type; // 'reload', 'navigate', 'back_forward', etc.
+        }
+      } catch (error) {
+        // Fallback
+      }
+      return 'navigate'; // Default to navigate
+    };
     // Render markdown
     const renderMarkdown = (text) => {
       try {
@@ -170,8 +430,137 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
       }
     };
 
+    // Save chat history to localStorage
+    const saveChatHistory = (text, isUser) => {
+      try {
+        const existingHistory = localStorage.getItem(STORAGE_KEY);
+        const messages = existingHistory ? JSON.parse(existingHistory) : [];
+
+        messages.push({
+          text,
+          isUser,
+          timestamp: Date.now(),
+        });
+
+        // Keep only last 100 messages to avoid storage limit
+        const trimmedMessages = messages.slice(-100);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmedMessages));
+      } catch (error) {
+        console.error('Error saving chat history:', error);
+      }
+    };
+
+    // Save report to localStorage
+    const saveReport = (title, report, sources) => {
+      try {
+        const existingReports = localStorage.getItem(STORAGE_REPORTS_KEY);
+        const reports = existingReports ? JSON.parse(existingReports) : [];
+
+        reports.push({
+          title,
+          report,
+          sources: sources || [],
+          timestamp: Date.now(),
+        });
+
+        // Keep only last 20 reports
+        const trimmedReports = reports.slice(-20);
+        localStorage.setItem(STORAGE_REPORTS_KEY, JSON.stringify(trimmedReports));
+      } catch (error) {
+        console.error('Error saving report:', error);
+      }
+    };
+
+    // Save streaming chunk to localStorage
+    const saveStreamChunk = (chunkData) => {
+      try {
+        const existingStream = localStorage.getItem(STORAGE_STREAM_KEY);
+        const streamData = existingStream
+          ? JSON.parse(existingStream)
+          : {
+              chunks: [],
+              lastUpdate: Date.now(),
+            };
+
+        streamData.chunks.push({
+          ...chunkData,
+          timestamp: Date.now(),
+        });
+        streamData.lastUpdate = Date.now();
+
+        // Keep only last 1000 chunks to avoid storage limit
+        if (streamData.chunks.length > 1000) {
+          streamData.chunks = streamData.chunks.slice(-1000);
+        }
+
+        localStorage.setItem(STORAGE_STREAM_KEY, JSON.stringify(streamData));
+      } catch (error) {
+        console.error('Error saving stream chunk:', error);
+      }
+    };
+
+    // Save request state
+    const saveRequestState = (state) => {
+      try {
+        localStorage.setItem(
+          STORAGE_REQUEST_STATE_KEY,
+          JSON.stringify({
+            ...state,
+            lastUpdate: Date.now(),
+          })
+        );
+      } catch (error) {
+        console.error('Error saving request state:', error);
+      }
+    };
+
+    // Clear request state
+    const clearRequestState = () => {
+      try {
+        localStorage.removeItem(STORAGE_REQUEST_STATE_KEY);
+        localStorage.removeItem(STORAGE_STREAM_KEY);
+      } catch (error) {
+        console.error('Error clearing request state:', error);
+      }
+    };
+
+    // Load chat history from localStorage
+    const loadChatHistory = () => {
+      try {
+        const savedHistory = localStorage.getItem(STORAGE_KEY);
+        const savedReports = localStorage.getItem(STORAGE_REPORTS_KEY);
+
+        if (savedHistory) {
+          const messages = JSON.parse(savedHistory);
+
+          // Clear welcome message if we have saved messages
+          if (messages.length > 0) {
+            const welcomeMessage = messagesContainer.querySelector('.flex.items-start.space-x-2');
+            if (welcomeMessage && welcomeMessage.textContent?.includes(t.welcome)) {
+              welcomeMessage.remove();
+            }
+
+            // Restore messages
+            messages.forEach((msg) => {
+              addMessage(msg.text, msg.isUser, false); // false = don't save to storage again
+            });
+          }
+        }
+
+        // Restore report cards
+        if (savedReports) {
+          const reports = JSON.parse(savedReports);
+          reports.forEach((reportData) => {
+            addReportCard(reportData.title, reportData.report, reportData.sources, false);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading chat history:', error);
+      }
+    };
+
     // Add message to DOM
-    const addMessage = (text, isUser = false) => {
+    const addMessage = (text, isUser = false, saveToStorage = true) => {
       const messageDiv = document.createElement('div');
       messageDiv.className = `flex items-start space-x-2 sm:space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
 
@@ -210,347 +599,190 @@ const { locale, t, apiEndpoint = '/api/deep-research-chat' } = Astro.props;
       messageDiv.appendChild(contentDiv);
       messagesContainer.appendChild(messageDiv);
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Save to localStorage if not loading from storage
+      if (saveToStorage) {
+        saveChatHistory(text, isUser);
+      }
     };
 
-    // Load dummy chat history on page load
-    const loadDummyChatHistory = () => {
-      const dummyMessages = [
-        {
-          text:
-            locale === 'id'
-              ? 'Apa itu quantum computing dan bagaimana cara kerjanya?'
-              : 'What is quantum computing and how does it work?',
-          isUser: true,
-        },
-        {
-          text:
-            locale === 'id'
-              ? 'Saya akan melakukan penelitian mendalam tentang quantum computing untuk Anda. Ini akan memakan waktu beberapa saat...'
-              : 'I will conduct deep research on quantum computing for you. This will take a few moments...',
-          isUser: false,
-        },
-        {
-          text:
-            locale === 'id'
-              ? 'Baik, saya sudah selesai melakukan penelitian. Berikut adalah laporan lengkapnya:'
-              : 'Great! I have completed the research. Here is the full report:',
-          isUser: false,
-        },
-      ];
-
-      dummyMessages.forEach((msg) => {
-        addMessage(msg.text, msg.isUser);
+    // Add report card to reopen the report
+    const addReportCard = (title, report, sourcesList = [], saveToStorage = true) => {
+      const cardId = `report-card-${Date.now()}`;
+      const cardDate = new Date().toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', {
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
       });
+      const t = translations[locale];
+      const buttonText = t.report.open;
 
-      // Show research card after a short delay
-      setTimeout(() => {
-        const researchCard = document.createElement('div');
-        researchCard.className = 'flex items-start space-x-3';
-
-        const cardTitle =
-          locale === 'id' ? 'Memahami Quantum Computing' : 'Understanding Quantum Computing';
-        const cardDate = new Date().toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', {
-          day: 'numeric',
-          month: 'short',
-          hour: '2-digit',
-          minute: '2-digit',
-        });
-        const buttonText = locale === 'id' ? 'Buka' : 'Open';
-
-        researchCard.innerHTML = `
+      const researchCard = document.createElement('div');
+      researchCard.className = 'flex items-start space-x-2 sm:space-x-3';
+      researchCard.innerHTML = `
           <div class="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
             <svg class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
           <div class="flex-1 min-w-0">
-            <div class="group relative flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-xl border border-gray-200 bg-white p-3 sm:p-4 transition-all hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 cursor-pointer" id="research-card-default">
+          <div class="group relative flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-xl border border-gray-200 bg-white p-3 sm:p-4 transition-all hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 cursor-pointer" id="${cardId}">
               <div class="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
                 <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="truncate text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">${cardTitle}</h3>
-                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">${cardDate}</p>
+              <h3 class="truncate text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">${title}</h3>
+              <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">${cardDate}${sourcesList.length > 0 ? ` • ${sourcesList.length} ${t.report.sources}` : ''}</p>
               </div>
-              <button id="research-card-open-btn" class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 sm:py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 touch-manipulation" data-report-id="default">
+            <button class="report-open-btn w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 sm:py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 touch-manipulation">
                 ${buttonText}
               </button>
             </div>
           </div>
         `;
-        messagesContainer.appendChild(researchCard);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-        // Add click handler immediately after card is added to DOM
-        // Use requestAnimationFrame to ensure DOM is updated
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            const card = document.getElementById('research-card-default');
-            const openBtn = document.getElementById('research-card-open-btn');
-
-            if (card && openBtn) {
-              const dummyReport = `# Deep Research Report: Understanding Quantum Computing
-
-## Executive Summary
-
-Quantum computing represents a paradigm shift in computational capabilities, leveraging the principles of quantum mechanics to process information in fundamentally different ways compared to classical computers. This report provides a comprehensive analysis of quantum computing, its current state, potential applications, and future implications.
-
-## Introduction
-
-Quantum computing is an emerging technology that harnesses quantum mechanical phenomena such as superposition and entanglement to perform computations. Unlike classical bits that exist in either 0 or 1 states, quantum bits (qubits) can exist in a superposition of both states simultaneously, enabling exponential increases in computational power for certain types of problems.
-
-## Current State of Quantum Computing
-
-### Hardware Development
-
-Major technology companies including IBM, Google, Microsoft, and Amazon are investing heavily in quantum computing research. IBM's quantum processors have reached milestones with systems containing over 100 qubits, while Google achieved "quantum supremacy" in 2019 with their 53-qubit Sycamore processor.
-
-### Challenges
-
-Despite significant progress, quantum computing faces several critical challenges:
-
-1. **Quantum Decoherence**: Qubits are extremely fragile and lose their quantum state quickly due to environmental interference
-2. **Error Rates**: Current quantum systems have high error rates that require extensive error correction
-3. **Scalability**: Building larger, more stable quantum systems remains a significant engineering challenge
-4. **Temperature Requirements**: Most quantum systems require near-absolute zero temperatures to function
-
-## Potential Applications
-
-### Cryptography
-
-Quantum computing poses both threats and opportunities for cryptography. While quantum computers could potentially break current encryption methods, quantum cryptography offers new, theoretically unbreakable encryption techniques based on quantum key distribution.
-
-### Drug Discovery
-
-Quantum computers could simulate molecular interactions at the quantum level, dramatically accelerating drug discovery and development processes. This could lead to faster development of treatments for diseases like cancer, Alzheimer's, and COVID-19.
-
-### Financial Modeling
-
-Complex financial models involving risk analysis, portfolio optimization, and fraud detection could benefit from quantum computing's ability to process vast amounts of data and explore multiple scenarios simultaneously.
-
-### Artificial Intelligence
-
-Quantum machine learning algorithms could potentially solve optimization problems that are currently intractable for classical computers, leading to more powerful AI systems.
-
-### Climate Modeling
-
-Quantum computers could help model complex climate systems more accurately, potentially improving our understanding of climate change and enabling better predictions.
-
-## Technical Deep Dive
-
-### Quantum Gates
-
-Quantum gates are the fundamental building blocks of quantum circuits, analogous to logic gates in classical computing. Common quantum gates include:
-
-- **Pauli Gates**: X, Y, Z gates for qubit manipulation
-- **Hadamard Gate**: Creates superposition states
-- **CNOT Gate**: Creates entanglement between qubits
-- **Phase Gates**: Modify the phase of quantum states
-
-### Quantum Algorithms
-
-Several important quantum algorithms have been developed:
-
-1. **Shor's Algorithm**: Factors large numbers exponentially faster than classical algorithms
-2. **Grover's Algorithm**: Provides quadratic speedup for unstructured search problems
-3. **Quantum Fourier Transform**: Fundamental to many quantum algorithms
-4. **Variational Quantum Eigensolver**: Used for quantum chemistry simulations
-
-## Industry Landscape
-
-### Major Players
-
-- **IBM**: Leading in quantum hardware with accessible cloud-based quantum systems
-- **Google**: Achieved quantum supremacy and developing error-corrected quantum computers
-- **Microsoft**: Focusing on topological qubits and quantum software development
-- **Amazon**: Offering quantum computing services through AWS Braket
-- **IonQ**: Developing trapped-ion quantum computers
-- **Rigetti Computing**: Building superconducting quantum processors
-
-### Investment Trends
-
-Global investment in quantum computing has been growing rapidly, with billions of dollars invested annually. Governments worldwide are also increasing funding for quantum research, recognizing its strategic importance.
-
-## Future Outlook
-
-### Short-term (1-5 years)
-
-- Continued improvement in qubit count and stability
-- Development of better error correction methods
-- Increased accessibility through cloud platforms
-- More practical applications in optimization and simulation
-
-### Medium-term (5-10 years)
-
-- Quantum advantage demonstrated in real-world applications
-- Integration of quantum and classical computing systems
-- Development of quantum networks for secure communication
-- Breakthroughs in quantum machine learning
-
-### Long-term (10+ years)
-
-- Fault-tolerant quantum computers
-- Widespread adoption in various industries
-- Potential transformation of cryptography and security
-- New discoveries enabled by quantum simulation capabilities
-
-## Risks and Considerations
-
-### Security Implications
-
-The development of quantum computers capable of breaking current encryption could have significant security implications. Organizations need to begin preparing for "quantum-safe" cryptography.
-
-### Ethical Concerns
-
-As with any powerful technology, quantum computing raises ethical questions about:
-- Access and equity
-- Potential misuse
-- Environmental impact of quantum systems
-- Job displacement in certain sectors
-
-## Conclusion
-
-Quantum computing represents one of the most exciting frontiers in technology today. While still in early stages, the potential applications are vast and transformative. Success will require continued investment, collaboration between academia and industry, and careful consideration of the societal implications.
-
-The journey toward practical quantum computing is complex and challenging, but the potential rewards—from solving previously intractable problems to enabling new scientific discoveries—make it a pursuit worth undertaking.
-
-## References
-
-1. Arute, F., et al. (2019). "Quantum supremacy using a programmable superconducting processor." Nature, 574(7779), 505-510.
-
-2. Preskill, J. (2018). "Quantum Computing in the NISQ era and beyond." Quantum, 2, 79.
-
-3. National Academies of Sciences, Engineering, and Medicine. (2019). "Quantum Computing: Progress and Prospects." National Academies Press.
-
-4. IBM Quantum Network. (2024). "Quantum Computing Roadmap." IBM Research.
-
-5. Google AI Quantum. (2024). "Quantum Computing Research." Google Research.`;
-
-              const openReport = () => {
-                const title =
-                  locale === 'id'
-                    ? 'Memahami Quantum Computing'
-                    : 'Understanding Quantum Computing';
-
-                // Try to use global functions first (preferred method)
-                // @ts-ignore
-                if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
-                  // @ts-ignore
-                  window.displayDeepResearchReport(dummyReport, title);
-                  return;
-                }
-
-                // @ts-ignore
-                if (typeof window !== 'undefined' && window.openDeepResearchReport) {
-                  // @ts-ignore
-                  window.openDeepResearchReport('default');
-                  return;
-                }
-
-                // Fallback: try to access elements directly and use openModal
-                const canvas = document.getElementById('deep-research-report-canvas');
-                const reportContent = document.getElementById('deep-research-report-content');
-                const titleEl = document.getElementById('deep-research-report-title');
-
-                if (!canvas || !reportContent) {
-                  // Retry after a short delay
-                  setTimeout(() => {
-                    // @ts-ignore
-                    if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
-                      // @ts-ignore
-                      window.displayDeepResearchReport(dummyReport, title);
-                    }
-                  }, 200);
-                  return;
-                }
-
-                // Render markdown
-                let html = dummyReport;
-                // @ts-ignore
-                if (typeof window !== 'undefined' && window.marked) {
-                  try {
-                    // @ts-ignore
-                    html = window.marked.parse(dummyReport);
-                  } catch (error) {
-                    // Silent fail
-                  }
-                }
-
-                // Update content
-                reportContent.innerHTML = html;
-
-                // Update title
-                if (titleEl) {
-                  titleEl.textContent = title;
-                }
-
-                // Show modal using the same method as openModal
-                canvas.style.position = 'fixed';
-                canvas.style.top = '0';
-                canvas.style.left = '0';
-                canvas.style.right = '0';
-                canvas.style.bottom = '0';
-                canvas.style.width = '100vw';
-                canvas.style.height = '100vh';
-                canvas.style.zIndex = '99999';
-                canvas.style.margin = '0';
-                canvas.style.padding = '0';
-                canvas.classList.add('active');
-                canvas.style.display = 'flex';
-
-                // Hide header and other elements
-                const header = document.querySelector('header');
-                if (header) {
-                  header.style.visibility = 'hidden';
-                  header.style.pointerEvents = 'none';
-                }
-
-                const chatButton = document.getElementById('chatbot-toggle');
-                if (chatButton) {
-                  chatButton.style.visibility = 'hidden';
-                  chatButton.style.pointerEvents = 'none';
-                }
-
-                // Prevent body scroll
-                const scrollY = window.scrollY;
-                document.body.style.overflow = 'hidden';
-                document.body.style.position = 'fixed';
-                document.body.style.top = `-${scrollY}px`;
-                document.body.style.width = '100%';
-                document.body.style.height = '100%';
-              };
-
-              // Add event listeners - use both onclick and addEventListener for maximum compatibility
-              const handleButtonClick = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                openReport();
-                return false;
-              };
-
-              const handleCardClick = (e) => {
-                const target = e.target;
-                // Only trigger if clicking on card itself, not on button
-                if (target && target !== openBtn && !openBtn.contains(target)) {
-                  e.preventDefault();
-                  openReport();
-                  return false;
-                }
-              };
-
-              // Use both methods for maximum compatibility
-              openBtn.onclick = handleButtonClick;
-              openBtn.addEventListener('click', handleButtonClick);
-
-              card.onclick = handleCardClick;
-              card.addEventListener('click', handleCardClick);
-            }
-          }, 300);
+      messagesContainer.appendChild(researchCard);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Add click handlers
+      const card = document.getElementById(cardId);
+      const openBtn = card?.querySelector('.report-open-btn');
+
+      if (card && openBtn) {
+        const openReport = (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+
+          // @ts-ignore
+          if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
+            // @ts-ignore
+            window.displayDeepResearchReport(report, title);
+          } else {
+            // Fallback: show as message
+            addMessage(report, false);
+          }
+          return false;
+        };
+
+        openBtn.addEventListener('click', openReport);
+        card.addEventListener('click', (e) => {
+          if (e.target !== openBtn && !openBtn.contains(e.target)) {
+            openReport(e);
+          }
         });
-      }, 1500);
+      }
+
+      // Save report to localStorage
+      if (saveToStorage) {
+        saveReport(title, report, sourcesList);
+      }
     };
+
+    // Restore streaming progress if request was interrupted
+    const restoreStreamProgress = () => {
+      try {
+        const savedState = localStorage.getItem(STORAGE_REQUEST_STATE_KEY);
+        const savedStream = localStorage.getItem(STORAGE_STREAM_KEY);
+
+        if (savedState && savedStream) {
+          const state = JSON.parse(savedState);
+          const streamData = JSON.parse(savedStream);
+
+          // Only restore if request was still processing (not completed/error)
+          if (state.status === 'processing' || state.status === 'completed') {
+            // Show that we're restoring progress
+            const t = translations[locale];
+            const restoreMessage = `🔄 ${t.status.restoring}`;
+            let restoredStatusMessageId = addStatusMessage(restoreMessage, null, false);
+
+            // Restore all chunks
+            let restoredFinalReport = null;
+            let restoredSources = [];
+
+            streamData.chunks.forEach((chunk) => {
+              const data = chunk;
+
+              if (data.type === 'status') {
+                const statusText = data.message || t.processing;
+                const msgId = addStatusMessage(statusText, null, false);
+                if (!restoredStatusMessageId) {
+                  restoredStatusMessageId = msgId;
+                }
+              } else if (data.type === 'thought') {
+                if (data.content) {
+                  addStatusMessage(data.content, null, false);
+                }
+              } else if (data.type === 'final') {
+                // If we have final report, restore it
+                if (data.report) {
+                  restoredFinalReport = data.report;
+                  restoredSources = data.sources || [];
+
+                  const t = translations[locale];
+                  const completeMessage = `✅ ${t.status.complete} ${t.report.characters}: ${data.report_length || 0}`;
+                  addStatusMessage(completeMessage, null, false);
+
+                  // Restore report card
+                  setTimeout(() => {
+                    addReportCard(state.topic, restoredFinalReport, restoredSources, false);
+                  }, 100);
+
+                  // Clear request state
+                  clearRequestState();
+                }
+              }
+            });
+
+            // If we have a final report, display it
+            if (
+              restoredFinalReport &&
+              typeof window !== 'undefined' &&
+              window.displayDeepResearchReport
+            ) {
+              setTimeout(() => {
+                window.displayDeepResearchReport(restoredFinalReport, state.topic);
+              }, 200);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error restoring stream progress:', error);
+      }
+    };
+
+    // Handle page visibility changes to ensure data is saved
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        // Page is hidden, ensure all data is saved
+        // This is already handled by saveStreamChunk and saveRequestState
+      } else {
+        // Page is visible again, check if we need to restore progress
+        restoreStreamProgress();
+      }
+    });
+
+    // Handle beforeunload to ensure data is saved
+    window.addEventListener('beforeunload', () => {
+      // Force save any pending data
+      // This is already handled by saveStreamChunk and saveRequestState
+    });
+
+    // Check navigation type and load/clear history
+    const navType = checkNavigationType();
+    if (navType === 'reload') {
+      // Full page refresh (hard refresh) - clear history
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_REPORTS_KEY);
+      localStorage.removeItem(STORAGE_STREAM_KEY);
+      localStorage.removeItem(STORAGE_REQUEST_STATE_KEY);
+    } else {
+      // Navigation (not refresh) - load history and restore progress
+      loadChatHistory();
+      restoreStreamProgress();
+    }
 
     // Auto-resize textarea
     const autoResize = () => {
@@ -570,16 +802,116 @@ The journey toward practical quantum computing is complex and challenging, but t
       }
     });
 
-    // Load dummy chat history on page load
-    loadDummyChatHistory();
+    // Update status message
+    const updateStatusMessage = (messageId, text) => {
+      const messageEl = document.getElementById(messageId);
+      if (messageEl) {
+        const contentEl = messageEl.querySelector('.status-content');
+        if (contentEl) {
+          contentEl.textContent = text;
+          // Update icon based on content
+          const iconContainer = messageEl.querySelector('div > div');
+          if (iconContainer && text) {
+            let iconSvg = '';
+            if (text.includes('🔍') || text.includes('Searching')) {
+              iconSvg = `
+                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              `;
+            } else if (
+              text.includes('✓') ||
+              text.includes('Found') ||
+              text.includes('✅') ||
+              text.includes('complete')
+            ) {
+              iconSvg = `
+                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              `;
+            } else if (text.includes('⏳') || text.includes('Retrieving')) {
+              iconSvg = `
+                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600 dark:text-yellow-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              `;
+            }
+            if (iconSvg) {
+              iconContainer.innerHTML = iconSvg;
+            }
+          }
+        }
+      }
+    };
+
+    // Add status/thought message
+    const addStatusMessage = (text, messageId = null, saveToStorage = true) => {
+      const messageDiv = document.createElement('div');
+      const id = messageId || `status-${Date.now()}`;
+      messageDiv.id = id;
+      messageDiv.className = 'flex items-start space-x-2 sm:space-x-3';
+
+      // Different icon based on content
+      let iconSvg = '';
+      if (text.includes('🔍') || text.includes('Searching')) {
+        iconSvg = `
+          <svg class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        `;
+      } else if (text.includes('✓') || text.includes('Found')) {
+        iconSvg = `
+          <svg class="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        `;
+      } else if (text.includes('⏳') || text.includes('Retrieving')) {
+        iconSvg = `
+          <svg class="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600 dark:text-yellow-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        `;
+      } else if (text.includes('✅') || text.includes('complete')) {
+        iconSvg = `
+          <svg class="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        `;
+      } else {
+        iconSvg = `
+          <svg class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        `;
+      }
+
+      messageDiv.innerHTML = `
+        <div class="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+          ${iconSvg}
+        </div>
+        <div class="flex-1 rounded-lg bg-gray-100 px-3 py-2 sm:px-4 sm:py-3 dark:bg-gray-700">
+          <p class="status-content text-xs sm:text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">${text}</p>
+        </div>
+      `;
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Save status message to localStorage
+      if (saveToStorage) {
+        saveChatHistory(text, false);
+      }
+
+      return id;
+    };
 
     // Handle form submission
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const question = input.value.trim();
-      if (!question) return;
+      const topic = input.value.trim();
+      if (!topic) return;
 
-      addMessage(question, true);
+      addMessage(topic, true);
       input.value = '';
       input.style.height = 'auto';
       submitBtn.disabled = true;
@@ -589,68 +921,211 @@ The journey toward practical quantum computing is complex and challenging, but t
         </svg>
       `;
 
-      // Add loading message
-      const loadingDiv = document.createElement('div');
-      loadingDiv.id = 'deep-research-loading';
-      loadingDiv.className = 'flex items-start space-x-2 sm:space-x-3';
-      loadingDiv.innerHTML = `
-        <div class="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
-          <svg class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      // Determine language and focus
+      const language = locale === 'id' ? 'Indonesia' : 'English';
+      const focusSelect = document.getElementById('deep-research-focus');
+      const selectedFocus = focusSelect?.value;
+
+      if (!selectedFocus) {
+        addMessage(`${t.error}: ${t.focus.selectFirst}`, false);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
           </svg>
-        </div>
-        <div class="flex-1 rounded-lg bg-gray-100 px-3 py-2 sm:px-4 sm:py-3 dark:bg-gray-700">
-          <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300">${t.processing}</p>
-        </div>
-      `;
-      messagesContainer.appendChild(loadingDiv);
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        `;
+        return;
+      }
+
+      const focus = selectedFocus;
+
+      let statusMessageId = null;
+      let finalReport = null;
+      let sources = [];
+
+      // Show initial processing message immediately
+      const t = translations[locale];
+      const initialMessage = `🔄 ${t.status.starting} "${topic}"...`;
+
+      // Ensure messagesContainer exists
+      if (!messagesContainer) {
+        console.error('messagesContainer not found!');
+        return;
+      }
+
+      // Save request state
+      saveRequestState({
+        topic,
+        focus,
+        language,
+        status: 'processing',
+        startTime: Date.now(),
+      });
+
+      statusMessageId = addStatusMessage(initialMessage, null, true);
 
       try {
-        const response = await fetch(apiEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            question,
-            locale,
-          }),
+        // Get utility functions from window
+        // @ts-ignore
+        const { createDeepResearchRequest, processStreamingResponse } =
+          window.deepResearchUtils || {};
+
+        if (!createDeepResearchRequest || !processStreamingResponse) {
+          throw new Error('Deep research utilities not loaded. Please refresh the page.');
+        }
+
+        // Create request and get response
+        const response = await createDeepResearchRequest(apiEndpoint, {
+          topic,
+          focus,
+          language,
         });
 
-        // Remove loading
-        const loading = document.getElementById('deep-research-loading');
-        if (loading) loading.remove();
+        // Process streaming response
+        await processStreamingResponse(response, (chunk) => {
+          // Save chunk to localStorage immediately
+          saveStreamChunk(chunk);
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ message: t.errorMessage }));
-          throw new Error(errorData.message || errorData.error || t.errorMessage);
+          // Handle status messages
+          if (chunk.type === 'status') {
+            const statusText = chunk.message || t.processing;
+
+            // Update request state
+            saveRequestState({
+              topic,
+              focus,
+              language,
+              status: 'processing',
+              lastStatus: statusText,
+              startTime: Date.now(),
+            });
+
+            if (!statusMessageId) {
+              statusMessageId = addStatusMessage(statusText, null, true);
+            } else {
+              updateStatusMessage(statusMessageId, statusText);
+            }
+          }
+          // Handle thought messages (searching, found results, etc.)
+          else if (chunk.type === 'thought') {
+            if (chunk.content) {
+              // Always add new thought messages (don't update existing ones)
+              addStatusMessage(chunk.content);
+            }
+          }
+          // Handle final report
+          else if (chunk.type === 'final') {
+            // Store final report
+            finalReport = chunk.report || '';
+            sources = chunk.sources || [];
+
+            // Update request state to completed
+            saveRequestState({
+              topic,
+              focus,
+              language,
+              status: 'completed',
+              reportLength: chunk.report_length,
+              complete: chunk.complete,
+            });
+
+            // Show completion message
+            const t = translations[locale];
+            const incompleteNote = chunk.complete === false ? ` [${t.status.incomplete}]` : '';
+            const completeMessage = `✅ ${t.status.complete} ${t.report.characters}: ${chunk.report_length || 0}${incompleteNote}`;
+
+            addStatusMessage(completeMessage);
+
+            // Show sources if available
+            if (sources && sources.length > 0) {
+              const t = translations[locale];
+              const sourcesText = `📚 ${t.report.sources} (${sources.length}):\n${sources.map((s, i) => `${i + 1}. ${s.title || s.url || s.domain || 'Unknown'}`).join('\n')}`;
+              addStatusMessage(sourcesText);
+            }
+
+            // Display the report and create a card to reopen it
+            if (finalReport) {
+              const reportTitle = topic;
+
+              // Store report globally so it can be reopened
+              // @ts-ignore
+              if (typeof window !== 'undefined') {
+                // @ts-ignore
+                window.lastDeepResearchReport = {
+                  report: finalReport,
+                  title: reportTitle,
+                  sources: sources,
+                  timestamp: new Date().toISOString(),
+                };
+              }
+
+              // Display the report
+              // @ts-ignore
+              if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
+                // @ts-ignore
+                window.displayDeepResearchReport(finalReport, reportTitle);
+              } else {
+                // Fallback: show report as message
+                addMessage(finalReport, false);
+              }
+
+              // Save report to localStorage
+              saveReport(reportTitle, finalReport, sources);
+
+              // Clear request state and stream data after completion
+              clearRequestState();
+
+              // Add a card to reopen the report
+              setTimeout(() => {
+                addReportCard(reportTitle, finalReport, sources, true);
+              }, 500);
+            }
+          }
+        });
+
+        // If we got data but no final report, show warning
+        if (!finalReport) {
+          const t = translations[locale];
+          const warningMsg = `⚠️ ${t.status.noFinalReport}`;
+          addStatusMessage(warningMsg);
         }
 
-        const data = await response.json();
-        const answer = data.answer || data.message || t.errorMessage;
-        addMessage(answer, false);
-
-        // If response contains a report, display it in the canvas
-        if (data.report) {
-          // @ts-ignore
-          if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
+        // If we have a final report but didn't display it yet (fallback)
+        if (finalReport) {
+          // Try to display report one more time if it wasn't displayed
+          setTimeout(() => {
             // @ts-ignore
-            window.displayDeepResearchReport(data.report);
-          }
-        } else if (data.type === 'report' || answer.length > 500) {
-          // If answer is long, treat it as a report
-          // @ts-ignore
-          if (typeof window !== 'undefined' && window.displayDeepResearchReport) {
-            // @ts-ignore
-            window.displayDeepResearchReport(answer);
-          }
+            if (
+              typeof window !== 'undefined' &&
+              window.displayDeepResearchReport &&
+              !document.getElementById('deep-research-report-canvas')?.classList.contains('active')
+            ) {
+              // @ts-ignore
+              window.displayDeepResearchReport(finalReport, topic);
+            }
+          }, 100);
         }
       } catch (error) {
-        const loading = document.getElementById('deep-research-loading');
-        if (loading) loading.remove();
-
+        console.error('Error in form submission:', error);
         const errorMessage = error instanceof Error ? error.message : t.errorMessage;
+
+        // Update request state to error
+        saveRequestState({
+          topic,
+          focus,
+          language,
+          status: 'error',
+          error: errorMessage,
+        });
+
+        // Remove loading/status message if exists
+        if (statusMessageId) {
+          const statusEl = document.getElementById(statusMessageId);
+          if (statusEl) {
+            statusEl.remove();
+          }
+        }
+
         addMessage(`${t.error}: ${errorMessage}`, false);
       } finally {
         submitBtn.disabled = false;

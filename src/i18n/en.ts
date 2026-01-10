@@ -101,6 +101,31 @@ export default {
     downloadReport: 'Download Report',
     download: 'Download',
     closeReport: 'Close Report',
+    focus: {
+      selectPlaceholder: 'Select research focus',
+      loading: 'Loading focuses...',
+      selectFocus: 'Select Focus',
+      selectFirst: 'Please select a research focus first',
+    },
+    status: {
+      starting: 'Starting research on',
+      complete: 'Research complete!',
+      restoring: 'Restoring previous research progress...',
+      noData: 'No data received from server. Please try again or check your internet connection.',
+      noFinalReport: 'Data received but final report not found. Please try again.',
+      incomplete: 'Report may be incomplete - check for missing sections',
+    },
+    report: {
+      open: 'Open Report',
+      sources: 'sources',
+      characters: 'characters',
+    },
+    reportCanvas: {
+      tableOfContents: 'Table of Contents',
+      toc: 'TOC',
+      shareExport: 'Share & Export',
+      share: 'Share',
+    },
   },
   theme: {
     toggle: 'Toggle theme',
