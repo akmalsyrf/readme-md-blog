@@ -36,6 +36,13 @@ export default {
     minRead: 'menit',
     underOneMinute: 'dibawah satu menit',
   },
+  cheatsheet: {
+    title: 'Cheatsheet',
+    readMore: 'Baca selengkapnya',
+    backToCheatsheet: 'Kembali ke Cheatsheet',
+    publishedOn: 'Dipublikasikan pada',
+    noCheatsheets: 'Belum ada cheatsheet.',
+  },
   pagination: {
     previous: 'Sebelumnya',
     next: 'Selanjutnya',
@@ -84,6 +91,10 @@ export default {
       spineldb: {
         title: 'SpinelDB',
         description: 'Database In-Memory Modern yang Kompatibel dengan Redis dalam Rust',
+      },
+      cheatSheet: {
+        title: 'Cheat Sheet',
+        description: 'Catatan ringkas saya untuk berbagai topik',
       },
     },
   },
@@ -143,6 +154,7 @@ export default {
   breadcrumb: {
     home: 'Beranda',
     notes: 'Catatan',
+    cheatsheet: 'Cheatsheet',
     tags: 'Tag',
   },
   notFound: {

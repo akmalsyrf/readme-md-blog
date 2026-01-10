@@ -34,6 +34,13 @@ export default {
     minRead: 'min',
     underOneMinute: 'under one minute',
   },
+  cheatsheet: {
+    title: 'Cheatsheet',
+    readMore: 'Read more',
+    backToCheatsheet: 'Back to Cheatsheet',
+    publishedOn: 'Published on',
+    noCheatsheets: 'No cheatsheets yet.',
+  },
   pagination: {
     previous: 'Previous',
     next: 'Next',
@@ -82,6 +89,10 @@ export default {
       spineldb: {
         title: 'SpinelDB',
         description: 'A Modern, Redis-Compatible In-Memory Database in Rust',
+      },
+      cheatSheet: {
+        title: 'Cheat Sheet',
+        description: 'My cheat sheet for various topics',
       },
     },
   },
@@ -140,6 +151,7 @@ export default {
   breadcrumb: {
     home: 'Home',
     notes: 'Notes',
+    cheatsheet: 'Cheatsheet',
     tags: 'Tags',
   },
   notFound: {

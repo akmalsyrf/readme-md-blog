@@ -104,21 +104,21 @@ const { locale, t, apiEndpoint = defaultApiEndpoint } = Astro.props;
   </div>
 
   <!-- Input Container -->
-  <div class="border-t border-gray-200 px-3 py-3 dark:border-gray-700 sm:px-6 sm:py-4">
-    <form id="deep-research-form" class="flex gap-2 sm:gap-3">
+  <div class="border-t border-gray-200 px-2 py-2.5 dark:border-gray-700 sm:px-6 sm:py-4">
+    <form id="deep-research-form" class="flex flex-col gap-2 sm:flex-row sm:gap-3">
       <div class="flex flex-1 gap-2 sm:gap-3">
         <DeepResearchFocusSelect locale={locale} apiBaseUrl={defaultApiBaseUrl} />
         <textarea
           id="deep-research-input"
           rows="1"
           placeholder={t.deepResearchChat.placeholder}
-          class="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 sm:px-4 sm:py-2"
+          class="flex-1 resize-none rounded-lg border border-gray-300 px-2.5 py-2.5 text-sm leading-5 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 sm:px-4 sm:py-2 sm:leading-normal"
         ></textarea>
       </div>
       <button
         type="submit"
         id="deep-research-submit"
-        class="flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-colors hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 sm:h-10 sm:w-10"
+        class="flex h-11 w-full shrink-0 touch-manipulation items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-colors hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 sm:h-10 sm:w-10"
       >
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -1184,6 +1184,21 @@ const { locale, t, apiEndpoint = defaultApiEndpoint } = Astro.props;
     /* Prevent horizontal overflow */
     #deep-research-messages {
       overflow-x: hidden;
+    }
+
+    /* Form input optimizations for mobile */
+    #deep-research-form {
+      min-height: 44px;
+    }
+
+    #deep-research-input {
+      min-height: 44px;
+      font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    /* Better spacing for form elements on mobile */
+    #deep-research-form > div {
+      min-height: 44px;
     }
   }
 </style>

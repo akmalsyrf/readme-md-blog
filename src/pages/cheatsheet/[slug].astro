@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getLocaleFromPath } from '../../utils/i18n';
+import { getCheatsheetStaticPaths } from '../../utils/getCheatsheetStaticPaths';
+import { extractHeadingsFromMarkdown } from '../../utils/extractHeadings';
+import TableOfContents from '../../components/blog/TableOfContents.astro';
+import Breadcrumb from '../../components/common/Breadcrumb.astro';
+import BlogPostHeader from '../../components/blog/BlogPostHeader.astro';
+import BlogPostContent from '../../components/blog/BlogPostContent.astro';
+import ShareButtons from '../../components/blog/ShareButtons.astro';
+import { getTranslations } from '../../utils/i18n';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  return await getCheatsheetStaticPaths();
+}
+
+interface Props {
+  cheatsheet: CollectionEntry<'cheatsheet'>;
+}
+
+const { cheatsheet } = Astro.props;
+const currentPath = Astro.url.pathname;
+const locale = getLocaleFromPath(currentPath);
+const t = getTranslations(locale);
+
+const { Content } = await cheatsheet.render();
+const headings = extractHeadingsFromMarkdown(cheatsheet.body);
+
+// Get image URL for SEO
+const imageURL = cheatsheet.data.image
+  ? new URL(cheatsheet.data.image, Astro.site || Astro.url).href
+  : undefined;
+
+// Create a compatible post object for components that expect 'notes' collection
+const post = {
+  ...cheatsheet,
+  slug: cheatsheet.slug,
+} as CollectionEntry<'notes'>;
+---
+
+<BaseLayout
+  title={cheatsheet.data.title}
+  description={cheatsheet.data.description}
+  image={imageURL}
+  type="article"
+  publishedTime={cheatsheet.data.pubDate}
+  modifiedTime={cheatsheet.data.pubDate}
+  author={cheatsheet.data.author}
+  tags={cheatsheet.data.tags}
+>
+  <article class="container mx-auto px-4 py-12">
+    <div class="mx-auto max-w-3xl">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: t.breadcrumb.home, href: locale === 'id' ? '/' : '/en' },
+          { label: t.breadcrumb.cheatsheet, href: '/cheatsheet' },
+          { label: cheatsheet.data.title },
+        ]}
+      />
+
+      <BlogPostHeader post={post} locale={locale} isReadingTimeVisible={false} />
+
+      {headings.length > 0 && <TableOfContents headings={headings} locale={locale} t={t} />}
+
+      <BlogPostContent content={Content} />
+
+      <div class="flex justify-center border-t border-gray-200 dark:border-gray-700">
+        <ShareButtons
+          url={Astro.url.href}
+          title={cheatsheet.data.title}
+          description={cheatsheet.data.description}
+          locale={locale}
+        />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

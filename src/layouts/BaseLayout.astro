@@ -8,6 +8,7 @@ import LayoutStyles from '../components/layout/LayoutStyles.astro';
 import ChatBot from '../components/chat/ChatBot.astro';
 import ImageModal from '../components/common/ImageModal.astro';
 import DeepResearchReportCanvas from '../components/others/DeepResearch/DeepResearchReportCanvas.astro';
+import BackToTopButton from '../components/common/BackToTopButton.astro';
 
 interface Props {
   title?: string;
@@ -66,6 +67,7 @@ const t = getTranslations(locale);
     <ChatBot locale={locale} />
     <ImageModal />
     <DeepResearchReportCanvas locale={locale} t={t} />
+    <BackToTopButton />
 
     <!-- Initialize vector store on page load -->
     <script define:vars={{ locale }}>

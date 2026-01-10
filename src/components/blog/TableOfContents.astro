@@ -248,9 +248,31 @@ const tocHide = t.toc.hide;
   }
 
   .toc-content {
-    @apply overflow-hidden transition-all duration-300 ease-in-out;
-    max-height: 1000px;
+    @apply transition-all duration-300 ease-in-out;
+    max-height: 70vh;
+    min-height: 200px;
     opacity: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar styling for TOC */
+  .toc-content::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .toc-content::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-700;
+    border-radius: 4px;
+  }
+
+  .toc-content::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600;
+    border-radius: 4px;
+  }
+
+  .toc-content::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
   }
 
   .toc-content-collapsed {
@@ -258,6 +280,7 @@ const tocHide = t.toc.hide;
     opacity: 0;
     margin: 0;
     padding: 0;
+    overflow: hidden;
   }
 
   .toc-nav {

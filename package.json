@@ -19,6 +19,7 @@
     "prepare": "husky install",
     "all-checks": "npm run lint && npm run format:check && npm run type-check",
     "new-note": "node scripts/new-note.js",
+    "new-cheatsheet": "node scripts/new-cheatsheet.js",
     "optimize-image": "node scripts/optimize-image.js",
     "optimize-images": "node scripts/optimize-images-folder.js"
   },
