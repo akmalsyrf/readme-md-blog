@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/id/:path*",
+      "destination": "/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/id",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
+}
