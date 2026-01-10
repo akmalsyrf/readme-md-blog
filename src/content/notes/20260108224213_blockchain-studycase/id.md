@@ -1,6 +1,6 @@
 ---
 title: 'Arsitektur Kepercayaan: Bedah Anatomi dari Genesis Block hingga DeFi'
-description: 'Menelusuri teknologi blockchain melalui studi kasus teknis repo studycase saya'
+description: 'Menelusuri teknologi blockchain melalui studi kasus teknis repository saya'
 pubDate: 2026-01-08
 author: 'Akmal'
 tags: ['blockchain', 'web3', 'smart-contract']
