@@ -40,14 +40,16 @@ A modern notes/blog application built with Astro, featuring internationalization
 - ✅ **Automatic Fallback**: Falls back to Cloudflare Workers AI if Gemini fails
 - ✅ **Rate Limiting**: Built-in rate limiting per IP for API protection
 - ✅ **Security**: Request validation, CORS support, API key protection, and request size limits
+- ✅ **Deep Research Chatbot** (Experimental): Advanced AI research assistant for comprehensive topic research with real-time streaming reports
 
 ### Developer Features
 
-- ✅ **Image Optimization**: Script to optimize images to WebP format
+- ✅ **Image Optimization**: Scripts to optimize single images or entire folders to WebP format
 - ✅ **TypeScript**: Full TypeScript support
 - ✅ **ESLint & Prettier**: Code quality and formatting tools
 - ✅ **Husky & lint-staged**: Pre-commit hooks for code quality
 - ✅ **Vercel Deployment**: Optimized for Vercel serverless deployment (hybrid mode)
+- ✅ **Others Page**: Dedicated page for experimental features and external project links
 
 ## Getting Started
 
@@ -80,6 +82,9 @@ ADMIN_API_KEY=your_admin_key_here
 CLOUDFLARE_ACCOUNT_ID=your_account_id
 CLOUDFLARE_API_TOKEN=your_api_token
 CLOUDFLARE_MODEL_NAME=@cf/meta/llama-3.1-8b-instruct
+
+# Optional: Deep Research API endpoint (default: https://api-deep-research-backend.vercel.app)
+API_DEEP_RESEARCH_BASE_URL=https://api-deep-research-backend.vercel.app
 ```
 
 **Note**:
@@ -153,6 +158,9 @@ readme-md/
 │   │   │   └── ThemeToggle.astro
 │   │   ├── home/           # Homepage components
 │   │   ├── layout/         # Layout components
+│   │   ├── others/        # Others page components
+│   │   │   ├── DeepResearch/  # Deep Research chatbot components
+│   │   │   └── MenuItemCard.astro
 │   │   ├── search/         # Search components
 │   │   └── tags/           # Tags components
 │   ├── config/             # Configuration files
@@ -168,12 +176,15 @@ readme-md/
 │   │   └── BaseLayout.astro
 │   ├── pages/             # Pages and routes
 │   │   ├── api/           # API routes
-│   │   │   └── chat.ts    # Chatbot API endpoint
+│   │   │   ├── chat.ts    # Chatbot API endpoint
+│   │   │   └── init-vectors.ts  # Vector store initialization endpoint
 │   │   ├── en/            # English routes
 │   │   ├── notes/         # Notes routes
 │   │   ├── 404.astro      # 404 error page
 │   │   ├── archive.astro
+│   │   ├── deep-research-chat.astro  # Deep Research chatbot page
 │   │   ├── index.astro
+│   │   ├── others.astro   # Others page
 │   │   ├── rss.xml.ts     # RSS feed
 │   │   ├── sitemap.xml.ts # Sitemap
 │   │   ├── search.astro
@@ -193,19 +204,22 @@ readme-md/
 │       │   ├── geminiAI.ts
 │       │   ├── ragQuery.ts
 │       │   └── vectorStore.ts
+│       ├── deepResearch.ts  # Deep Research API utilities
 │       ├── extractHeadings.ts
 │       ├── getAdjacentPosts.ts
 │       ├── getBlogPaginationStaticPaths.ts
 │       ├── getBlogPostStaticPaths.ts
 │       ├── getPostsByLocale.ts
 │       ├── i18n.ts
-│       └── readingTime.ts
+│       ├── readingTime.ts
+│       └── storageConfig.ts  # Storage configuration
 ├── public/                # Static assets
 │   └── notes/            # Optimized note images
 ├── scripts/              # Utility scripts
 │   ├── fix-vercel-runtime.js
 │   ├── new-note.js
-│   └── optimize-image.js
+│   ├── optimize-image.js
+│   └── optimize-images-folder.js
 ├── astro.config.mjs
 ├── package.json
 └── tailwind.config.mjs
@@ -289,6 +303,31 @@ The script will:
 - Show size reduction statistics
 - Support PNG, JPG, JPEG, GIF, TIFF, BMP formats
 
+### Batch Image Optimization
+
+Optimize all images in a folder:
+
+```bash
+npm run optimize-images <folder> [targetFolder]
+```
+
+Examples:
+
+```bash
+# Optimize all images in public/images folder
+npm run optimize-images public/images
+
+# Optimize to a different target folder
+npm run optimize-images public/images public/images-optimized
+```
+
+This script will:
+
+- Process all images in the specified folder
+- Convert to WebP format
+- Preserve folder structure
+- Show progress and statistics for each image
+
 ## AI Chatbot
 
 The application includes an AI-powered chatbot that uses RAG (Retrieval Augmented Generation) to answer questions based on your notes content.
@@ -343,10 +382,71 @@ curl -X POST https://your-domain.com/api/chat \
 
 **Note**: Vector embeddings are generated using Gemini's text embedding model. The vector store is stored in memory and persists across requests in the same serverless function instance.
 
+### Vector Store Initialization API
+
+There's also a dedicated endpoint for initializing the vector store:
+
+```bash
+# Initialize for Indonesian locale
+curl -X POST https://your-domain.com/api/init-vectors \
+  -H "Content-Type: application/json" \
+  -d '{"locale": "id"}'
+
+# Initialize for English locale
+curl -X POST https://your-domain.com/api/init-vectors \
+  -H "Content-Type: application/json" \
+  -d '{"locale": "en"}'
+```
+
+This endpoint is useful for pre-initializing the vector store on page load to improve chat initialization speed.
+
+## Deep Research Chatbot
+
+The application includes an experimental Deep Research chatbot feature that provides comprehensive research reports on any topic.
+
+### Features
+
+- **Multi-Domain Research**: Support for 20+ research focus domains (Technology, Economy, Healthcare, etc.)
+- **Real-Time Streaming**: Server-Sent Events (SSE) for live progress updates
+- **Structured Reports**: Multi-phase report generation with proper markdown formatting
+- **Source Citations**: Includes source references and citations
+- **Report Export**: Download reports as Markdown files
+- **Focus Selection**: Choose research focus domain for specialized research
+- **Multilingual**: Supports both Indonesian and English
+
+### Usage
+
+1. Navigate to `/deep-research-chat` or `/en/deep-research-chat`
+2. Select a research focus domain (optional)
+3. Enter your research topic
+4. Wait for the AI to generate a comprehensive research report
+5. View, download, or share the generated report
+
+### Configuration
+
+The Deep Research API endpoint can be configured via environment variable:
+
+```env
+API_DEEP_RESEARCH_BASE_URL=https://api-deep-research-backend.vercel.app
+```
+
+If not set, it defaults to `https://api-deep-research-backend.vercel.app`.
+
+**Note**: This is an experimental feature and may be subject to changes.
+
+## Others Page
+
+The `/others` page provides access to experimental features and external project links:
+
+- **Deep Research Chatbot**: Advanced AI research assistant
+- **External Projects**: Links to other projects (SpinelDB, Bahlilfication, etc.)
+
+This page can be customized by editing `src/components/others/OthersContent.astro`.
+
 ## i18n Routing
 
-- Indonesian (default): `/` and `/notes`
-- English: `/en` and `/en/notes`
+- Indonesian (default): `/`, `/notes`
+- English: `/en`, `/en/notes`
 
 All routes support both languages with automatic locale detection.
 
@@ -395,6 +495,7 @@ This project is optimized for Vercel deployment with hybrid mode (static pages +
    - `CLOUDFLARE_ACCOUNT_ID` (optional, for fallback AI)
    - `CLOUDFLARE_API_TOKEN` (optional, for fallback AI)
    - `CLOUDFLARE_MODEL_NAME` (optional, default: @cf/meta/llama-3.1-8b-instruct)
+   - `API_DEEP_RESEARCH_BASE_URL` (optional, for Deep Research feature)
 4. Deploy!
 
 The site URL is configured in `astro.config.mjs`. Update it to match your domain:
@@ -432,7 +533,8 @@ For static-only deployment, remove API routes or use a separate service for the 
 ### Content Management
 
 - `npm run new-note "note-title"` - Create a new note with templates (generates both id.md and en.md)
-- `npm run optimize-image <source> [target]` - Optimize images to WebP format
+- `npm run optimize-image <source> [target]` - Optimize a single image to WebP format
+- `npm run optimize-images <folder> [targetFolder]` - Optimize all images in a folder to WebP format
 
 ### Code Quality
 
