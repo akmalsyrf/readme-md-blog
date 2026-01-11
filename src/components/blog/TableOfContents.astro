@@ -127,26 +127,98 @@ const tocHide = t.toc.hide;
       }
     });
 
+    // Generate slug function (must match extractHeadings.ts generateSlug)
+    function generateSlug(text) {
+      // Remove markdown formatting (bold, italic, etc.) - already removed in HTML, but just in case
+      let cleaned = text.replace(/\*\*/g, '').replace(/\*/g, '').replace(/`/g, '').trim();
+
+      // Convert to lowercase
+      cleaned = cleaned.toLowerCase();
+
+      // Normalize Unicode characters (NFD normalization)
+      cleaned = cleaned.normalize('NFD');
+
+      // Replace spaces and underscores with hyphens
+      cleaned = cleaned.replace(/[\s_]+/g, '-');
+
+      // Keep alphanumeric, hyphens, and remove everything else
+      // This matches the server-side generateSlug function
+      cleaned = cleaned
+        .split('')
+        .map((char) => {
+          // Keep alphanumeric and hyphens
+          if (/[a-z0-9-]/.test(char)) {
+            return char;
+          }
+          // Remove Unicode characters and special chars (to match server-side behavior)
+          return '';
+        })
+        .join('');
+
+      // Clean up multiple consecutive hyphens
+      cleaned = cleaned.replace(/-+/g, '-');
+
+      // Remove leading/trailing hyphens
+      cleaned = cleaned.replace(/^-+|-+$/g, '');
+
+      // If empty, create fallback
+      if (!cleaned || cleaned === '-') {
+        let hash = 0;
+        for (let i = 0; i < text.length; i++) {
+          const char = text.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash = hash & hash;
+        }
+        return `heading-${Math.abs(hash)}`;
+      }
+
+      return cleaned.trim();
+    }
+
+    // Normalize text for matching (remove extra whitespace, normalize unicode)
+    function normalizeText(text) {
+      return text.toLowerCase().normalize('NFD').replace(/\s+/g, ' ').trim();
+    }
+
+    // Create a map of TOC link text to IDs for matching
+    // Also create a reverse map of ID to TOC link for direct lookup
+    const tocTextToId = new Map();
+    const tocIdToLink = new Map();
+    document.querySelectorAll('.toc-link').forEach((link) => {
+      const text = (link.textContent || '').trim();
+      const id = link.getAttribute('data-heading-id');
+      if (text && id) {
+        const normalized = normalizeText(text);
+        tocTextToId.set(normalized, id);
+        tocIdToLink.set(id, link);
+        // Also update href to ensure it matches
+        link.setAttribute('href', `#${id}`);
+      }
+    });
+
     // Add IDs to headings and handle smooth scroll
-    // Add IDs to headings if they don't have one
+    // Match headings with TOC links by text content, prioritizing TOC link IDs
     const headings = document.querySelectorAll('.prose h2, .prose h3, .prose h4');
     headings.forEach((heading) => {
-      if (!heading.id) {
-        const text = heading.textContent || '';
-        const id = text
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-')
-          .trim();
-        heading.id = id;
+      const text = (heading.textContent || '').trim();
+      const normalizedText = normalizeText(text);
 
-        // Update TOC links to match the generated ID
-        const tocLinks = document.querySelectorAll(`.toc-link[data-heading-id="${id}"]`);
-        tocLinks.forEach((link) => {
-          link.setAttribute('href', `#${id}`);
-        });
+      // Try to find matching TOC link by text first
+      let finalId = tocTextToId.get(normalizedText);
+
+      // If no match found, generate ID using the same function
+      if (!finalId) {
+        finalId = generateSlug(text);
       }
+
+      // Set the ID on the heading
+      heading.id = finalId;
+
+      // Update TOC links to match the generated ID
+      const tocLinks = document.querySelectorAll(`.toc-link[data-heading-id="${finalId}"]`);
+      tocLinks.forEach((link) => {
+        link.setAttribute('href', `#${finalId}`);
+      });
     });
 
     // Smooth scroll for TOC links
@@ -200,16 +272,66 @@ const tocHide = t.toc.hide;
       observer.observe(heading);
     });
 
-    // Highlight heading on page load if hash exists
-    const hash = window.location.hash.substring(1);
-    if (hash) {
-      const targetLink = document.querySelector(`.toc-link[data-heading-id="${hash}"]`);
-      if (targetLink) {
-        setTimeout(() => {
-          targetLink.classList.add('toc-link-active');
-        }, 100);
+    // Handle hash on page load - scroll to heading and highlight TOC link
+    function scrollToHash() {
+      const hash = window.location.hash.substring(1);
+      if (hash) {
+        // Try multiple times in case headings aren't ready yet
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const tryScroll = () => {
+          attempts++;
+          const target = document.getElementById(hash);
+
+          if (target) {
+            const offset = 100; // Offset for fixed header
+            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth',
+            });
+
+            // Highlight TOC link
+            const targetLink = document.querySelector(`.toc-link[data-heading-id="${hash}"]`);
+            if (targetLink) {
+              // Remove active class from all links
+              document.querySelectorAll('.toc-link').forEach((link) => {
+                link.classList.remove('toc-link-active');
+              });
+              targetLink.classList.add('toc-link-active');
+            }
+          } else if (attempts < maxAttempts) {
+            // Retry after a short delay
+            setTimeout(tryScroll, 100);
+          }
+        };
+
+        // Start trying after a short delay to ensure IDs are set
+        setTimeout(tryScroll, 100);
       }
     }
+
+    // Scroll to hash on page load
+    scrollToHash();
+
+    // Also handle hash changes (e.g., when clicking browser back/forward)
+    window.addEventListener('hashchange', () => {
+      // Re-run the ID assignment in case new content was loaded
+      const headings = document.querySelectorAll('.prose h2, .prose h3, .prose h4');
+      headings.forEach((heading) => {
+        if (!heading.id) {
+          const text = (heading.textContent || '').trim();
+          const normalizedText = normalizeText(text);
+          let finalId = tocTextToId.get(normalizedText);
+          if (!finalId) {
+            finalId = generateSlug(text);
+          }
+          heading.id = finalId;
+        }
+      });
+      scrollToHash();
+    });
   });
 </script>
 
