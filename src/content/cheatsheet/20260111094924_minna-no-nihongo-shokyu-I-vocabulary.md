@@ -3,6 +3,7 @@ title: 'Kosakata Minna no Nihongo Shokyu I'
 description: 'Buku Merah / Oranye: Setara dengan N5'
 pubDate: 2026-01-11
 author: 'Akmal'
+category: 'Belajar Bahasa Jepang'
 tags: ['japanese', 'kanji', 'minna-no-nihongo', 'language-learning', 'shokyu-I']
 ---
 

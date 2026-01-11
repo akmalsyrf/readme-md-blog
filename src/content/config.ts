@@ -22,6 +22,7 @@ const cheatsheet = defineCollection({
     pubDate: z.coerce.date(),
     author: z.string().default('Admin'),
     image: z.string().optional(),
+    category: z.string().default('Umum'),
     tags: z.array(z.string()).default([]),
   }),
 });
