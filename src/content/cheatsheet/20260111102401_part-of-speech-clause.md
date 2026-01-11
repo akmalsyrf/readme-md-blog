@@ -4,7 +4,7 @@ description: 'Cheatsheet ringkas untuk konsep POS & Clause'
 pubDate: 2026-01-11
 author: 'Akmal'
 category: 'Belajar Bahasa Inggris'
-tags: ['english', 'language-learning']
+tags: ['english', 'language-learning', 'basic']
 ---
 
 ## PART OF SPEECH (Kelas Kata)
@@ -16,80 +16,78 @@ tags: ['english', 'language-learning']
 Kata benda yang jumlahnya lebih dari satu.
 
 - **Regular (Beraturan):** Menambahkan akhiran _-s_ atau _-es_.
-- _Contoh:_ Book **Books**, Box **Boxes**, Lady **Ladies**.
+  - _Contoh:_ Book **Books**, Box **Boxes**, Lady **Ladies**.
 
 - **Irregular (Tidak Beraturan):** Perubahan bentuk kata tidak mengikuti pola _-s/-es_, melainkan berubah huruf vokal atau bentuk total.
-- _Contoh:_ Man **Men**, Child **Children**, Tooth **Teeth**, Mouse **Mice**.
+  - _Contoh:_ Man **Men**, Child **Children**, Tooth **Teeth**, Mouse **Mice**.
 
 #### B. Singular (Tunggal)
 
 Kata benda yang jumlahnya hanya satu.
 
 - **Collective Noun:** Kata benda tunggal yang merepresentasikan sekumpulan individu/grup.
-- _Contoh:_ **Team** (tim), **Family** (keluarga), **Government** (pemerintah), **Flock** (kawanan).
+  - _Contoh:_ **Team** (tim), **Family** (keluarga), **Government** (pemerintah), **Flock** (kawanan).
 
 - **Random Noun (Common/Proper Noun):** Kata benda umum atau spesifik yang berdiri sendiri.
-- _Contoh:_ **Table**, **Student**, **Jakarta**.
+  - _Contoh:_ **Table**, **Student**, **Jakarta**.
 
 #### C. Real (Concrete Noun)
 
 Kata benda yang nyata, dapat dilihat, dan disentuh oleh panca indra.
 
 - **Nature (Alam):** Benda-benda alam.
-- _Contoh:_ **Tree**, **River**, **Sand**, **Mountain**.
+  - _Contoh:_ **Tree**, **River**, **Sand**, **Mountain**.
 
 - **Things (Benda Buatan/Objek):** Benda mati atau objek fisik.
-- _Contoh:_ **Car**, **Laptop**, **Chair**, **Building**.
+  - _Contoh:_ **Car**, **Laptop**, **Chair**, **Building**.
 
 #### D. Abstract
 
 Kata benda yang tidak memiliki wujud fisik (ide, konsep, perasaan).
 
 - **Opinion:** Konsep pemikiran atau pandangan.
-- _Contoh:_ **Justice** (keadilan), **Politics**, **Freedom**.
+  - _Contoh:_ **Justice** (keadilan), **Politics**, **Freedom**.
 
 - **Dream:** Hal yang berkaitan dengan imajinasi atau visi.
-- _Contoh:_ **Nightmare**, **Fantasy**, **Goal**.
+  - _Contoh:_ **Nightmare**, **Fantasy**, **Goal**.
 
 - **Feeling:** Emosi atau perasaan.
-- _Contoh:_ **Happiness**, **Anger**, **Love**, **Sorrow**.
+  - _Contoh:_ **Happiness**, **Anger**, **Love**, **Sorrow**.
 
 - **Verb-gerund (V-ing as Noun):** Kata kerja yang dibendakan (berakhiran -ing).
-- **As Subject:** Gerund di awal kalimat sebagai pelaku.
-- _Contoh:_ **Reading** is my hobby.
-
-- **As Object:** Gerund setelah kata kerja utama sebagai sasaran.
-- _Contoh:_ I like **swimming**.
-
-- **After Prep:** Gerund yang wajib muncul setelah preposisi (in, on, at, of, for, about).
-- _Contoh:_ Thank you _for_ **coming**. / She is good _at_ **painting**.
+  - **As Subject:** Gerund di awal kalimat sebagai pelaku.
+    - _Contoh:_ **Reading** is my hobby.
+  - **As Object:** Gerund setelah kata kerja utama sebagai sasaran.
+    - _Contoh:_ I like **swimming**.
+  - **After Prep:** Gerund yang wajib muncul setelah preposisi (in, on, at, of, for, about).
+    - _Contoh:_ Thank you _for_ **coming**. / She is good _at_ **painting**.
 
 #### E. Countable & Uncountable
 
 - **Countable:** Dapat dihitung dengan angka (one, two, three).
-- _Contoh:_ Apple, car, bottle.
+  - _Contoh:_ Apple, car, bottle.
 
 - **Uncountable:** Tidak dapat dihitung satuan (biasanya cairan, butiran, atau konsep abstrak).
-- _Contoh:_ Water, rice, sugar, information, money.
+  - _Contoh:_ Water, rice, sugar, information, money.
 
 ---
 
 ### 2. Pronoun (Kata Ganti)
 
 - **Subject:** Pelaku dalam kalimat.
-- _Contoh:_ **I**, **You**, **We**, **They**, **He**, **She**, **It**.
+  - _Contoh:_ **I**, **You**, **We**, **They**, **He**, **She**, **It**.
 
 - **Object:** Sasaran tindakan.
-- _Contoh:_ **Me**, **You**, **Us**, **Them**, **Him**, **Her**, **It**.
+  - _Contoh:_ **Me**, **You**, **Us**, **Them**, **Him**, **Her**, **It**.
 
 - **Reflexive:** Memantulkan kembali ke subjek (diri sendiri).
-- _Contoh:_ **Myself**, **Yourself**, **Themselves**, **Ourselves**. (_I cut myself_).
+  - _Contoh:_ **Myself**, **Yourself**, **Themselves**, **Ourselves**. (_I cut myself_).
 
 - **Possessive:** Menunjukkan kepemilikan (Independent possessive).
-- _Contoh:_ **Mine**, **Yours**, **Theirs**, **Ours**, **Hers**, **His**. (_This book is mine_).
+  - _Contoh:_ **Mine**, **Yours**, **Theirs**, **Ours**, **Hers**, **His**. (_This book is mine_).
 
 - **Demonstrative:** Kata tunjuk.
-- _Contoh:_ **This** (ini), **That** (itu), **These** (ini jamak), **Those** (itu jamak).
+  - _Contoh:_ **This** (ini), **That** (itu), **These** (ini jamak), **Those** (itu jamak).
 
 ---
 
@@ -106,21 +104,21 @@ Kata kerja utama yang memiliki arti leksikal (tindakan nyata).
 Membantu _ordinary verb_ membentuk tenses atau makna modalitas.
 
 - **Primary:** Be (is, am, are, was, were), Do (do, does, did), Have (have, has, had).
-- _Contoh:_ I **am** eating. / I **have** eaten.
+  - _Contoh:_ I **am** eating. / I **have** eaten.
 
 - **Modal:** Menunjukkan kemampuan, kemungkinan, atau kewajiban.
-- _Contoh:_ **Can**, **May**, **Must**, **Should**, **Will**.
+  - _Contoh:_ **Can**, **May**, **Must**, **Should**, **Will**.
 
 - **Emphasize:** Menggunakan _do/does/did_ dalam kalimat positif untuk penekanan (benar-benar).
-- _Contoh:_ I **do** love you (Saya _benar-benar_ mencintaimu).
+  - _Contoh:_ I **do** love you (Saya _benar-benar_ mencintaimu).
 
 #### C. Transitive (Butuh Objek)
 
 - **Mono-Transitive:** Memiliki satu objek.
-- _Contoh:_ She **kicks** _the ball_.
+  - _Contoh:_ She **kicks** _the ball_.
 
 - **Di-Transitive:** Memiliki dua objek (Objek Langsung & Tak Langsung).
-- _Contoh:_ He **gave** _me_ (indirect) _a flower_ (direct).
+  - _Contoh:_ He **gave** _me_ (indirect) _a flower_ (direct).
 
 #### D. Intransitive (Tidak Butuh Objek)
 
@@ -182,26 +180,26 @@ Membatasi atau menentukan benda yang dimaksud.
 ### 5. Adverb (Kata Keterangan)
 
 - **Place (Tempat):** Menjelaskan _di mana_.
-- _Contoh:_ Here, there, at home, in the office.
+  - _Contoh:_ Here, there, at home, in the office.
 
 - **Time (Waktu):** Menjelaskan _kapan_.
-- _Contoh:_ Now, yesterday, tomorrow, soon.
+  - _Contoh:_ Now, yesterday, tomorrow, soon.
 
 - **Degree (Tingkatan):** Menjelaskan _seberapa banyak/intens_.
-- _Contoh:_ **Very** good, **Too** hard, **Quite** near.
+  - _Contoh:_ **Very** good, **Too** hard, **Quite** near.
 
 - **Manner (Cara):** Menjelaskan _bagaimana_ (biasanya akhiran -ly).
-- _Contoh:_ Quickly, slowly, hard, fast, beautifully.
+  - _Contoh:_ Quickly, slowly, hard, fast, beautifully.
 
 - **Frequency (Frekuensi):** Menjelaskan _seberapa sering_.
-- _Contoh:_ Always, usually, sometimes, rarely, never.
+  - _Contoh:_ Always, usually, sometimes, rarely, never.
 
 ---
 
 ### 6. Conjunction (Kata Sambung)
 
 - **Single (Coordinating Conjunction):** Menghubungkan elemen setara (kata, frasa, atau klausa yang memiliki tingkat kepentingan sama).
-- _Contoh:_ **FANBOYS Breakdown:**
+  - _Contoh:_ **FANBOYS Breakdown:**
   - **F - For:** Menunjukkan alasan/sebab (formal, biasanya di tengah kalimat).
     - _Contoh:_ I study hard, **for** I want to succeed. / She left early, **for** she was tired.
   - **A - And:** Menambahkan/menggabungkan informasi (penjumlahan).
@@ -218,7 +216,7 @@ Membatasi atau menentukan benda yang dimaksud.
     - _Contoh:_ It was raining, **so** I took an umbrella. / He studied hard, **so** he passed the exam. / She was tired, **so** she went to bed early.
 
 - **Double (Correlative):** Pasangan kata sambung.
-- _Contoh:_ **Not only**... **but also**..., **Either**... **or**..., **Neither**... **nor**...
+  - _Contoh:_ **Not only**... **but also**..., **Either**... **or**..., **Neither**... **nor**...
 
 ---
 
@@ -252,20 +250,20 @@ _Kumpulan kata yang memiliki minimal Subject dan Verb._
 Klausa yang berfungsi sebagai kata benda.
 
 - **As Subject:** Klausa berada di posisi subjek kalimat.
-- _Contoh:_ **What you said** makes me angry. (_Apa yang kamu katakan membuatku marah_).
+  - _Contoh:_ **What you said** makes me angry. (_Apa yang kamu katakan membuatku marah_).
 
 - **As Object:** Klausa berada setelah kata kerja.
-- _Contoh:_ I know **where you live**. (_Saya tahu di mana kamu tinggal_).
+  - _Contoh:_ I know **where you live**. (_Saya tahu di mana kamu tinggal_).
 
 ### 2. Adjective Clause (Relative Clause)
 
 Klausa yang berfungsi sebagai kata sifat (menjelaskan Noun), biasanya menggunakan _who, whom, whose, which, that_.
 
 - **Modifying the Subject:** Menjelaskan subjek kalimat.
-- _Contoh:_ The man **who called me** is my uncle.
+  - _Contoh:_ The man **who called me** is my uncle.
 
 - **Modifying the Object:** Menjelaskan objek kalimat.
-- _Contoh:_ I like the car **that you bought**.
+  - _Contoh:_ I like the car **that you bought**.
 
 ### 3. Adverb Clause
 
@@ -273,17 +271,17 @@ Klausa yang berfungsi sebagai _Adverb_ (memberikan keterangan waktu, sebab, kond
 _(Catatan: Adverb clause biasanya tidak berfungsi sebagai Subject/Object, tetapi sebagai Modifier)._
 
 - **As Modifier (Time/Reason/Condition):**
-- _Time:_ I will call you **when I arrive**.
-- _Reason:_ I study hard **because I want to succeed**.
-- _Condition:_ I will go **if it doesn't rain**.
+  - _Time:_ I will call you **when I arrive**.
+  - _Reason:_ I study hard **because I want to succeed**.
+  - _Condition:_ I will go **if it doesn't rain**.
 
 ### 4. Reducing, Omitting, Abridgment
 
 Meringkas klausa agar kalimat lebih efisien (biasanya disebut _Reduced Clause_ atau _Phrase_).
 
 - **Reduced Adjective Clause:**
-- _Active (V-ing):_ The man **who is standing** there The man **standing** there.
-- _Passive (V3):_ The book **which is written** by him The book **written** by him.
+  - _Active (V-ing):_ The man **who is standing** there → The man **standing** there.
+  - _Passive (V3):_ The book **which is written** by him → The book **written** by him.
 
 - **Reduced Adverbial Clause:**
-- _Same Subject:_ **While I was walking** down the street, I saw an accident **While walking** down the street, I saw an accident.
+  - _Same Subject:_ **While I was walking** down the street, I saw an accident → **While walking** down the street, I saw an accident.
