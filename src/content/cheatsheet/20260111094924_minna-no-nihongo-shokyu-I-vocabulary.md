@@ -1144,3 +1144,5 @@ Bab ini memperkenalkan bentuk kondisional たら (jika/kalau) dan bentuk kondisi
 | [いろいろ]おせわになりました            | [Iroiro] osewa ni narimashita. | Terima kasih atas [banyak] bantuan Anda.    |
 | がんばります (頑張ります)               | ganbarimasu                    | berusaha, bersemangat                       |
 | どうぞおげんきで (どうぞお元気で)       | Dōzo o-genki de.               | Jaga diri baik-baik ya. (ucapan perpisahan) |
+
+---

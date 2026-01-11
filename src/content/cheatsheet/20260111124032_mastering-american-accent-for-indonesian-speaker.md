@@ -255,3 +255,5 @@ Konsep gliding (/y/ dan /w/) juga berlaku di dalam satu kata.
 
 - `Diet` -> _Die-(y)-et_
 - `Cooperate` -> _Co-(w)-operate_
+
+---

@@ -12,6 +12,12 @@ const { locale, t } = Astro.props;
 // Define menu items configuration
 const menuItems = [
   {
+    key: 'cheatSheet',
+    path: '/cheatsheet',
+    showBadge: false,
+    external: false,
+  },
+  {
     key: 'deepResearchChatbot',
     path: '/deep-research-chat',
     showBadge: true,
@@ -28,12 +34,6 @@ const menuItems = [
     path: 'https://bahlilfication.vercel.app/',
     showBadge: false,
     external: true,
-  },
-  {
-    key: 'cheatSheet',
-    path: '/cheatsheet',
-    showBadge: false,
-    external: false,
   },
 ];
 ---

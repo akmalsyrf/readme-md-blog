@@ -380,3 +380,5 @@ Atau kombinasi lainnya yang memiliki minimal 2 independent clause dan minimal 1 
    - Coba identifikasi jenis kalimat dalam bacaan sehari-hari
    - Coba ubah simple sentence menjadi compound, complex, atau compound-complex sentence
    - Coba gabungkan beberapa simple sentence menjadi compound-complex sentence
+
+---

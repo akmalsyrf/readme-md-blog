@@ -285,3 +285,5 @@ Meringkas klausa agar kalimat lebih efisien (biasanya disebut _Reduced Clause_ a
 
 - **Reduced Adverbial Clause:**
   - _Same Subject:_ **While I was walking** down the street, I saw an accident → **While walking** down the street, I saw an accident.
+
+---
