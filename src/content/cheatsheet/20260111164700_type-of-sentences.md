@@ -4,7 +4,7 @@ description: 'Panduan tentang struktur kalimat dalam bahasa Inggris: Simple, Com
 pubDate: 2026-01-11
 author: 'Akmal'
 category: 'Belajar Bahasa Inggris'
-tags: ['english', 'language-learning', 'grammar', 'sentence-structure']
+tags: ['english', 'language-learning', 'grammar', 'advance']
 ---
 
 Kalimat dalam bahasa Inggris dapat diklasifikasikan berdasarkan strukturnya, yaitu berdasarkan jumlah **clause** (klausa) yang dimilikinya dan jenis **conjunction** (kata sambung) yang digunakan. Untuk memahami konsep clause secara detail, silakan baca [Part of Speech & Clause](/cheatsheet/20260111102401_part-of-speech-clause).
