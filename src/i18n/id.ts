@@ -98,6 +98,12 @@ export default {
       },
     },
   },
+  aiPractice: {
+    title: 'AI Practice',
+    subtitle: 'Praktik dan latihan dengan AI',
+    description: 'Halaman untuk berlatih dan bereksperimen dengan AI',
+    buttonText: 'Praktik dengan AI',
+  },
   deepResearchChat: {
     title: 'Deep Research Chatbot',
     subtitle: 'Penelitian mendalam dengan AI',

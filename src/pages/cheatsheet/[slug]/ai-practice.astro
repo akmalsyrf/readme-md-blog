@@ -1,0 +1,500 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getLocaleFromPath, getTranslations } from '../../../utils/i18n';
+import { getCheatsheetStaticPaths } from '../../../utils/getCheatsheetStaticPaths';
+import Breadcrumb from '../../../components/common/Breadcrumb.astro';
+import AIPracticeContent from '../../../components/ai-practice/AIPracticeContent.astro';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  return await getCheatsheetStaticPaths();
+}
+
+interface Props {
+  cheatsheet: CollectionEntry<'cheatsheet'>;
+}
+
+const { cheatsheet } = Astro.props;
+const currentPath = Astro.url.pathname;
+const locale = getLocaleFromPath(currentPath);
+const t = getTranslations(locale);
+
+// Questions will be loaded from API on client side
+const initialQuestions: Array<{
+  type: 'yesno' | 'fillblank' | 'multiplechoice' | 'selectmultiple';
+  question: string;
+  answer?: boolean | string | number | number[];
+  options?: string[];
+  correctAnswer?: number;
+  correctAnswers?: number[];
+  explanation?: string;
+}> = [];
+---
+
+<BaseLayout
+  title={`${t.aiPractice.title} - ${cheatsheet.data.title}`}
+  description={t.aiPractice.description}
+>
+  <div class="container mx-auto px-4 py-12">
+    <div class="mx-auto max-w-4xl">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: t.breadcrumb.home, href: locale === 'id' ? '/' : '/en' },
+          {
+            label: t.breadcrumb.cheatsheet,
+            href: locale === 'id' ? '/cheatsheet' : '/en/cheatsheet',
+          },
+          {
+            label: cheatsheet.data.title,
+            href:
+              locale === 'id'
+                ? `/cheatsheet/${cheatsheet.slug}`
+                : `/en/cheatsheet/${cheatsheet.slug}`,
+          },
+          { label: t.aiPractice.title },
+        ]}
+      />
+
+      <div id="ai-practice-container">
+        <div class="loading-state" id="loading-state">
+          <div class="flex flex-col items-center justify-center py-12">
+            <div
+              class="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600 dark:border-purple-800 dark:border-t-purple-400"
+            >
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">Memuat soal latihan...</p>
+          </div>
+        </div>
+        <div class="error-state hidden" id="error-state">
+          <div
+            class="rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-900/20"
+          >
+            <p class="text-red-800 dark:text-red-200" id="error-message">
+              Terjadi kesalahan saat memuat soal latihan.
+            </p>
+            <button
+              id="retry-button"
+              class="mt-4 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        </div>
+        <div class="content-state hidden" id="content-state">
+          <AIPracticeContent
+            locale={locale}
+            cheatsheetTitle={cheatsheet.data.title}
+            questions={initialQuestions}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script define:vars={{ cheatsheetSlug: cheatsheet.slug }}>
+  const loadingState = document.getElementById('loading-state');
+  const errorState = document.getElementById('error-state');
+  const contentState = document.getElementById('content-state');
+  const errorMessage = document.getElementById('error-message');
+  const retryButton = document.getElementById('retry-button');
+  const container = document.getElementById('ai-practice-container');
+
+  async function loadQuestions() {
+    try {
+      loadingState?.classList.remove('hidden');
+      errorState?.classList.add('hidden');
+      contentState?.classList.add('hidden');
+
+      const response = await fetch('/api/ai-questions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ slug: cheatsheetSlug }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (!data.success || !data.questions || !Array.isArray(data.questions)) {
+        throw new Error('Invalid response format');
+      }
+
+      // Replace the container content with new questions
+      if (container) {
+        // Escape HTML to prevent XSS
+        const escapeHtml = (text) => {
+          if (text == null) return '';
+          const div = document.createElement('div');
+          div.textContent = String(text);
+          return div.innerHTML;
+        };
+
+        const questionsHtml = data.questions
+          .map((q, index) => {
+            const questionId = `q-${index}`;
+
+            if (q.type === 'yesno') {
+              return `
+                <div class="question-card">
+                  <div class="question-header">
+                    <span class="question-type-badge badge-purple">Yes/No</span>
+                    <p class="question-text">${escapeHtml(q.question)}</p>
+                  </div>
+                  <div class="question-options">
+                    <label class="option-label">
+                      <input type="radio" name="yesno-${questionId}" value="true" class="option-input" />
+                      <span class="option-text">Ya</span>
+                    </label>
+                    <label class="option-label">
+                      <input type="radio" name="yesno-${questionId}" value="false" class="option-input" />
+                      <span class="option-text">Tidak</span>
+                    </label>
+                  </div>
+                  ${q.explanation ? `<div class="explanation" data-correct-answer="${q.answer}"><strong>Penjelasan:</strong> ${escapeHtml(q.explanation)}</div>` : ''}
+                </div>
+              `;
+            } else if (q.type === 'fillblank') {
+              return `
+                <div class="question-card">
+                  <div class="question-header">
+                    <span class="question-type-badge badge-blue">Fill in the Blank</span>
+                    <p class="question-text">${escapeHtml(q.question)}</p>
+                  </div>
+                  <div class="question-input">
+                    <input type="text" placeholder="Masukkan jawaban Anda..." class="answer-input" data-answer="${String(
+                      q.answer || ''
+                    )
+                      .toLowerCase()
+                      .trim()}" id="fillblank-${questionId}" />
+                  </div>
+                  ${q.explanation ? `<div class="explanation"><strong>Jawaban yang benar:</strong> ${escapeHtml(String(q.answer || ''))}<br /><strong>Penjelasan:</strong> ${escapeHtml(q.explanation)}</div>` : ''}
+                </div>
+              `;
+            } else if (q.type === 'multiplechoice') {
+              return `
+                <div class="question-card">
+                  <div class="question-header">
+                    <span class="question-type-badge badge-green">Pilihan Ganda</span>
+                    <p class="question-text">${escapeHtml(q.question)}</p>
+                  </div>
+                  <div class="question-options">
+                    ${(q.options || [])
+                      .map(
+                        (opt, optIdx) => `
+                      <label class="option-label">
+                        <input type="radio" name="mc-${questionId}" value="${optIdx}" class="option-input" data-correct="${optIdx === q.correctAnswer}" />
+                        <span class="option-text">${String.fromCharCode(65 + optIdx)}. ${escapeHtml(opt)}</span>
+                      </label>
+                    `
+                      )
+                      .join('')}
+                  </div>
+                  ${q.explanation ? `<div class="explanation" data-correct="${q.correctAnswer}"><strong>Jawaban yang benar:</strong> ${String.fromCharCode(65 + (q.correctAnswer || 0))}. ${escapeHtml(q.options?.[q.correctAnswer || 0] || '')}<br /><strong>Penjelasan:</strong> ${escapeHtml(q.explanation)}</div>` : ''}
+                </div>
+              `;
+            } else if (q.type === 'selectmultiple') {
+              return `
+                <div class="question-card">
+                  <div class="question-header">
+                    <span class="question-type-badge badge-orange">Pilih Semua yang Benar</span>
+                    <p class="question-text">${escapeHtml(q.question)}</p>
+                  </div>
+                  <div class="question-options">
+                    ${(q.options || [])
+                      .map(
+                        (opt, optIdx) => `
+                      <label class="option-label">
+                        <input type="checkbox" name="sm-${questionId}" value="${optIdx}" class="option-checkbox" data-correct="${(q.correctAnswers || []).includes(optIdx)}" />
+                        <span class="option-text">${String.fromCharCode(65 + optIdx)}. ${escapeHtml(opt)}</span>
+                      </label>
+                    `
+                      )
+                      .join('')}
+                  </div>
+                  ${q.explanation ? `<div class="explanation" data-correct="${(q.correctAnswers || []).join(',')}"><strong>Jawaban yang benar:</strong> ${(q.correctAnswers || []).map((idx) => String.fromCharCode(65 + idx)).join(', ')}<br /><strong>Penjelasan:</strong> ${escapeHtml(q.explanation)}</div>` : ''}
+                </div>
+              `;
+            }
+            return '';
+          })
+          .join('');
+
+        const questionsContainer = document.querySelector('.questions-container');
+        if (questionsContainer) {
+          questionsContainer.innerHTML = questionsHtml;
+
+          // Re-initialize check answers functionality
+          initializeCheckAnswers();
+        }
+      }
+
+      loadingState?.classList.add('hidden');
+      contentState?.classList.remove('hidden');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error loading questions:', error);
+      loadingState?.classList.add('hidden');
+      errorState?.classList.remove('hidden');
+      if (errorMessage) {
+        errorMessage.textContent =
+          error instanceof Error ? error.message : 'Terjadi kesalahan saat memuat soal latihan.';
+      }
+    }
+  }
+
+  retryButton?.addEventListener('click', loadQuestions);
+
+  // Function to initialize check answers functionality
+  function initializeCheckAnswers() {
+    const checkButton = document.getElementById('check-answers');
+    const resetButton = document.getElementById('reset-answers');
+
+    if (!checkButton || !resetButton) return;
+
+    // Remove existing listeners by cloning
+    const newCheckButton = checkButton.cloneNode(true);
+    const newResetButton = resetButton.cloneNode(true);
+    checkButton.parentNode?.replaceChild(newCheckButton, checkButton);
+    resetButton.parentNode?.replaceChild(newResetButton, resetButton);
+
+    // Re-get buttons after cloning
+    const checkBtn = document.getElementById('check-answers');
+    const resetBtn = document.getElementById('reset-answers');
+
+    if (!checkBtn || !resetBtn) return;
+
+    checkBtn.addEventListener('click', () => {
+      // Show all explanations
+      const explanations = document.querySelectorAll('.explanation');
+      explanations.forEach((el) => {
+        el.classList.add('show');
+      });
+
+      // Check answers and highlight
+      checkAnswers();
+
+      checkBtn.style.display = 'none';
+      resetBtn.style.display = 'inline-flex';
+    });
+
+    resetBtn.addEventListener('click', () => {
+      // Hide all explanations
+      const explanations = document.querySelectorAll('.explanation');
+      explanations.forEach((el) => {
+        el.classList.remove('show');
+      });
+
+      // Reset all inputs
+      const inputs = document.querySelectorAll(
+        'input[type="radio"], input[type="checkbox"], input[type="text"]'
+      );
+      inputs.forEach((input) => {
+        if (input instanceof HTMLInputElement) {
+          if (input.type === 'text') {
+            input.value = '';
+          } else {
+            input.checked = false;
+          }
+        }
+      });
+
+      // Remove highlight classes
+      const labels = document.querySelectorAll('.option-label');
+      labels.forEach((label) => {
+        label.classList.remove('correct', 'incorrect', 'missed');
+      });
+
+      // Remove input highlight classes
+      const textInputs = document.querySelectorAll('.answer-input');
+      textInputs.forEach((input) => {
+        input.classList.remove('correct-input', 'incorrect-input');
+      });
+
+      checkBtn.style.display = 'inline-flex';
+      resetBtn.style.display = 'none';
+    });
+
+    function checkAnswers() {
+      // Check Yes/No questions
+      document.querySelectorAll('input[type="radio"][name^="yesno-"]').forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) return;
+        const label = input.closest('.option-label');
+        if (!label) return;
+        const questionCard = input.closest('.question-card');
+        if (!questionCard) return;
+
+        const isChecked = input.checked;
+        const userValue = input.value === 'true';
+        const correctAnswerStr = questionCard
+          .querySelector('.explanation')
+          ?.getAttribute('data-correct-answer');
+        const correctAnswer = correctAnswerStr === 'true';
+
+        if (isChecked) {
+          label.classList.add(userValue === correctAnswer ? 'correct' : 'incorrect');
+        }
+      });
+
+      // Check Multiple Choice
+      document.querySelectorAll('input[type="radio"][name^="mc-"]').forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) return;
+        const label = input.closest('.option-label');
+        if (!label) return;
+
+        if (input.checked) {
+          const isCorrect = input.getAttribute('data-correct') === 'true';
+          label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        }
+      });
+
+      // Check Select Multiple
+      document.querySelectorAll('input[type="checkbox"][name^="sm-"]').forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) return;
+        const label = input.closest('.option-label');
+        if (!label) return;
+
+        if (input.checked) {
+          const isCorrect = input.getAttribute('data-correct') === 'true';
+          label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        } else {
+          const isCorrect = input.getAttribute('data-correct') === 'true';
+          if (isCorrect) {
+            label.classList.add('missed');
+          }
+        }
+      });
+
+      // Check Fill in the Blank
+      document.querySelectorAll('input[type="text"].answer-input').forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) return;
+        const correctAnswer = input.getAttribute('data-answer')?.toLowerCase().trim();
+        const userAnswer = input.value.toLowerCase().trim();
+
+        if (userAnswer) {
+          if (userAnswer === correctAnswer) {
+            input.classList.add('correct-input');
+          } else {
+            input.classList.add('incorrect-input');
+          }
+        }
+      });
+    }
+  }
+
+  // Initialize on page load (for initial empty state)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCheckAnswers);
+  } else {
+    initializeCheckAnswers();
+  }
+
+  // Load questions on page load
+  loadQuestions();
+</script>
+
+<style is:global>
+  /* Global styles for dynamically injected questions */
+  .question-card {
+    @apply rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800;
+    transition: all 0.2s;
+  }
+
+  .question-card:hover {
+    @apply shadow-md;
+  }
+
+  .question-header {
+    @apply mb-4;
+  }
+
+  .question-type-badge {
+    @apply mb-2 inline-block rounded-full px-3 py-1 text-xs font-semibold;
+  }
+
+  /* Badge color variants */
+  .badge-purple {
+    @apply bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300;
+  }
+
+  .badge-blue {
+    @apply bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300;
+  }
+
+  .badge-green {
+    @apply bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300;
+  }
+
+  .badge-orange {
+    @apply bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300;
+  }
+
+  .question-text {
+    @apply text-lg font-medium text-gray-900 dark:text-gray-100;
+  }
+
+  .question-options {
+    @apply mt-4 flex flex-col gap-3;
+  }
+
+  .question-input {
+    @apply mt-4;
+  }
+
+  .option-label {
+    @apply flex cursor-pointer items-center gap-3 rounded-lg border-2 border-gray-200 p-4 transition-all hover:border-purple-300 hover:bg-purple-50 dark:border-gray-600 dark:hover:border-purple-600 dark:hover:bg-purple-900/20;
+  }
+
+  .option-input,
+  .option-checkbox {
+    @apply h-5 w-5 cursor-pointer text-purple-600 focus:ring-purple-500;
+  }
+
+  .option-checkbox {
+    @apply rounded;
+  }
+
+  .option-text {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+
+  .answer-input {
+    @apply w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500;
+  }
+
+  .explanation {
+    @apply mt-4 rounded-lg border-l-4 border-green-500 bg-green-50 p-4 text-sm text-gray-700 dark:border-green-400 dark:bg-green-900/20 dark:text-gray-300;
+    display: none;
+  }
+
+  .explanation.show {
+    display: block;
+  }
+
+  /* Answer feedback styles */
+  .option-label.correct {
+    @apply border-green-500 bg-green-50 dark:border-green-400 dark:bg-green-900/20;
+  }
+
+  .option-label.incorrect {
+    @apply border-red-500 bg-red-50 dark:border-red-400 dark:bg-red-900/20;
+  }
+
+  .option-label.missed {
+    @apply border-yellow-500 bg-yellow-50 dark:border-yellow-400 dark:bg-yellow-900/20;
+  }
+
+  .answer-input.correct-input {
+    @apply border-green-500 bg-green-50 dark:border-green-400 dark:bg-green-900/20;
+  }
+
+  .answer-input.incorrect-input {
+    @apply border-red-500 bg-red-50 dark:border-red-400 dark:bg-red-900/20;
+  }
+</style>

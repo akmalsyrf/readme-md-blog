@@ -1,0 +1,286 @@
+---
+import YesNoQuestion from './YesNoQuestion.astro';
+import FillBlankQuestion from './FillBlankQuestion.astro';
+import MultipleChoiceQuestion from './MultipleChoiceQuestion.astro';
+import SelectMultipleQuestion from './SelectMultipleQuestion.astro';
+import type { Locale } from '../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  cheatsheetTitle: string;
+  questions: Array<{
+    type: 'yesno' | 'fillblank' | 'multiplechoice' | 'selectmultiple';
+    question: string;
+    answer?: boolean | string | number | number[];
+    options?: string[];
+    correctAnswer?: number;
+    correctAnswers?: number[];
+    explanation?: string;
+  }>;
+}
+
+const { cheatsheetTitle, questions } = Astro.props;
+---
+
+<div class="ai-practice-container">
+  <div class="practice-header">
+    <h2 class="practice-title">Latihan: {cheatsheetTitle}</h2>
+    <p class="practice-subtitle">
+      Jawab pertanyaan-pertanyaan berikut untuk menguji pemahaman Anda
+    </p>
+  </div>
+
+  <div class="questions-container">
+    {
+      questions.map((q, index) => {
+        const questionId = `q-${index}`;
+        if (q.type === 'yesno') {
+          return (
+            <YesNoQuestion
+              question={q.question}
+              answer={q.answer as boolean}
+              explanation={q.explanation}
+              questionId={questionId}
+            />
+          );
+        } else if (q.type === 'fillblank') {
+          return (
+            <FillBlankQuestion
+              question={q.question}
+              answer={q.answer as string}
+              explanation={q.explanation}
+              questionId={questionId}
+            />
+          );
+        } else if (q.type === 'multiplechoice') {
+          return (
+            <MultipleChoiceQuestion
+              question={q.question}
+              options={q.options || []}
+              correctAnswer={q.correctAnswer || 0}
+              explanation={q.explanation}
+              questionId={questionId}
+            />
+          );
+        } else if (q.type === 'selectmultiple') {
+          return (
+            <SelectMultipleQuestion
+              question={q.question}
+              options={q.options || []}
+              correctAnswers={q.correctAnswers || []}
+              explanation={q.explanation}
+              questionId={questionId}
+            />
+          );
+        }
+      })
+    }
+  </div>
+
+  <div class="practice-footer">
+    <button class="submit-button" id="check-answers"> Periksa Jawaban </button>
+    <button class="reset-button" id="reset-answers" style="display: none;"> Reset </button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const checkButton = document.getElementById('check-answers');
+    const resetButton = document.getElementById('reset-answers');
+
+    if (!checkButton || !resetButton) return;
+
+    checkButton.addEventListener('click', () => {
+      // Show all explanations
+      const explanations = document.querySelectorAll('.explanation');
+      explanations.forEach((el) => {
+        el.classList.add('show');
+      });
+
+      // Check answers and highlight
+      checkAnswers();
+
+      checkButton.style.display = 'none';
+      resetButton.style.display = 'inline-flex';
+    });
+
+    resetButton.addEventListener('click', () => {
+      // Hide all explanations
+      const explanations = document.querySelectorAll('.explanation');
+      explanations.forEach((el) => {
+        el.classList.remove('show');
+      });
+
+      // Reset all inputs
+      const inputs = document.querySelectorAll(
+        'input[type="radio"], input[type="checkbox"], input[type="text"]'
+      );
+      inputs.forEach((input) => {
+        if (input instanceof HTMLInputElement) {
+          if (input.type === 'text') {
+            input.value = '';
+          } else {
+            input.checked = false;
+          }
+        }
+      });
+
+      // Remove highlight classes
+      const labels = document.querySelectorAll('.option-label');
+      labels.forEach((label) => {
+        label.classList.remove('correct', 'incorrect', 'missed');
+      });
+
+      // Remove input highlight classes
+      const textInputs = document.querySelectorAll('.answer-input');
+      textInputs.forEach((input) => {
+        input.classList.remove('correct-input', 'incorrect-input');
+      });
+
+      checkButton.style.display = 'inline-flex';
+      resetButton.style.display = 'none';
+    });
+
+    function checkAnswers() {
+      // Check Yes/No questions
+      document.querySelectorAll('input[type="radio"][name^="yesno-"]').forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) return;
+        const label = input.closest('.option-label');
+        if (!label) return;
+        const questionCard = input.closest('.question-card');
+        if (!questionCard) return;
+
+        const isChecked = input.checked;
+        const userValue = input.value === 'true';
+        const correctAnswerStr = questionCard
+          .querySelector('.explanation')
+          ?.getAttribute('data-correct-answer');
+        const correctAnswer = correctAnswerStr === 'true';
+
+        if (isChecked) {
+          label.classList.add(userValue === correctAnswer ? 'correct' : 'incorrect');
+        }
+      });
+
+      // Check Multiple Choice
+      document.querySelectorAll('input[type="radio"][name^="mc-"]').forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) return;
+        const label = input.closest('.option-label');
+        if (!label) return;
+
+        if (input.checked) {
+          const isCorrect = input.getAttribute('data-correct') === 'true';
+          label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        }
+      });
+
+      // Check Select Multiple
+      document.querySelectorAll('input[type="checkbox"][name^="sm-"]').forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) return;
+        const label = input.closest('.option-label');
+        if (!label) return;
+
+        if (input.checked) {
+          const isCorrect = input.getAttribute('data-correct') === 'true';
+          label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        } else {
+          const isCorrect = input.getAttribute('data-correct') === 'true';
+          if (isCorrect) {
+            label.classList.add('missed');
+          }
+        }
+      });
+
+      // Check Fill in the Blank
+      document.querySelectorAll('input[type="text"].answer-input').forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) return;
+        const correctAnswer = input.getAttribute('data-answer')?.toLowerCase().trim();
+        const userAnswer = input.value.toLowerCase().trim();
+
+        if (userAnswer) {
+          if (userAnswer === correctAnswer) {
+            input.classList.add('correct-input');
+          } else {
+            input.classList.add('incorrect-input');
+          }
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .ai-practice-container {
+    @apply mx-auto max-w-4xl;
+  }
+
+  .practice-header {
+    @apply mb-8 text-center;
+  }
+
+  .practice-title {
+    @apply mb-2 text-3xl font-bold text-gray-900 dark:text-gray-100;
+  }
+
+  .practice-subtitle {
+    @apply text-gray-600 dark:text-gray-400;
+  }
+
+  .questions-container {
+    @apply mb-8 space-y-6;
+  }
+
+  .practice-footer {
+    @apply flex justify-center gap-4 border-t border-gray-200 pt-6 dark:border-gray-700;
+  }
+
+  .submit-button,
+  .reset-button {
+    @apply inline-flex items-center gap-2 rounded-lg px-6 py-3 font-medium text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 dark:focus:ring-indigo-500;
+    background: linear-gradient(
+      135deg,
+      rgb(99 102 241) 0%,
+      rgb(79 70 229) 50%,
+      rgb(139 92 246) 100%
+    );
+    box-shadow:
+      0 0 20px rgba(99, 102, 241, 0.5),
+      0 0 40px rgba(99, 102, 241, 0.3),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .submit-button:hover,
+  .reset-button:hover {
+    background: linear-gradient(
+      135deg,
+      rgb(79 70 229) 0%,
+      rgb(99 102 241) 50%,
+      rgb(124 58 237) 100%
+    );
+    box-shadow:
+      0 0 30px rgba(99, 102, 241, 0.7),
+      0 0 60px rgba(99, 102, 241, 0.5),
+      0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .option-label.correct {
+    @apply border-green-500 bg-green-50 dark:border-green-400 dark:bg-green-900/20;
+  }
+
+  .option-label.incorrect {
+    @apply border-red-500 bg-red-50 dark:border-red-400 dark:bg-red-900/20;
+  }
+
+  .option-label.missed {
+    @apply border-yellow-500 bg-yellow-50 dark:border-yellow-400 dark:bg-yellow-900/20;
+  }
+
+  .answer-input.correct-input {
+    @apply border-green-500 bg-green-50 dark:border-green-400 dark:bg-green-900/20;
+  }
+
+  .answer-input.incorrect-input {
+    @apply border-red-500 bg-red-50 dark:border-red-400 dark:bg-red-900/20;
+  }
+</style>

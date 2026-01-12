@@ -96,6 +96,12 @@ export default {
       },
     },
   },
+  aiPractice: {
+    title: 'AI Practice',
+    subtitle: 'Practice and exercises with AI',
+    description: 'Page for practicing and experimenting with AI',
+    buttonText: 'Practice with AI',
+  },
   deepResearchChat: {
     title: 'Deep Research Chatbot',
     subtitle: 'Deep research with AI',

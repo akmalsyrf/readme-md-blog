@@ -60,13 +60,44 @@ const post = {
         ]}
       />
 
-      <BlogPostHeader post={post} locale={locale} isReadingTimeVisible={false} />
+      <div class="mb-8">
+        <div class="mb-4 flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <BlogPostHeader post={post} locale={locale} isReadingTimeVisible={false} />
+          </div>
+          <a
+            href={locale === 'id'
+              ? `/cheatsheet/${cheatsheet.slug}/ai-practice`
+              : `/en/cheatsheet/${cheatsheet.slug}/ai-practice`}
+            class="ai-practice-button"
+            title={t.aiPractice.buttonText}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+              ></path>
+            </svg>
+            <span class="hidden sm:inline">{t.aiPractice.buttonText}</span>
+          </a>
+        </div>
+      </div>
 
       {headings.length > 0 && <TableOfContents headings={headings} locale={locale} t={t} />}
 
       <BlogPostContent content={Content} />
 
-      <div class="flex justify-center border-t border-gray-200 dark:border-gray-700">
+      <div
+        class="flex flex-col items-center gap-4 border-t border-gray-200 pt-6 dark:border-gray-700"
+      >
         <ShareButtons
           url={Astro.url.href}
           title={cheatsheet.data.title}
@@ -77,3 +108,60 @@ const post = {
     </div>
   </article>
 </BaseLayout>
+
+<style>
+  .ai-practice-button {
+    @apply inline-flex items-center gap-2 rounded-lg px-6 py-3 font-medium text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 dark:focus:ring-indigo-500;
+    background: linear-gradient(
+      135deg,
+      rgb(99 102 241) 0%,
+      rgb(79 70 229) 50%,
+      rgb(139 92 246) 100%
+    );
+    box-shadow:
+      0 0 20px rgba(99, 102, 241, 0.5),
+      0 0 40px rgba(99, 102, 241, 0.3),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-practice-button:hover {
+    background: linear-gradient(
+      135deg,
+      rgb(79 70 229) 0%,
+      rgb(99 102 241) 50%,
+      rgb(124 58 237) 100%
+    );
+    box-shadow:
+      0 0 30px rgba(99, 102, 241, 0.7),
+      0 0 60px rgba(99, 102, 241, 0.5),
+      0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .dark .ai-practice-button {
+    background: linear-gradient(
+      135deg,
+      rgb(129 140 248) 0%,
+      rgb(99 102 241) 50%,
+      rgb(167 139 250) 100%
+    );
+    box-shadow:
+      0 0 20px rgba(129, 140, 248, 0.6),
+      0 0 40px rgba(129, 140, 248, 0.4),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .ai-practice-button:hover {
+    background: linear-gradient(
+      135deg,
+      rgb(99 102 241) 0%,
+      rgb(129 140 248) 50%,
+      rgb(196 181 253) 100%
+    );
+    box-shadow:
+      0 0 30px rgba(129, 140, 248, 0.8),
+      0 0 60px rgba(129, 140, 248, 0.6),
+      0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px) scale(1.02);
+  }
+</style>
