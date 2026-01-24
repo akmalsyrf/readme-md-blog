@@ -8,6 +8,7 @@ import BlogPostHeader from './BlogPostHeader.astro';
 import BlogPostContent from './BlogPostContent.astro';
 import ShareButtons from './ShareButtons.astro';
 import PostNavigation from './PostNavigation.astro';
+import GiscusComments from '../common/GiscusComments.astro';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -46,6 +47,8 @@ const currentUrl = Astro.url.href;
     <BlogPostContent content={Content} />
 
     <PostNavigation previous={previous} next={next} locale={locale} />
+
+    <GiscusComments locale={locale} />
 
     <div class="flex justify-center border-t border-gray-200 dark:border-gray-700">
       <ShareButtons

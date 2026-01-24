@@ -183,6 +183,11 @@ export default {
     instagram: 'Instagram',
     copyLink: 'Copy Link',
   },
+  comments: {
+    title: 'Comments & Discussion',
+    loading: 'Loading comments...',
+    powered: 'Powered by GitHub Discussions',
+  },
   chatbot: {
     title: 'AI Chat Assistant',
     welcome:

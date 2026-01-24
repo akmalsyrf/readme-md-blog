@@ -186,6 +186,11 @@ export default {
     instagram: 'Instagram',
     copyLink: 'Salin Link',
   },
+  comments: {
+    title: 'Komentar & Diskusi',
+    loading: 'Memuat komentar...',
+    powered: 'Didukung oleh GitHub Discussions',
+  },
   chatbot: {
     title: 'Asisten Chat AI',
     welcome:

@@ -1,0 +1,191 @@
+---
+import { getTranslations, type Locale } from '../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+
+// Giscus configuration from environment variables
+// Set these in your .env file (see .env.example)
+const giscusConfig = {
+  repo: import.meta.env.PUBLIC_GISCUS_REPO || '',
+  repoId: import.meta.env.PUBLIC_GISCUS_REPO_ID || '',
+  category: import.meta.env.PUBLIC_GISCUS_CATEGORY || '',
+  categoryId: import.meta.env.PUBLIC_GISCUS_CATEGORY_ID || '',
+};
+
+// Map locale to giscus language
+const giscusLang = locale === 'id' ? 'id' : 'en';
+---
+
+<section class="comments-section mt-12 border-t border-gray-200 pt-8 dark:border-gray-700">
+  <h2 class="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
+    {t.comments.title}
+  </h2>
+
+  <div id="giscus-container" class="giscus-frame">
+    <div id="giscus-loading" class="flex items-center justify-center py-8">
+      <div class="flex items-center gap-3 text-gray-500 dark:text-gray-400">
+        <svg
+          class="h-5 w-5 animate-spin"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <span>{t.comments.loading}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script
+  define:vars={{
+    repo: giscusConfig.repo,
+    repoId: giscusConfig.repoId,
+    category: giscusConfig.category,
+    categoryId: giscusConfig.categoryId,
+    giscusLang,
+  }}
+>
+  function loadGiscus() {
+    const container = document.getElementById('giscus-container');
+    const loadingEl = document.getElementById('giscus-loading');
+
+    if (!container) return;
+
+    // Check if giscus is already loaded
+    if (container.querySelector('.giscus')) {
+      if (loadingEl) loadingEl.style.display = 'none';
+      return;
+    }
+
+    // Get current theme
+    const isDark =
+      document.documentElement.classList.contains('dark') ||
+      localStorage.getItem('theme') === 'dark' ||
+      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    const theme = isDark ? 'dark' : 'light';
+
+    // Create giscus script
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo', repo);
+    script.setAttribute('data-repo-id', repoId);
+    script.setAttribute('data-category', category);
+    script.setAttribute('data-category-id', categoryId);
+    script.setAttribute('data-mapping', 'pathname');
+    script.setAttribute('data-strict', '0');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata', '0');
+    script.setAttribute('data-input-position', 'bottom');
+    script.setAttribute('data-theme', theme);
+    script.setAttribute('data-lang', giscusLang);
+    script.setAttribute('data-loading', 'lazy');
+    script.crossOrigin = 'anonymous';
+    script.async = true;
+
+    // Hide loading when giscus iframe loads
+    script.onload = () => {
+      // Wait a bit for iframe to render
+      setTimeout(() => {
+        if (loadingEl) loadingEl.style.display = 'none';
+      }, 500);
+    };
+
+    container.appendChild(script);
+  }
+
+  // Load giscus when section is in viewport (lazy loading)
+  function initGiscusObserver() {
+    const container = document.getElementById('giscus-container');
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            loadGiscus();
+            observer.disconnect();
+          }
+        });
+      },
+      { rootMargin: '100px' }
+    );
+
+    observer.observe(container);
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGiscusObserver);
+  } else {
+    initGiscusObserver();
+  }
+
+  // Handle Astro view transitions
+  document.addEventListener('astro:after-swap', initGiscusObserver);
+
+  // Sync giscus theme with site theme
+  function updateGiscusTheme() {
+    const iframe = document.querySelector('iframe.giscus-frame');
+    if (!iframe) return;
+
+    const isDark =
+      document.documentElement.classList.contains('dark') ||
+      localStorage.getItem('theme') === 'dark';
+
+    const theme = isDark ? 'dark' : 'light';
+
+    iframe.contentWindow?.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app');
+  }
+
+  // Listen for theme changes
+  const themeObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'class') {
+        updateGiscusTheme();
+      }
+    });
+  });
+
+  themeObserver.observe(document.documentElement, { attributes: true });
+
+  // Also listen for storage changes (theme toggle from other tabs)
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'theme') {
+      updateGiscusTheme();
+    }
+  });
+</script>
+
+<style>
+  .comments-section {
+    scroll-margin-top: 100px;
+  }
+
+  .giscus-frame {
+    min-height: 200px;
+  }
+
+  /* Ensure giscus iframe takes full width */
+  .giscus-frame :global(.giscus) {
+    width: 100%;
+  }
+
+  .giscus-frame :global(.giscus-frame) {
+    width: 100%;
+    border: none;
+  }
+</style>

@@ -1,6 +1,6 @@
 # Notes with Astro
 
-A modern notes/blog application built with Astro, featuring internationalization (i18n), AI-powered chatbot with RAG (Retrieval Augmented Generation), and comprehensive blog features.
+A modern notes/blog application built with Astro, featuring internationalization (i18n), AI-powered chatbot with RAG (Retrieval Augmented Generation), cheatsheet library with AI practice questions, and comprehensive blog features.
 
 ## Features
 
@@ -8,7 +8,8 @@ A modern notes/blog application built with Astro, featuring internationalization
 
 - ✅ **Internationalization (i18n)**: Support for Indonesian (default) and English languages
 - ✅ **Light & Dark Theme**: Theme toggle with saved preferences in localStorage
-- ✅ **Content Collections**: Notes content management using Astro Content Collections
+- ✅ **Font Size Toggle**: Adjustable font sizes (Small, Medium, Large) with saved preferences
+- ✅ **Content Collections**: Notes and cheatsheet content management using Astro Content Collections
 - ✅ **Responsive Design**: Fully responsive design using Tailwind CSS
 - ✅ **SEO Optimized**: SEO-friendly structure with structured data, sitemap, and RSS feed
 - ✅ **Social Links**: Links to GitHub, X (Twitter), and LinkedIn in the footer
@@ -28,6 +29,17 @@ A modern notes/blog application built with Astro, featuring internationalization
 - ✅ **Image Modal**: Click-to-expand image viewing with modal
 - ✅ **Breadcrumb Navigation**: Breadcrumb navigation for better UX
 - ✅ **404 Page**: Custom 404 error page
+- ✅ **Back to Top Button**: Smooth scroll back to top functionality
+- ✅ **Comments System**: GitHub Discussions-based commenting via Giscus
+
+### Cheatsheet Features
+
+- ✅ **Cheatsheet Library**: Dedicated content collection for quick reference materials
+- ✅ **Category Organization**: Cheatsheets organized by categories
+- ✅ **Pagination**: Paginated category listings for better navigation
+- ✅ **AI Practice Mode**: AI-generated practice questions for each cheatsheet
+- ✅ **Multiple Question Types**: Yes/No, Fill in the Blank, Multiple Choice, Select Multiple
+- ✅ **Answer Checking**: Interactive answer validation with explanations
 
 ### AI Features
 
@@ -41,6 +53,7 @@ A modern notes/blog application built with Astro, featuring internationalization
 - ✅ **Rate Limiting**: Built-in rate limiting per IP for API protection
 - ✅ **Security**: Request validation, CORS support, API key protection, and request size limits
 - ✅ **Deep Research Chatbot** (Experimental): Advanced AI research assistant for comprehensive topic research with real-time streaming reports
+- ✅ **AI Practice Questions**: Generate practice questions from cheatsheet content
 
 ### Developer Features
 
@@ -50,6 +63,7 @@ A modern notes/blog application built with Astro, featuring internationalization
 - ✅ **Husky & lint-staged**: Pre-commit hooks for code quality
 - ✅ **Vercel Deployment**: Optimized for Vercel serverless deployment (hybrid mode)
 - ✅ **Others Page**: Dedicated page for experimental features and external project links
+- ✅ **URL Middleware**: Automatic redirect from `/id/*` to `/*` for cleaner Indonesian URLs
 
 ## Getting Started
 
@@ -66,7 +80,7 @@ npm install
 
 ### Environment Variables
 
-Create a `.env` file in the root directory for AI chatbot features:
+Create a `.env` file in the root directory:
 
 ```env
 # Required for AI Chatbot (at least one AI provider)
@@ -85,6 +99,12 @@ CLOUDFLARE_MODEL_NAME=@cf/meta/llama-3.1-8b-instruct
 
 # Optional: Deep Research API endpoint (default: https://api-deep-research-backend.vercel.app)
 API_DEEP_RESEARCH_BASE_URL=https://api-deep-research-backend.vercel.app
+
+# Optional: Giscus Comments (GitHub Discussions)
+PUBLIC_GISCUS_REPO=your-github-username/your-repo
+PUBLIC_GISCUS_REPO_ID=your_repo_id
+PUBLIC_GISCUS_CATEGORY=Announcements
+PUBLIC_GISCUS_CATEGORY_ID=your_category_id
 ```
 
 **Note**:
@@ -93,6 +113,7 @@ API_DEEP_RESEARCH_BASE_URL=https://api-deep-research-backend.vercel.app
 - Gemini is the primary provider; Cloudflare is used as automatic fallback
 - You can get a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
 - For Cloudflare, you need a Workers AI enabled account
+- For Giscus configuration, visit [giscus.app](https://giscus.app) to generate your settings
 
 ### Development
 
@@ -130,6 +151,12 @@ readme-md/
 ├── src/
 │   ├── components/          # Reusable components
 │   │   ├── 404/            # 404 page component
+│   │   ├── ai-practice/    # AI Practice components
+│   │   │   ├── AIPracticeContent.astro
+│   │   │   ├── FillBlankQuestion.astro
+│   │   │   ├── MultipleChoiceQuestion.astro
+│   │   │   ├── SelectMultipleQuestion.astro
+│   │   │   └── YesNoQuestion.astro
 │   │   ├── archive/        # Archive page components
 │   │   ├── blog/           # Blog-specific components
 │   │   │   ├── BlogListing.astro
@@ -147,8 +174,11 @@ readme-md/
 │   │   │   ├── ChatMessages.astro
 │   │   │   └── ChatWindow.astro
 │   │   ├── common/         # Common components
+│   │   │   ├── BackToTopButton.astro
 │   │   │   ├── BlogPostCard.astro
 │   │   │   ├── Breadcrumb.astro
+│   │   │   ├── FontSizeToggle.astro
+│   │   │   ├── GiscusComments.astro
 │   │   │   ├── ImageModal.astro
 │   │   │   ├── LanguageSwitcher.astro
 │   │   │   ├── Pagination.astro
@@ -158,26 +188,36 @@ readme-md/
 │   │   │   └── ThemeToggle.astro
 │   │   ├── home/           # Homepage components
 │   │   ├── layout/         # Layout components
-│   │   ├── others/        # Others page components
+│   │   ├── others/         # Others page components
 │   │   │   ├── DeepResearch/  # Deep Research chatbot components
 │   │   │   └── MenuItemCard.astro
 │   │   ├── search/         # Search components
 │   │   └── tags/           # Tags components
 │   ├── config/             # Configuration files
+│   │   ├── cheatsheet.ts
 │   │   ├── notes.ts
 │   │   └── social.ts
 │   ├── content/            # Content collections
 │   │   ├── config.ts
+│   │   ├── cheatsheet/     # Cheatsheet content (single .md files)
 │   │   └── notes/          # Notes content (id.md & en.md per note)
 │   ├── i18n/              # Translation files
 │   │   ├── id.ts
 │   │   └── en.ts
 │   ├── layouts/           # Page layouts
 │   │   └── BaseLayout.astro
+│   ├── middleware.ts      # URL redirect middleware
 │   ├── pages/             # Pages and routes
 │   │   ├── api/           # API routes
-│   │   │   ├── chat.ts    # Chatbot API endpoint
-│   │   │   └── init-vectors.ts  # Vector store initialization endpoint
+│   │   │   ├── ai-questions.ts   # AI practice questions endpoint
+│   │   │   ├── chat.ts           # Chatbot API endpoint
+│   │   │   └── init-vectors.ts   # Vector store initialization endpoint
+│   │   ├── cheatsheet/    # Cheatsheet routes
+│   │   │   ├── [slug]/
+│   │   │   │   └── ai-practice.astro
+│   │   │   ├── [slug].astro
+│   │   │   ├── category/
+│   │   │   └── index.astro
 │   │   ├── en/            # English routes
 │   │   ├── notes/         # Notes routes
 │   │   ├── 404.astro      # 404 error page
@@ -204,11 +244,17 @@ readme-md/
 │       │   ├── geminiAI.ts
 │       │   ├── ragQuery.ts
 │       │   └── vectorStore.ts
-│       ├── deepResearch.ts  # Deep Research API utilities
+│       ├── deepResearch.ts          # Deep Research API utilities
 │       ├── extractHeadings.ts
 │       ├── getAdjacentPosts.ts
 │       ├── getBlogPaginationStaticPaths.ts
 │       ├── getBlogPostStaticPaths.ts
+│       ├── getCheatsheets.ts        # Cheatsheet utilities
+│       ├── getCheatsheetsByCategory.ts
+│       ├── getCheatsheetStaticPaths.ts
+│       ├── getCheatsheetCategoryStaticPaths.ts
+│       ├── getCheatsheetCategoryPaginationStaticPaths.ts
+│       ├── getCheatsheetPaginationStaticPaths.ts
 │       ├── getPostsByLocale.ts
 │       ├── i18n.ts
 │       ├── readingTime.ts
@@ -217,6 +263,7 @@ readme-md/
 │   └── notes/            # Optimized note images
 ├── scripts/              # Utility scripts
 │   ├── fix-vercel-runtime.js
+│   ├── new-cheatsheet.js    # Create new cheatsheet
 │   ├── new-note.js
 │   ├── optimize-image.js
 │   └── optimize-images-folder.js
@@ -277,6 +324,86 @@ author: 'Author Name'
 tags: ['tag1', 'tag2']
 ---
 ```
+
+## Adding New Cheatsheets
+
+### Using Command (Recommended)
+
+Create a new cheatsheet using:
+
+```bash
+npm run new-cheatsheet "cheatsheet-title"
+```
+
+Examples:
+
+```bash
+npm run new-cheatsheet "git-commands"
+npm run new-cheatsheet "docker-basics"
+```
+
+This command will:
+
+- ✅ Create a new file with timestamp format: `YYYYMMDDHHMMSS_cheatsheet-title.md`
+- ✅ Automatically generate frontmatter template
+- ✅ Set `pubDate` to today's date
+
+Generated file:
+
+```
+src/content/cheatsheet/
+└── 20240115143025_git-commands.md
+```
+
+### Manual
+
+If you want to create cheatsheets manually:
+
+1. Create a new file in `src/content/cheatsheet/` with format: `YYYYMMDDHHMMSS_cheatsheet-title.md`
+2. Add frontmatter with metadata:
+
+```markdown
+---
+title: 'Cheatsheet Title'
+description: 'Brief description about this cheatsheet'
+pubDate: 2024-01-15
+author: 'Admin'
+category: 'Programming'
+tags: ['tag1', 'tag2']
+---
+
+# Cheatsheet Title
+
+Start writing your cheatsheet here...
+```
+
+### Available Categories
+
+Cheatsheets are organized by categories. Use consistent category names for proper grouping:
+
+- Programming
+- Web Development
+- Database
+- DevOps
+- Language Learning
+- Mathematics
+- And more...
+
+## AI Practice Mode
+
+Each cheatsheet has an AI Practice mode that generates practice questions:
+
+1. Navigate to any cheatsheet (e.g., `/cheatsheet/git-commands`)
+2. Click the "Practice with AI" button
+3. The system will generate 8-10 questions covering different parts of the cheatsheet
+4. Answer the questions and check your results
+
+Question types include:
+
+- **Yes/No**: Simple true/false questions
+- **Fill in the Blank**: Complete the missing word or phrase
+- **Multiple Choice**: Select the correct answer from options
+- **Select Multiple**: Choose all correct answers
 
 ## Image Optimization
 
@@ -434,25 +561,56 @@ If not set, it defaults to `https://api-deep-research-backend.vercel.app`.
 
 **Note**: This is an experimental feature and may be subject to changes.
 
+## Comments System (Giscus)
+
+The blog supports comments powered by [Giscus](https://giscus.app), which uses GitHub Discussions.
+
+### Setup
+
+1. Enable GitHub Discussions on your repository
+2. Visit [giscus.app](https://giscus.app) and configure your settings
+3. Add the following to your `.env` file:
+
+```env
+PUBLIC_GISCUS_REPO=your-github-username/your-repo
+PUBLIC_GISCUS_REPO_ID=your_repo_id
+PUBLIC_GISCUS_CATEGORY=Announcements
+PUBLIC_GISCUS_CATEGORY_ID=your_category_id
+```
+
+### Features
+
+- **Lazy Loading**: Comments load only when scrolled into view
+- **Theme Sync**: Automatically syncs with site light/dark theme
+- **Multilingual**: Supports Indonesian and English
+- **No Tracking**: Privacy-friendly, no ads or tracking
+
 ## Others Page
 
 The `/others` page provides access to experimental features and external project links:
 
 - **Deep Research Chatbot**: Advanced AI research assistant
+- **Cheat Sheet**: Quick reference materials library
 - **External Projects**: Links to other projects (SpinelDB, Bahlilfication, etc.)
 
 This page can be customized by editing `src/components/others/OthersContent.astro`.
 
 ## i18n Routing
 
-- Indonesian (default): `/`, `/notes`
+- Indonesian (default): `/`, `/notes`, `/cheatsheet`
 - English: `/en`, `/en/notes`
 
 All routes support both languages with automatic locale detection.
 
+**Note**: The middleware automatically redirects `/id/*` URLs to `/*` for cleaner Indonesian URLs.
+
 ## Theme
 
 The light/dark theme can be toggled using the button in the header. User preferences are saved in localStorage and persist across sessions.
+
+## Font Size
+
+Font size can be adjusted using the toggle in the header. Choose between Small, Medium, and Large. Preferences are saved in localStorage.
 
 ## Social Links
 
@@ -496,6 +654,10 @@ This project is optimized for Vercel deployment with hybrid mode (static pages +
    - `CLOUDFLARE_API_TOKEN` (optional, for fallback AI)
    - `CLOUDFLARE_MODEL_NAME` (optional, default: @cf/meta/llama-3.1-8b-instruct)
    - `API_DEEP_RESEARCH_BASE_URL` (optional, for Deep Research feature)
+   - `PUBLIC_GISCUS_REPO` (optional, for comments)
+   - `PUBLIC_GISCUS_REPO_ID` (optional, for comments)
+   - `PUBLIC_GISCUS_CATEGORY` (optional, for comments)
+   - `PUBLIC_GISCUS_CATEGORY_ID` (optional, for comments)
 4. Deploy!
 
 The site URL is configured in `astro.config.mjs`. Update it to match your domain:
@@ -533,6 +695,7 @@ For static-only deployment, remove API routes or use a separate service for the 
 ### Content Management
 
 - `npm run new-note "note-title"` - Create a new note with templates (generates both id.md and en.md)
+- `npm run new-cheatsheet "cheatsheet-title"` - Create a new cheatsheet with template
 - `npm run optimize-image <source> [target]` - Optimize a single image to WebP format
 - `npm run optimize-images <folder> [targetFolder]` - Optimize all images in a folder to WebP format
 
@@ -630,6 +793,7 @@ Hooks are automatically set up when you run `npm install` (via `prepare` script)
   - Fallback: Cloudflare Workers AI (@cf/meta/llama-3.1-8b-instruct)
 - **Embeddings**: Google Gemini text embedding model
 - **Vector Store**: In-memory vector store with similarity search
+- **Comments**: Giscus (GitHub Discussions)
 - **Deployment**: Vercel (Serverless functions for API routes)
 - **Language**: TypeScript
 - **Code Quality**: ESLint, Prettier, Husky, lint-staged
