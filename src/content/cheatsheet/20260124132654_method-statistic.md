@@ -18,12 +18,12 @@ Cheatsheet lengkap untuk memahami metode statistika dari konsep dasar hingga apl
 **Rumus Dasar:**
 
 - Integral tak tentu: $\int f(x) dx = F(x) + C$
-- Integral tentu: $\int_a^b f(x) dx = F(b) - F(a)$
-- Integral untuk peluang: $P(a \leq X \leq b) = \int_a^b f(x) dx$ dimana $f(x)$ adalah fungsi kepekatan peluang
+- Integral tentu: $\int\_a^b f(x) dx = F(b) - F(a)$
+- Integral untuk peluang: $P(a \leq X \leq b) = \int\_a^b f(x) dx$ dimana $f(x)$ adalah fungsi kepekatan peluang
 
 **Contoh:**
 Untuk menghitung peluang peubah acak kontinu $X$ antara 2 dan 5:
-$$P(2 \leq X \leq 5) = \int_2^5 f(x) dx$$
+$$P(2 \leq X \leq 5) = \int\_2^5 f(x) dx$$
 
 ### Peluang (Probability)
 
@@ -44,7 +44,7 @@ $$P(\text{genap}) = P(2) + P(4) + P(6) = \frac{1}{6} + \frac{1}{6} + \frac{1}{6}
 **Konsep:** Aturan untuk menentukan banyaknya kelas interval dalam histogram atau tabel distribusi frekuensi.
 
 **Rumus:**
-$$k = 1 + 3.322 \log_{10}(n)$$
+$$k = 1 + 3.322 \log\_{10}(n)$$
 
 dimana:
 
@@ -53,10 +53,10 @@ dimana:
 
 **Contoh:**
 Jika memiliki 100 data:
-$$k = 1 + 3.322 \log_{10}(100) = 1 + 3.322 \times 2 = 7.644 \approx 8 \text{ kelas}$$
+$$k = 1 + 3.322 \log\_{10}(100) = 1 + 3.322 \times 2 = 7.644 \approx 8 \text{ kelas}$$
 
 **Panjang Kelas:**
-$$\text{Panjang kelas} = \frac{\text{Range}}{k} = \frac{X_{\max} - X_{\min}}{k}$$
+$$\text{Panjang kelas} = \frac{\text{Range}}{k} = \frac{X\_{\max} - X\_{\min}}{k}$$
 
 ## Sebaran Normal
 
@@ -111,8 +111,8 @@ $$P(a \leq X \leq b) = P\left(\frac{a-\mu}{\sigma} \leq Z \leq \frac{b-\mu}{\sig
 Jika $X \sim N(50, 10^2)$, hitung $P(45 \leq X \leq 60)$:
 
 1. Transformasi:
-   - $Z_1 = \frac{45-50}{10} = -0.5$
-   - $Z_2 = \frac{60-50}{10} = 1.0$
+   - $Z\_1 = \frac{45-50}{10} = -0.5$
+   - $Z\_2 = \frac{60-50}{10} = 1.0$
 
 2. Dari tabel:
    - $P(Z \leq -0.5) = 0.3085$
@@ -254,14 +254,14 @@ Jika $X \sim N(50, 10^2)$, hitung $P(45 \leq X \leq 60)$:
 **Notasi:**
 
 - $z_\alpha$ = nilai kritis untuk peluang $\alpha$ di ekor kanan
-- $z_{1-\alpha}$ = nilai kritis untuk peluang $\alpha$ di ekor kiri
+- $z\_{1-\alpha}$ = nilai kritis untuk peluang $\alpha$ di ekor kiri
 
 **Nilai Kritis Umum:**
 
-- $z_{0.05} = 1.645$ (untuk $\alpha = 0.05$ ekor kanan)
-- $z_{0.025} = 1.96$ (untuk $\alpha = 0.025$ ekor kanan, atau $\alpha = 0.05$ dua ekor)
-- $z_{0.01} = 2.326$ (untuk $\alpha = 0.01$ ekor kanan)
-- $z_{0.005} = 2.576$ (untuk $\alpha = 0.005$ ekor kanan, atau $\alpha = 0.01$ dua ekor)
+- $z\_{0.05} = 1.645$ (untuk $\alpha = 0.05$ ekor kanan)
+- $z\_{0.025} = 1.96$ (untuk $\alpha = 0.025$ ekor kanan, atau $\alpha = 0.05$ dua ekor)
+- $z\_{0.01} = 2.326$ (untuk $\alpha = 0.01$ ekor kanan)
+- $z\_{0.005} = 2.576$ (untuk $\alpha = 0.005$ ekor kanan, atau $\alpha = 0.01$ dua ekor)
 
 **Contoh:**
 Untuk uji hipotesis dua ekor dengan $\alpha = 0.05$:
@@ -439,7 +439,7 @@ Penduga dengan ragam terkecil di antara semua penduga tidak bias.
 
 **3. Konsisten**
 Penduga yang semakin mendekati parameter sebenarnya ketika ukuran sampel meningkat:
-$$\lim_{n \to \infty} P(|\hat{\theta} - \theta| < \epsilon) = 1$$
+$$\lim\_{n \to \infty} P(|\hat{\theta} - \theta| < \epsilon) = 1$$
 
 **4. Cukup (Sufficient)**
 Penduga yang memuat semua informasi tentang parameter dari sampel.
@@ -601,10 +601,10 @@ Jika kita membuat 100 selang kepercayaan 95%, maka sekitar 95 di antaranya akan 
 **Konsep:** Setengah dari lebar selang kepercayaan, menunjukkan ketidakpastian dalam pendugaan.
 
 **Rumus:**
-$$\text{Margin of error} = z_{\alpha/2} \times \frac{\sigma}{\sqrt{n}}$$
+$$\text{Margin of error} = z\_{\alpha/2} \times \frac{\sigma}{\sqrt{n}}$$
 
 atau untuk ragam tidak diketahui:
-$$\text{Margin of error} = t_{\alpha/2, n-1} \times \frac{s}{\sqrt{n}}$$
+$$\text{Margin of error} = t\_{\alpha/2, n-1} \times \frac{s}{\sqrt{n}}$$
 
 **Faktor yang Mempengaruhi:**
 
@@ -615,7 +615,7 @@ $$\text{Margin of error} = t_{\alpha/2, n-1} \times \frac{s}{\sqrt{n}}$$
 **Contoh:**
 Untuk $\bar{x} = 50$, $s = 10$, $n = 100$, tingkat kepercayaan 95%:
 
-- $z_{0.025} = 1.96$
+- $z\_{0.025} = 1.96$
 - Margin of error = $1.96 \times \frac{10}{\sqrt{100}} = 1.96 \times 1 = 1.96$
 - Selang kepercayaan: $50 \pm 1.96$ atau $(48.04, 51.96)$
 
@@ -627,7 +627,7 @@ Sebuah pabrik ingin menduga rata-rata berat produk. Dari sampel 50 produk, diper
 **Penyelesaian:**
 
 - $n = 50$, $\bar{x} = 250$, $\sigma = 20$, $\alpha = 0.05$
-- $z_{0.025} = 1.96$
+- $z\_{0.025} = 1.96$
 - Margin of error = $1.96 \times \frac{20}{\sqrt{50}} = 1.96 \times 2.828 = 5.54$
 - Selang kepercayaan: $250 \pm 5.54$ atau $(244.46, 255.54)$
 
@@ -927,7 +927,7 @@ Data jenis kelamin: Laki-laki (45), Perempuan (55)
 **Contoh:**
 Data tinggi badan (cm): 150, 155, 160, 165, 170, 175, 180, 185, 190
 
-- $n = 9$, maka $k = 1 + 3.322 \log_{10}(9) \approx 4$
+- $n = 9$, maka $k = 1 + 3.322 \log\_{10}(9) \approx 4$
 - Range = 190 - 150 = 40
 - Panjang kelas = 40/4 = 10
 
@@ -964,17 +964,17 @@ Data tinggi badan (cm): 150, 155, 160, 165, 170, 175, 180, 185, 190
 **1. Mean (Rata-rata)**
 
 **Populasi ($\mu$):**
-$$\mu = \frac{\sum_{i=1}^{N} x_i}{N}$$
+$$\mu = \frac{\sum\_{i=1}^{N} x\_i}{N}$$
 
 **Sampel ($\bar{x}$):**
-$$\bar{x} = \frac{\sum_{i=1}^{n} x_i}{n}$$
+$$\bar{x} = \frac{\sum\_{i=1}^{n} x\_i}{n}$$
 
 **Contoh:**
 Data: 10, 20, 30, 40, 50
 $$\bar{x} = \frac{10 + 20 + 30 + 40 + 50}{5} = \frac{150}{5} = 30$$
 
 **Mean Tertimbang:**
-$$\bar{x}_w = \frac{\sum w_i x_i}{\sum w_i}$$
+$$\bar{x}\_w = \frac{\sum w\_i x\_i}{\sum w\_i}$$
 
 **2. Median**
 
@@ -1007,7 +1007,7 @@ Data: 5, 7, 7, 9, 10, 10, 10, 12
 **1. Kisaran (Range)**
 
 **Rumus:**
-$$\text{Range} = X_{\max} - X_{\min}$$
+$$\text{Range} = X\_{\max} - X\_{\min}$$
 
 **Contoh:**
 Data: 10, 20, 30, 40, 50
@@ -1019,18 +1019,18 @@ Data: 10, 20, 30, 40, 50
 **Konsep:** Selisih antara kuartil ketiga dan kuartil pertama.
 
 **Rumus:**
-$$\text{IQR} = Q_3 - Q_1$$
+$$\text{IQR} = Q\_3 - Q\_1$$
 
 **Contoh:**
-Jika $Q_1 = 25$ dan $Q_3 = 75$, maka IQR = 75 - 25 = 50
+Jika $Q\_1 = 25$ dan $Q\_3 = 75$, maka IQR = 75 - 25 = 50
 
 **3. Ragam (Variance) dan Simpangan Baku (Standard Deviation)**
 
 **Ragam Populasi ($\sigma^2$):**
-$$\sigma^2 = \frac{\sum_{i=1}^{N} (x_i - \mu)^2}{N}$$
+$$\sigma^2 = \frac{\sum\_{i=1}^{N} (x\_i - \mu)^2}{N}$$
 
 **Ragam Sampel ($s^2$):**
-$$s^2 = \frac{\sum_{i=1}^{n} (x_i - \bar{x})^2}{n-1}$$
+$$s^2 = \frac{\sum\_{i=1}^{n} (x\_i - \bar{x})^2}{n-1}$$
 
 **Simpangan Baku:**
 
@@ -1046,7 +1046,7 @@ Data: 10, 20, 30, 40, 50
 - $s = \sqrt{250} = 15.81$
 
 **Rumus Alternatif (Lebih Mudah Dihitung):**
-$$s^2 = \frac{\sum x_i^2 - n\bar{x}^2}{n-1}$$
+$$s^2 = \frac{\sum x\_i^2 - n\bar{x}^2}{n-1}$$
 
 ### Kuartil
 
@@ -1054,51 +1054,51 @@ $$s^2 = \frac{\sum x_i^2 - n\bar{x}^2}{n-1}$$
 
 **Kuartil:**
 
-- $Q_1$ (Kuartil pertama): 25% data di bawahnya
-- $Q_2$ (Kuartil kedua): Sama dengan median, 50% data di bawahnya
-- $Q_3$ (Kuartil ketiga): 75% data di bawahnya
+- $Q\_1$ (Kuartil pertama): 25% data di bawahnya
+- $Q\_2$ (Kuartil kedua): Sama dengan median, 50% data di bawahnya
+- $Q\_3$ (Kuartil ketiga): 75% data di bawahnya
 
 **Cara Menghitung:**
 
 1. Urutkan data
 2. Tentukan posisi kuartil:
-   - $Q_1$: posisi = $\frac{n+1}{4}$
-   - $Q_2$: posisi = $\frac{n+1}{2}$ (median)
-   - $Q_3$: posisi = $\frac{3(n+1)}{4}$
+   - $Q\_1$: posisi = $\frac{n+1}{4}$
+   - $Q\_2$: posisi = $\frac{n+1}{2}$ (median)
+   - $Q\_3$: posisi = $\frac{3(n+1)}{4}$
 
 **Contoh:**
 Data: 10, 20, 30, 40, 50, 60, 70, 80, 90
 
 - $n = 9$
-- $Q_1$: posisi = $\frac{9+1}{4} = 2.5$ → nilai antara data ke-2 dan ke-3 = $\frac{20+30}{2} = 25$
-- $Q_2$: posisi = $\frac{9+1}{2} = 5$ → data ke-5 = 50
-- $Q_3$: posisi = $\frac{3(9+1)}{4} = 7.5$ → nilai antara data ke-7 dan ke-8 = $\frac{70+80}{2} = 75$
+- $Q\_1$: posisi = $\frac{9+1}{4} = 2.5$ → nilai antara data ke-2 dan ke-3 = $\frac{20+30}{2} = 25$
+- $Q\_2$: posisi = $\frac{9+1}{2} = 5$ → data ke-5 = 50
+- $Q\_3$: posisi = $\frac{3(9+1)}{4} = 7.5$ → nilai antara data ke-7 dan ke-8 = $\frac{70+80}{2} = 75$
 
 ### IQR dan Boxplot
 
 **IQR (Inter Quartile Range):**
-$$\text{IQR} = Q_3 - Q_1$$
+$$\text{IQR} = Q\_3 - Q\_1$$
 
 **Boxplot (Diagram Kotak-Garis):**
 Menampilkan 5 ringkasan data:
 
-1. Minimum ($X_{\min}$)
-2. $Q_1$
-3. Median ($Q_2$)
-4. $Q_3$
-5. Maximum ($X_{\max}$)
+1. Minimum ($X\_{\min}$)
+2. $Q\_1$
+3. Median ($Q\_2$)
+4. $Q\_3$
+5. Maximum ($X\_{\max}$)
 
 **Komponen Boxplot:**
 
-- **Kotak:** Dari $Q_1$ sampai $Q_3$ (mengandung IQR)
+- **Kotak:** Dari $Q\_1$ sampai $Q\_3$ (mengandung IQR)
 - **Garis di dalam kotak:** Median
 - **Whisker (kumis):**
-  - Bawah: dari $Q_1$ sampai $X_{\min}$ (atau $Q_1 - 1.5 \times \text{IQR}$ jika ada pencilan)
-  - Atas: dari $Q_3$ sampai $X_{\max}$ (atau $Q_3 + 1.5 \times \text{IQR}$ jika ada pencilan)
-- **Pencilan (Outlier):** Data di luar $Q_1 - 1.5 \times \text{IQR}$ atau $Q_3 + 1.5 \times \text{IQR}$
+  - Bawah: dari $Q\_1$ sampai $X\_{\min}$ (atau $Q\_1 - 1.5 \times \text{IQR}$ jika ada pencilan)
+  - Atas: dari $Q\_3$ sampai $X\_{\max}$ (atau $Q\_3 + 1.5 \times \text{IQR}$ jika ada pencilan)
+- **Pencilan (Outlier):** Data di luar $Q\_1 - 1.5 \times \text{IQR}$ atau $Q\_3 + 1.5 \times \text{IQR}$
 
 **Contoh:**
-Jika $Q_1 = 25$, $Q_3 = 75$, maka:
+Jika $Q\_1 = 25$, $Q\_3 = 75$, maka:
 
 - IQR = 75 - 25 = 50
 - Batas bawah pencilan = 25 - 1.5 × 50 = 25 - 75 = -50
@@ -1362,7 +1362,7 @@ Untuk kejadian saling lepas (mutually exclusive):
 $$P(A \cup B) = P(A) + P(B)$$
 
 **Umum untuk kejadian saling lepas:**
-$$P(A_1 \cup A_2 \cup ... \cup A_n) = P(A_1) + P(A_2) + ... + P(A_n)$$
+$$P(A\_1 \cup A\_2 \cup ... \cup A\_n) = P(A\_1) + P(A\_2) + ... + P(A\_n)$$
 
 **Contoh:**
 Pelemparan dadu:
@@ -1458,12 +1458,12 @@ Fungsi yang memetakan setiap hasil eksperimen ke bilangan real.
 **Fungsi Peluang:**
 
 - **Diskret:** $f(x) = P(X = x)$ (fungsi massa peluang)
-- **Kontinu:** $f(x)$ adalah fungsi kepekatan peluang, dimana $P(a \leq X \leq b) = \int_a^b f(x) dx$
+- **Kontinu:** $f(x)$ adalah fungsi kepekatan peluang, dimana $P(a \leq X \leq b) = \int\_a^b f(x) dx$
 
 **Syarat Fungsi Peluang:**
 
 1. $f(x) \geq 0$ untuk semua $x$
-2. $\sum_{x} f(x) = 1$ (diskret) atau $\int_{-\infty}^{\infty} f(x) dx = 1$ (kontinu)
+2. $\sum\_{x} f(x) = 1$ (diskret) atau $\int\_{-\infty}^{\infty} f(x) dx = 1$ (kontinu)
 
 **Contoh Diskret:**
 Pelemparan 2 koin, $X$ = banyaknya kepala:
@@ -1512,10 +1512,10 @@ Sebaran normal dengan $f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2
 **Konsep:** Rata-rata tertimbang dari semua nilai yang mungkin, dengan bobot adalah peluangnya.
 
 **Diskret:**
-$$E(X) = \mu = \sum_{x} x \cdot P(X = x) = \sum_{x} x \cdot f(x)$$
+$$E(X) = \mu = \sum\_{x} x \cdot P(X = x) = \sum\_{x} x \cdot f(x)$$
 
 **Kontinu:**
-$$E(X) = \mu = \int_{-\infty}^{\infty} x \cdot f(x) dx$$
+$$E(X) = \mu = \int\_{-\infty}^{\infty} x \cdot f(x) dx$$
 
 **Contoh Diskret:**
 Pelemparan dadu, $X$ = nilai yang muncul:
@@ -1533,10 +1533,10 @@ $$E(X) = 1 \times \frac{1}{6} + 2 \times \frac{1}{6} + 3 \times \frac{1}{6} + 4 
 $$\text{Var}(X) = \sigma^2 = E[(X - \mu)^2] = E(X^2) - [E(X)]^2$$
 
 **Diskret:**
-$$\text{Var}(X) = \sum_{x} (x - \mu)^2 \cdot f(x) = \sum_{x} x^2 \cdot f(x) - \mu^2$$
+$$\text{Var}(X) = \sum\_{x} (x - \mu)^2 \cdot f(x) = \sum\_{x} x^2 \cdot f(x) - \mu^2$$
 
 **Kontinu:**
-$$\text{Var}(X) = \int_{-\infty}^{\infty} (x - \mu)^2 \cdot f(x) dx = \int_{-\infty}^{\infty} x^2 \cdot f(x) dx - \mu^2$$
+$$\text{Var}(X) = \int\_{-\infty}^{\infty} (x - \mu)^2 \cdot f(x) dx = \int\_{-\infty}^{\infty} x^2 \cdot f(x) dx - \mu^2$$
 
 **Simpangan Baku:**
 $$\sigma = \sqrt{\text{Var}(X)}$$
@@ -2028,7 +2028,7 @@ dimana:
 **Konsep:** Peluang dihitung sebagai luas di bawah kurva fungsi kepekatan.
 
 **Rumus:**
-$$P(a \leq X \leq b) = \int_a^b \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}} dx$$
+$$P(a \leq X \leq b) = \int\_a^b \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}} dx$$
 
 **Kesulitan:** Integral ini tidak dapat diselesaikan secara analitik, sehingga menggunakan:
 
@@ -2040,8 +2040,8 @@ $$P(a \leq X \leq b) = \int_a^b \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}
 $X \sim N(50, 10^2)$, hitung $P(45 \leq X \leq 60)$:
 
 1. Transformasi ke normal baku:
-   - $Z_1 = \frac{45-50}{10} = -0.5$
-   - $Z_2 = \frac{60-50}{10} = 1.0$
+   - $Z\_1 = \frac{45-50}{10} = -0.5$
+   - $Z\_2 = \frac{60-50}{10} = 1.0$
 
 2. Gunakan tabel atau software:
    $$P(45 \leq X \leq 60) = P(-0.5 \leq Z \leq 1.0) = 0.5328$$
@@ -2099,7 +2099,7 @@ $X \sim N(100, 15^2)$, hitung $P(X > 130)$:
 **1. Ragam Populasi Diketahui ($\sigma^2$ diketahui)**
 
 **Rumus:**
-$$\bar{x} \pm z_{\alpha/2} \frac{\sigma}{\sqrt{n}}$$
+$$\bar{x} \pm z\_{\alpha/2} \frac{\sigma}{\sqrt{n}}$$
 
 **Syarat:**
 
@@ -2109,14 +2109,14 @@ $$\bar{x} \pm z_{\alpha/2} \frac{\sigma}{\sqrt{n}}$$
 **Contoh:**
 $\bar{x} = 50$, $\sigma = 10$, $n = 100$, tingkat kepercayaan 95%:
 
-- $z_{0.025} = 1.96$
+- $z\_{0.025} = 1.96$
 - Selang: $50 \pm 1.96 \times \frac{10}{\sqrt{100}} = 50 \pm 1.96$
 - $(48.04, 51.96)$
 
 **2. Ragam Populasi Tidak Diketahui**
 
 **Rumus:**
-$$\bar{x} \pm t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}$$
+$$\bar{x} \pm t\_{\alpha/2, n-1} \frac{s}{\sqrt{n}}$$
 
 **Syarat:**
 
@@ -2126,7 +2126,7 @@ $$\bar{x} \pm t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}$$
 **Contoh:**
 $\bar{x} = 50$, $s = 10$, $n = 25$, tingkat kepercayaan 95%:
 
-- $t_{0.025, 24} = 2.064$ (dari tabel t)
+- $t\_{0.025, 24} = 2.064$ (dari tabel t)
 - Selang: $50 \pm 2.064 \times \frac{10}{\sqrt{25}} = 50 \pm 4.128$
 - $(45.872, 54.128)$
 
@@ -2137,11 +2137,11 @@ $\bar{x} = 50$, $s = 10$, $n = 25$, tingkat kepercayaan 95%:
 **1. Ragam Populasi Diketahui**
 
 **Rumus:**
-$$(\bar{x}_1 - \bar{x}_2) \pm z_{\alpha/2} \sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}$$
+$$(\bar{x}\_1 - \bar{x}\_2) \pm z\_{\alpha/2} \sqrt{\frac{\sigma\_1^2}{n\_1} + \frac{\sigma\_2^2}{n\_2}}$$
 
 **Contoh:**
-Sampel 1: $\bar{x}_1 = 50$, $\sigma_1 = 10$, $n_1 = 100$
-Sampel 2: $\bar{x}_2 = 45$, $\sigma_2 = 12$, $n_2 = 80$
+Sampel 1: $\bar{x}\_1 = 50$, $\sigma\_1 = 10$, $n\_1 = 100$
+Sampel 2: $\bar{x}\_2 = 45$, $\sigma\_2 = 12$, $n\_2 = 80$
 Tingkat kepercayaan 95%:
 
 - Selisih: $50 - 45 = 5$
@@ -2152,20 +2152,20 @@ Tingkat kepercayaan 95%:
 **2. Ragam Populasi Tidak Diketahui (Asumsi Sama)**
 
 **Rumus:**
-$$(\bar{x}_1 - \bar{x}_2) \pm t_{\alpha/2, df} \sqrt{s_p^2\left(\frac{1}{n_1} + \frac{1}{n_2}\right)}$$
+$$(\bar{x}\_1 - \bar{x}\_2) \pm t\_{\alpha/2, df} \sqrt{s\_p^2\left(\frac{1}{n\_1} + \frac{1}{n\_2}\right)}$$
 
 dimana:
 
-- $s_p^2 = \frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1 + n_2 - 2}$ (pooled variance)
-- $df = n_1 + n_2 - 2$ (derajat bebas)
+- $s\_p^2 = \frac{(n\_1-1)s\_1^2 + (n\_2-1)s\_2^2}{n\_1 + n\_2 - 2}$ (pooled variance)
+- $df = n\_1 + n\_2 - 2$ (derajat bebas)
 
 **Contoh:**
-Sampel 1: $\bar{x}_1 = 50$, $s_1 = 10$, $n_1 = 25$
-Sampel 2: $\bar{x}_2 = 45$, $s_2 = 12$, $n_2 = 30$
+Sampel 1: $\bar{x}\_1 = 50$, $s\_1 = 10$, $n\_1 = 25$
+Sampel 2: $\bar{x}\_2 = 45$, $s\_2 = 12$, $n\_2 = 30$
 
-- $s_p^2 = \frac{(25-1)10^2 + (30-1)12^2}{25+30-2} = \frac{24 \times 100 + 29 \times 144}{53} = \frac{6576}{53} = 124.08$
+- $s\_p^2 = \frac{(25-1)10^2 + (30-1)12^2}{25+30-2} = \frac{24 \times 100 + 29 \times 144}{53} = \frac{6576}{53} = 124.08$
 - $df = 25 + 30 - 2 = 53$
-- $t_{0.025, 53} \approx 2.006$
+- $t\_{0.025, 53} \approx 2.006$
 - Standard error: $\sqrt{124.08 \times (\frac{1}{25} + \frac{1}{30})} = \sqrt{124.08 \times 0.0733} = 3.01$
 - Selang: $5 \pm 2.006 \times 3.01 = 5 \pm 6.04$
 - $(-1.04, 11.04)$
@@ -2173,23 +2173,23 @@ Sampel 2: $\bar{x}_2 = 45$, $s_2 = 12$, $n_2 = 30$
 **3. Ragam Populasi Tidak Diketahui (Asumsi Berbeda)**
 
 **Rumus:**
-$$(\bar{x}_1 - \bar{x}_2) \pm t_{\alpha/2, df} \sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}$$
+$$(\bar{x}\_1 - \bar{x}\_2) \pm t\_{\alpha/2, df} \sqrt{\frac{s\_1^2}{n\_1} + \frac{s\_2^2}{n\_2}}$$
 
 dimana:
-$$df = \frac{\left(\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}\right)^2}{\frac{(s_1^2/n_1)^2}{n_1-1} + \frac{(s_2^2/n_2)^2}{n_2-1}}$$ (Welch's formula)
+$$df = \frac{\left(\frac{s\_1^2}{n\_1} + \frac{s\_2^2}{n\_2}\right)^2}{\frac{(s\_1^2/n\_1)^2}{n\_1-1} + \frac{(s\_2^2/n\_2)^2}{n\_2-1}}$$ (Welch's formula)
 
 #### Selang Kepercayaan Data Berpasangan
 
 **Konsep:** Data yang diukur dua kali pada subjek yang sama (sebelum-sesudah, matched pairs).
 
 **Rumus:**
-$$\bar{d} \pm t_{\alpha/2, n-1} \frac{s_d}{\sqrt{n}}$$
+$$\bar{d} \pm t\_{\alpha/2, n-1} \frac{s\_d}{\sqrt{n}}$$
 
 dimana:
 
-- $d_i = x_{i1} - x_{i2}$ (selisih pasangan ke-$i$)
-- $\bar{d} = \frac{\sum d_i}{n}$ (rata-rata selisih)
-- $s_d = \sqrt{\frac{\sum(d_i - \bar{d})^2}{n-1}}$ (simpangan baku selisih)
+- $d\_i = x\_{i1} - x\_{i2}$ (selisih pasangan ke-$i$)
+- $\bar{d} = \frac{\sum d\_i}{n}$ (rata-rata selisih)
+- $s\_d = \sqrt{\frac{\sum(d\_i - \bar{d})^2}{n-1}}$ (simpangan baku selisih)
 
 **Contoh:**
 Data sebelum dan sesudah program diet (kg):
@@ -2203,8 +2203,8 @@ Data sebelum dan sesudah program diet (kg):
 | 5      | 88      | 85      | 3   |
 
 - $\bar{d} = \frac{5+3+2+2+3}{5} = 3$
-- $s_d = 1.225$ (dihitung dari data)
-- $n = 5$, $t_{0.025, 4} = 2.776$
+- $s\_d = 1.225$ (dihitung dari data)
+- $n = 5$, $t\_{0.025, 4} = 2.776$
 - Selang: $3 \pm 2.776 \times \frac{1.225}{\sqrt{5}} = 3 \pm 1.52$
 - $(1.48, 4.52)$
 
@@ -2221,13 +2221,13 @@ dimana:
 - $n$ = ukuran sampel
 
 **Selang Kepercayaan (Sampel Besar, $n\hat{p} \geq 5$ dan $n(1-\hat{p}) \geq 5$):**
-$$\hat{p} \pm z_{\alpha/2} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$$
+$$\hat{p} \pm z\_{\alpha/2} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$$
 
 **Contoh:**
 Dari 1000 responden, 600 setuju dengan kebijakan baru:
 
 - $\hat{p} = \frac{600}{1000} = 0.6$
-- Tingkat kepercayaan 95%: $z_{0.025} = 1.96$
+- Tingkat kepercayaan 95%: $z\_{0.025} = 1.96$
 - Standard error: $\sqrt{\frac{0.6 \times 0.4}{1000}} = \sqrt{0.00024} = 0.0155$
 - Selang: $0.6 \pm 1.96 \times 0.0155 = 0.6 \pm 0.0304$
 - $(0.5696, 0.6304)$ atau $(56.96\%, 63.04\%)$
@@ -2235,14 +2235,14 @@ Dari 1000 responden, 600 setuju dengan kebijakan baru:
 #### Penduga Titik dan Selang Kepercayaan Beda Dua Proporsi
 
 **Penduga Titik:**
-$$\hat{p}_1 - \hat{p}_2$$
+$$\hat{p}\_1 - \hat{p}\_2$$
 
 **Selang Kepercayaan:**
-$$(\hat{p}_1 - \hat{p}_2) \pm z_{\alpha/2} \sqrt{\frac{\hat{p}_1(1-\hat{p}_1)}{n_1} + \frac{\hat{p}_2(1-\hat{p}_2)}{n_2}}$$
+$$(\hat{p}\_1 - \hat{p}\_2) \pm z\_{\alpha/2} \sqrt{\frac{\hat{p}\_1(1-\hat{p}\_1)}{n\_1} + \frac{\hat{p}\_2(1-\hat{p}\_2)}{n\_2}}$$
 
 **Contoh:**
-Sampel 1: 600 dari 1000 setuju ($\hat{p}_1 = 0.6$)
-Sampel 2: 400 dari 800 setuju ($\hat{p}_2 = 0.5$)
+Sampel 1: 600 dari 1000 setuju ($\hat{p}\_1 = 0.6$)
+Sampel 2: 400 dari 800 setuju ($\hat{p}\_2 = 0.5$)
 Tingkat kepercayaan 95%:
 
 - Selisih: $0.6 - 0.5 = 0.1$
@@ -2258,14 +2258,14 @@ Tingkat kepercayaan 95%:
 
 **1. Menulis Hipotesis Statistik**
 
-- **$H_0$ (Hipotesis Nol):** Klaim yang akan diuji, biasanya mengandung tanda $=$, $\leq$, atau $\geq$
-- **$H_1$ atau $H_a$ (Hipotesis Alternatif):** Klaim yang ingin dibuktikan, biasanya mengandung tanda $\neq$, $>$, atau $<$
+- **$H\_0$ (Hipotesis Nol):** Klaim yang akan diuji, biasanya mengandung tanda $=$, $\leq$, atau $\geq$
+- **$H\_1$ atau $H\_a$ (Hipotesis Alternatif):** Klaim yang ingin dibuktikan, biasanya mengandung tanda $\neq$, $>$, atau $<$
 
 **Jenis Uji:**
 
-- **Dua ekor:** $H_0: \mu = \mu_0$ vs $H_1: \mu \neq \mu_0$
-- **Ekor kanan:** $H_0: \mu \leq \mu_0$ vs $H_1: \mu > \mu_0$
-- **Ekor kiri:** $H_0: \mu \geq \mu_0$ vs $H_1: \mu < \mu_0$
+- **Dua ekor:** $H\_0: \mu = \mu\_0$ vs $H\_1: \mu \neq \mu\_0$
+- **Ekor kanan:** $H\_0: \mu \leq \mu\_0$ vs $H\_1: \mu > \mu\_0$
+- **Ekor kiri:** $H\_0: \mu \geq \mu\_0$ vs $H\_1: \mu < \mu\_0$
 
 <div class="hypothesis-test-viz" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 100%; width: 100%; border: 1px solid #e0e0e0; padding: 1rem; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin: 1.5rem 0;">
   <script is:inline>
@@ -2461,45 +2461,45 @@ Bergantung pada kasus:
 
 Berdasarkan tingkat signifikansi $\alpha$ (biasanya 0.05, 0.01, atau 0.10):
 
-- **Dua ekor:** Tolak $H_0$ jika $|Z| > z_{\alpha/2}$ atau $|t| > t_{\alpha/2, df}$
-- **Ekor kanan:** Tolak $H_0$ jika $Z > z_\alpha$ atau $t > t_{\alpha, df}$
-- **Ekor kiri:** Tolak $H_0$ jika $Z < -z_\alpha$ atau $t < -t_{\alpha, df}$
+- **Dua ekor:** Tolak $H\_0$ jika $|Z| > z\_{\alpha/2}$ atau $|t| > t\_{\alpha/2, df}$
+- **Ekor kanan:** Tolak $H\_0$ jika $Z > z_\alpha$ atau $t > t\_{\alpha, df}$
+- **Ekor kiri:** Tolak $H\_0$ jika $Z < -z_\alpha$ atau $t < -t\_{\alpha, df}$
 
 **4. Mengambil Kesimpulan**
 
-- **Tolak $H_0$:** Ada bukti cukup untuk mendukung $H_1$
-- **Gagal tolak $H_0$:** Tidak ada bukti cukup untuk mendukung $H_1$ (bukan berarti $H_0$ benar!)
+- **Tolak $H\_0$:** Ada bukti cukup untuk mendukung $H\_1$
+- **Gagal tolak $H\_0$:** Tidak ada bukti cukup untuk mendukung $H\_1$ (bukan berarti $H\_0$ benar!)
 
 #### Uji Hipotesis Rata-rata Populasi Satu Sampel
 
 **1. Ragam Diketahui (Z-test)**
 
 **Statistik Uji:**
-$$Z = \frac{\bar{x} - \mu_0}{\sigma/\sqrt{n}}$$
+$$Z = \frac{\bar{x} - \mu\_0}{\sigma/\sqrt{n}}$$
 
 **Contoh:**
 Klaim: Rata-rata tinggi mahasiswa = 170 cm
 Data: $\bar{x} = 172$, $\sigma = 10$, $n = 100$, $\alpha = 0.05$
 
-- $H_0: \mu = 170$ vs $H_1: \mu \neq 170$ (dua ekor)
+- $H\_0: \mu = 170$ vs $H\_1: \mu \neq 170$ (dua ekor)
 - $Z = \frac{172 - 170}{10/\sqrt{100}} = \frac{2}{1} = 2$
 - Daerah penolakan: $|Z| > 1.96$
-- Karena $2 > 1.96$, tolak $H_0$
+- Karena $2 > 1.96$, tolak $H\_0$
 - **Kesimpulan:** Ada bukti bahwa rata-rata tinggi tidak sama dengan 170 cm
 
 **2. Ragam Tidak Diketahui (t-test)**
 
 **Statistik Uji:**
-$$t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}}$$
+$$t = \frac{\bar{x} - \mu\_0}{s/\sqrt{n}}$$
 
 **Contoh:**
 Klaim: Rata-rata berat = 60 kg
 Data: $\bar{x} = 62$, $s = 8$, $n = 25$, $\alpha = 0.05$
 
-- $H_0: \mu = 60$ vs $H_1: \mu \neq 60$
+- $H\_0: \mu = 60$ vs $H\_1: \mu \neq 60$
 - $t = \frac{62 - 60}{8/\sqrt{25}} = \frac{2}{1.6} = 1.25$
-- $t_{0.025, 24} = 2.064$
-- Karena $|1.25| < 2.064$, gagal tolak $H_0$
+- $t\_{0.025, 24} = 2.064$
+- Karena $|1.25| < 2.064$, gagal tolak $H\_0$
 - **Kesimpulan:** Tidak ada bukti bahwa rata-rata berat berbeda dari 60 kg
 
 #### Uji Hipotesis Beda Dua Rata-rata Populasi (Dua Sampel Bebas)
@@ -2507,81 +2507,81 @@ Data: $\bar{x} = 62$, $s = 8$, $n = 25$, $\alpha = 0.05$
 **1. Ragam Diketahui**
 
 **Statistik Uji:**
-$$Z = \frac{(\bar{x}_1 - \bar{x}_2) - (\mu_1 - \mu_2)_0}{\sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}}$$
+$$Z = \frac{(\bar{x}\_1 - \bar{x}\_2) - (\mu\_1 - \mu\_2)\_0}{\sqrt{\frac{\sigma\_1^2}{n\_1} + \frac{\sigma\_2^2}{n\_2}}}$$
 
 **Contoh:**
 Uji apakah rata-rata kelompok 1 lebih besar dari kelompok 2:
 
-- Kelompok 1: $\bar{x}_1 = 50$, $\sigma_1 = 10$, $n_1 = 100$
-- Kelompok 2: $\bar{x}_2 = 45$, $\sigma_2 = 12$, $n_2 = 80$
+- Kelompok 1: $\bar{x}\_1 = 50$, $\sigma\_1 = 10$, $n\_1 = 100$
+- Kelompok 2: $\bar{x}\_2 = 45$, $\sigma\_2 = 12$, $n\_2 = 80$
 - $\alpha = 0.05$
 
-- $H_0: \mu_1 \leq \mu_2$ vs $H_1: \mu_1 > \mu_2$ (ekor kanan)
+- $H\_0: \mu\_1 \leq \mu\_2$ vs $H\_1: \mu\_1 > \mu\_2$ (ekor kanan)
 - $Z = \frac{(50 - 45) - 0}{\sqrt{\frac{10^2}{100} + \frac{12^2}{80}}} = \frac{5}{\sqrt{1 + 1.8}} = \frac{5}{1.673} = 2.99$
-- $z_{0.05} = 1.645$
-- Karena $2.99 > 1.645$, tolak $H_0$
+- $z\_{0.05} = 1.645$
+- Karena $2.99 > 1.645$, tolak $H\_0$
 - **Kesimpulan:** Ada bukti bahwa rata-rata kelompok 1 lebih besar
 
 **2. Ragam Tidak Diketahui (Asumsi Sama)**
 
 **Statistik Uji:**
-$$t = \frac{(\bar{x}_1 - \bar{x}_2) - (\mu_1 - \mu_2)_0}{s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
+$$t = \frac{(\bar{x}\_1 - \bar{x}\_2) - (\mu\_1 - \mu\_2)\_0}{s\_p \sqrt{\frac{1}{n\_1} + \frac{1}{n\_2}}}$$
 
-dimana $s_p^2$ adalah pooled variance (lihat bagian selang kepercayaan).
+dimana $s\_p^2$ adalah pooled variance (lihat bagian selang kepercayaan).
 
 #### Uji Hipotesis Rata-rata Data Berpasangan
 
 **Statistik Uji:**
-$$t = \frac{\bar{d} - \mu_{d0}}{s_d/\sqrt{n}}$$
+$$t = \frac{\bar{d} - \mu\_{d0}}{s\_d/\sqrt{n}}$$
 
-dimana $\mu_{d0}$ adalah nilai hipotesis untuk rata-rata selisih (biasanya 0).
+dimana $\mu\_{d0}$ adalah nilai hipotesis untuk rata-rata selisih (biasanya 0).
 
 **Contoh:**
 Uji apakah program diet efektif (penurunan berat badan > 0):
 
-- Data dari contoh sebelumnya: $\bar{d} = 3$, $s_d = 1.225$, $n = 5$
+- Data dari contoh sebelumnya: $\bar{d} = 3$, $s\_d = 1.225$, $n = 5$
 - $\alpha = 0.05$
 
-- $H_0: \mu_d \leq 0$ vs $H_1: \mu_d > 0$ (ekor kanan)
+- $H\_0: \mu\_d \leq 0$ vs $H\_1: \mu\_d > 0$ (ekor kanan)
 - $t = \frac{3 - 0}{1.225/\sqrt{5}} = \frac{3}{0.548} = 5.47$
-- $t_{0.05, 4} = 2.132$
-- Karena $5.47 > 2.132$, tolak $H_0$
+- $t\_{0.05, 4} = 2.132$
+- Karena $5.47 > 2.132$, tolak $H\_0$
 - **Kesimpulan:** Ada bukti bahwa program diet efektif
 
 #### Uji Hipotesis Proporsi Populasi
 
 **Statistik Uji (Sampel Besar):**
-$$Z = \frac{\hat{p} - p_0}{\sqrt{\frac{p_0(1-p_0)}{n}}}$$
+$$Z = \frac{\hat{p} - p\_0}{\sqrt{\frac{p\_0(1-p\_0)}{n}}}$$
 
 **Contoh:**
 Klaim: Proporsi setuju = 50%
 Data: 600 dari 1000 setuju, $\alpha = 0.05$
 
-- $H_0: p = 0.5$ vs $H_1: p \neq 0.5$
+- $H\_0: p = 0.5$ vs $H\_1: p \neq 0.5$
 - $\hat{p} = 0.6$
 - $Z = \frac{0.6 - 0.5}{\sqrt{\frac{0.5 \times 0.5}{1000}}} = \frac{0.1}{0.0158} = 6.33$
 - Daerah penolakan: $|Z| > 1.96$
-- Karena $6.33 > 1.96$, tolak $H_0$
+- Karena $6.33 > 1.96$, tolak $H\_0$
 - **Kesimpulan:** Ada bukti bahwa proporsi setuju tidak sama dengan 50%
 
 #### Uji Hipotesis Beda Dua Proporsi Populasi
 
 **Statistik Uji:**
-$$Z = \frac{(\hat{p}_1 - \hat{p}_2) - (p_1 - p_2)_0}{\sqrt{\frac{\hat{p}(1-\hat{p})}{n_1} + \frac{\hat{p}(1-\hat{p})}{n_2}}}$$
+$$Z = \frac{(\hat{p}\_1 - \hat{p}\_2) - (p\_1 - p\_2)\_0}{\sqrt{\frac{\hat{p}(1-\hat{p})}{n\_1} + \frac{\hat{p}(1-\hat{p})}{n\_2}}}$$
 
-dimana $\hat{p} = \frac{X_1 + X_2}{n_1 + n_2}$ adalah pooled proportion.
+dimana $\hat{p} = \frac{X\_1 + X\_2}{n\_1 + n\_2}$ adalah pooled proportion.
 
 **Contoh:**
 Uji apakah proporsi kelompok 1 berbeda dari kelompok 2:
 
-- Kelompok 1: 600 dari 1000 ($\hat{p}_1 = 0.6$)
-- Kelompok 2: 400 dari 800 ($\hat{p}_2 = 0.5$)
+- Kelompok 1: 600 dari 1000 ($\hat{p}\_1 = 0.6$)
+- Kelompok 2: 400 dari 800 ($\hat{p}\_2 = 0.5$)
 - $\alpha = 0.05$
 
-- $H_0: p_1 = p_2$ vs $H_1: p_1 \neq p_2$
+- $H\_0: p\_1 = p\_2$ vs $H\_1: p\_1 \neq p\_2$
 - $\hat{p} = \frac{600 + 400}{1000 + 800} = \frac{1000}{1800} = 0.556$
 - $Z = \frac{0.6 - 0.5}{\sqrt{\frac{0.556 \times 0.444}{1000} + \frac{0.556 \times 0.444}{800}}} = \frac{0.1}{0.0235} = 4.26$
-- Karena $|4.26| > 1.96$, tolak $H_0$
+- Karena $|4.26| > 1.96$, tolak $H\_0$
 - **Kesimpulan:** Ada bukti bahwa proporsi kedua kelompok berbeda
 
 ---
@@ -2848,13 +2848,13 @@ Data tinggi (cm) vs berat (kg):
 **Konsep:** Ukuran kekuatan dan arah hubungan linear antara dua peubah.
 
 **Koefisien Korelasi Pearson (Populasi):**
-$$\rho = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}$$
+$$\rho = \frac{\text{Cov}(X, Y)}{\sigma\_X \sigma\_Y}$$
 
 **Koefisien Korelasi Pearson (Sampel):**
-$$r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2}}$$
+$$r = \frac{\sum (x\_i - \bar{x})(y\_i - \bar{y})}{\sqrt{\sum (x\_i - \bar{x})^2 \sum (y\_i - \bar{y})^2}}$$
 
 **Rumus Alternatif (Lebih Mudah):**
-$$r = \frac{n\sum x_i y_i - \sum x_i \sum y_i}{\sqrt{[n\sum x_i^2 - (\sum x_i)^2][n\sum y_i^2 - (\sum y_i)^2]}}$$
+$$r = \frac{n\sum x\_i y\_i - \sum x\_i \sum y\_i}{\sqrt{[n\sum x\_i^2 - (\sum x\_i)^2][n\sum y\_i^2 - (\sum y\_i)^2]}}$$
 
 **Sifat-sifat:**
 
@@ -2906,14 +2906,14 @@ $$r = \frac{256250 - 255000}{\sqrt{[723750 - 722500][91250 - 90000]}} = \frac{12
 **Tujuan:** Menemukan persamaan garis lurus yang paling baik memprediksi $Y$ berdasarkan $X$.
 
 **Model Regresi Linear Sederhana:**
-$$Y = \beta_0 + \beta_1 X + \varepsilon$$
+$$Y = \beta\_0 + \beta\_1 X + \varepsilon$$
 
 dimana:
 
 - $Y$ = peubah terikat (dependent variable)
 - $X$ = peubah bebas (independent variable)
-- $\beta_0$ = intercept (titik potong sumbu Y)
-- $\beta_1$ = slope (kemiringan garis)
+- $\beta\_0$ = intercept (titik potong sumbu Y)
+- $\beta\_1$ = slope (kemiringan garis)
 - $\varepsilon$ = error (selisih antara nilai observasi dan nilai prediksi)
 
 ### Menentukan Persamaan Regresi
@@ -2921,36 +2921,36 @@ dimana:
 #### Populasi
 
 **Model:**
-$$Y = \beta_0 + \beta_1 X + \varepsilon$$
+$$Y = \beta\_0 + \beta\_1 X + \varepsilon$$
 
 dimana:
 
-- $\beta_0$ dan $\beta_1$ adalah parameter populasi (tidak diketahui)
+- $\beta\_0$ dan $\beta\_1$ adalah parameter populasi (tidak diketahui)
 - $\varepsilon \sim N(0, \sigma^2)$ (error berdistribusi normal dengan rata-rata 0)
 
 #### Sampel
 
 **Persamaan Regresi Terduga:**
-$$\hat{y} = b_0 + b_1 x$$
+$$\hat{y} = b\_0 + b\_1 x$$
 
 dimana:
 
 - $\hat{y}$ = nilai prediksi $Y$
-- $b_0$ = penduga $\beta_0$
-- $b_1$ = penduga $\beta_1$
+- $b\_0$ = penduga $\beta\_0$
+- $b\_1$ = penduga $\beta\_1$
 
 **Metode Kuadrat Terkecil (Least Squares Method):**
 
-Mencari $b_0$ dan $b_1$ yang meminimumkan:
-$$\sum (y_i - \hat{y}_i)^2 = \sum (y_i - b_0 - b_1 x_i)^2$$
+Mencari $b\_0$ dan $b\_1$ yang meminimumkan:
+$$\sum (y\_i - \hat{y}\_i)^2 = \sum (y\_i - b\_0 - b\_1 x\_i)^2$$
 
 **Rumus Koefisien Regresi:**
 
 **Slope:**
-$$b_1 = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2} = \frac{n\sum x_i y_i - \sum x_i \sum y_i}{n\sum x_i^2 - (\sum x_i)^2}$$
+$$b\_1 = \frac{\sum (x\_i - \bar{x})(y\_i - \bar{y})}{\sum (x\_i - \bar{x})^2} = \frac{n\sum x\_i y\_i - \sum x\_i \sum y\_i}{n\sum x\_i^2 - (\sum x\_i)^2}$$
 
 **Intercept:**
-$$b_0 = \bar{y} - b_1 \bar{x}$$
+$$b\_0 = \bar{y} - b\_1 \bar{x}$$
 
 **Contoh:**
 Data tinggi (X, cm) dan berat (Y, kg):
@@ -2968,11 +2968,11 @@ Data tinggi (X, cm) dan berat (Y, kg):
 - $\bar{x} = \frac{850}{5} = 170$
 - $\bar{y} = \frac{300}{5} = 60$
 
-**Menghitung $b_1$:**
-$$b_1 = \frac{5 \times 51250 - 850 \times 300}{5 \times 144750 - 850^2} = \frac{256250 - 255000}{723750 - 722500} = \frac{1250}{1250} = 1$$
+**Menghitung $b\_1$:**
+$$b\_1 = \frac{5 \times 51250 - 850 \times 300}{5 \times 144750 - 850^2} = \frac{256250 - 255000}{723750 - 722500} = \frac{1250}{1250} = 1$$
 
-**Menghitung $b_0$:**
-$$b_0 = 60 - 1 \times 170 = 60 - 170 = -110$$
+**Menghitung $b\_0$:**
+$$b\_0 = 60 - 1 \times 170 = 60 - 170 = -110$$
 
 **Persamaan Regresi:**
 $$\hat{y} = -110 + 1 \times x$$
@@ -3117,8 +3117,8 @@ $$\hat{y} = -110 + 1 \times x$$
 
 **Interpretasi:**
 
-- $b_1 = 1$: Setiap kenaikan tinggi 1 cm, berat meningkat 1 kg
-- $b_0 = -110$: Jika tinggi = 0 (tidak masuk akal), berat = -110 kg (hanya untuk perhitungan, tidak untuk interpretasi praktis)
+- $b\_1 = 1$: Setiap kenaikan tinggi 1 cm, berat meningkat 1 kg
+- $b\_0 = -110$: Jika tinggi = 0 (tidak masuk akal), berat = -110 kg (hanya untuk perhitungan, tidak untuk interpretasi praktis)
 
 **Prediksi:**
 Untuk tinggi 172 cm:
@@ -3126,36 +3126,36 @@ $$\hat{y} = -110 + 1 \times 172 = 62 \text{ kg}$$
 
 ### Uji Parameter Regresi
 
-**Uji untuk Slope ($\beta_1$):**
+**Uji untuk Slope ($\beta\_1$):**
 
 **Hipotesis:**
 
-- $H_0: \beta_1 = 0$ (tidak ada hubungan linear)
-- $H_1: \beta_1 \neq 0$ (ada hubungan linear)
+- $H\_0: \beta\_1 = 0$ (tidak ada hubungan linear)
+- $H\_1: \beta\_1 \neq 0$ (ada hubungan linear)
 
 **Statistik Uji:**
-$$t = \frac{b_1}{SE(b_1)}$$
+$$t = \frac{b\_1}{SE(b\_1)}$$
 
 dimana:
-$$SE(b_1) = \frac{s_e}{\sqrt{\sum (x_i - \bar{x})^2}}$$
+$$SE(b\_1) = \frac{s\_e}{\sqrt{\sum (x\_i - \bar{x})^2}}$$
 
 dan:
-$$s_e = \sqrt{\frac{\sum (y_i - \hat{y}_i)^2}{n-2}} = \sqrt{MSE}$$
+$$s\_e = \sqrt{\frac{\sum (y\_i - \hat{y}\_i)^2}{n-2}} = \sqrt{MSE}$$
 
-**Keputusan:** Tolak $H_0$ jika $|t| > t_{\alpha/2, n-2}$
+**Keputusan:** Tolak $H\_0$ jika $|t| > t\_{\alpha/2, n-2}$
 
-**Uji untuk Intercept ($\beta_0$):**
+**Uji untuk Intercept ($\beta\_0$):**
 
 **Hipotesis:**
 
-- $H_0: \beta_0 = 0$
-- $H_1: \beta_0 \neq 0$
+- $H\_0: \beta\_0 = 0$
+- $H\_1: \beta\_0 \neq 0$
 
 **Statistik Uji:**
-$$t = \frac{b_0}{SE(b_0)}$$
+$$t = \frac{b\_0}{SE(b\_0)}$$
 
 dimana:
-$$SE(b_0) = s_e \sqrt{\frac{1}{n} + \frac{\bar{x}^2}{\sum (x_i - \bar{x})^2}}$$
+$$SE(b\_0) = s\_e \sqrt{\frac{1}{n} + \frac{\bar{x}^2}{\sum (x\_i - \bar{x})^2}}$$
 
 ### Menilai Kebaikan Model Regresi: Koefisien Determinasi
 
@@ -3168,9 +3168,9 @@ $$R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST}$$
 
 dimana:
 
-- **SST (Total Sum of Squares):** $\sum (y_i - \bar{y})^2$ (total variasi dalam $Y$)
-- **SSR (Regression Sum of Squares):** $\sum (\hat{y}_i - \bar{y})^2$ (variasi yang dijelaskan oleh regresi)
-- **SSE (Error Sum of Squares):** $\sum (y_i - \hat{y}_i)^2$ (variasi yang tidak dijelaskan)
+- **SST (Total Sum of Squares):** $\sum (y\_i - \bar{y})^2$ (total variasi dalam $Y$)
+- **SSR (Regression Sum of Squares):** $\sum (\hat{y}\_i - \bar{y})^2$ (variasi yang dijelaskan oleh regresi)
+- **SSE (Error Sum of Squares):** $\sum (y\_i - \hat{y}\_i)^2$ (variasi yang tidak dijelaskan)
 
 **Sifat-sifat:**
 
@@ -3197,12 +3197,12 @@ $$R^2 = \frac{250}{250} = 1$$
 **Interpretasi:** Model menjelaskan 100% variasi dalam berat badan (dalam contoh ini karena data dibuat linear sempurna).
 
 **Rumus Alternatif:**
-$$R^2 = \frac{[\sum (x_i - \bar{x})(y_i - \bar{y})]^2}{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2} = r^2$$
+$$R^2 = \frac{[\sum (x\_i - \bar{x})(y\_i - \bar{y})]^2}{\sum (x\_i - \bar{x})^2 \sum (y\_i - \bar{y})^2} = r^2$$
 
 **Koefisien Determinasi Disesuaikan (Adjusted $R^2$):**
 
 Untuk model dengan lebih dari satu peubah bebas:
-$$R_{adj}^2 = 1 - \frac{SSE/(n-k-1)}{SST/(n-1)}$$
+$$R\_{adj}^2 = 1 - \frac{SSE/(n-k-1)}{SST/(n-1)}$$
 
 dimana $k$ adalah banyaknya peubah bebas.
 
@@ -3212,10 +3212,10 @@ dimana $k$ adalah banyaknya peubah bebas.
 
 ### Statistika Deskriptif
 
-- Mean: $\bar{x} = \frac{\sum x_i}{n}$
-- Ragam sampel: $s^2 = \frac{\sum (x_i - \bar{x})^2}{n-1}$
+- Mean: $\bar{x} = \frac{\sum x\_i}{n}$
+- Ragam sampel: $s^2 = \frac{\sum (x\_i - \bar{x})^2}{n-1}$
 - Simpangan baku: $s = \sqrt{s^2}$
-- IQR: $Q_3 - Q_1$
+- IQR: $Q\_3 - Q\_1$
 
 ### Peluang
 
@@ -3232,20 +3232,20 @@ dimana $k$ adalah banyaknya peubah bebas.
 
 ### Selang Kepercayaan
 
-- Rata-rata ($\sigma$ diketahui): $\bar{x} \pm z_{\alpha/2} \frac{\sigma}{\sqrt{n}}$
-- Rata-rata ($\sigma$ tidak diketahui): $\bar{x} \pm t_{\alpha/2, n-1} \frac{s}{\sqrt{n}}$
-- Proporsi: $\hat{p} \pm z_{\alpha/2} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$
+- Rata-rata ($\sigma$ diketahui): $\bar{x} \pm z\_{\alpha/2} \frac{\sigma}{\sqrt{n}}$
+- Rata-rata ($\sigma$ tidak diketahui): $\bar{x} \pm t\_{\alpha/2, n-1} \frac{s}{\sqrt{n}}$
+- Proporsi: $\hat{p} \pm z\_{\alpha/2} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$
 
 ### Uji Hipotesis
 
-- Z-test: $Z = \frac{\bar{x} - \mu_0}{\sigma/\sqrt{n}}$
-- t-test: $t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}}$
-- Proporsi: $Z = \frac{\hat{p} - p_0}{\sqrt{\frac{p_0(1-p_0)}{n}}}$
+- Z-test: $Z = \frac{\bar{x} - \mu\_0}{\sigma/\sqrt{n}}$
+- t-test: $t = \frac{\bar{x} - \mu\_0}{s/\sqrt{n}}$
+- Proporsi: $Z = \frac{\hat{p} - p\_0}{\sqrt{\frac{p\_0(1-p\_0)}{n}}}$
 
 ### Regresi Linear
 
-- Slope: $b_1 = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2}$
-- Intercept: $b_0 = \bar{y} - b_1 \bar{x}$
+- Slope: $b\_1 = \frac{\sum (x\_i - \bar{x})(y\_i - \bar{y})}{\sum (x\_i - \bar{x})^2}$
+- Intercept: $b\_0 = \bar{y} - b\_1 \bar{x}$
 - Koefisien determinasi: $R^2 = \frac{SSR}{SST} = r^2$
 
 ---
