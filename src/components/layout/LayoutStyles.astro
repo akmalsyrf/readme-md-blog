@@ -5,12 +5,15 @@
 <style is:global>
   html {
     font-family: system-ui, sans-serif;
+    --base-font-size: 16px;
+    font-size: var(--base-font-size);
   }
 
-  /* Smaller font size on mobile for better readability */
+  /* Slightly smaller font size on mobile for better readability */
   @media (max-width: 640px) {
     html {
-      font-size: 14px;
+      /* Reduce font size by 2px on mobile for each setting */
+      font-size: calc(var(--base-font-size) - 2px);
     }
   }
 

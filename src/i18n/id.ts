@@ -152,6 +152,12 @@ export default {
     light: 'Terang',
     dark: 'Gelap',
   },
+  fontSize: {
+    toggle: 'Ukuran font',
+    small: 'Kecil',
+    medium: 'Sedang',
+    large: 'Besar',
+  },
   toc: {
     title: 'Daftar Isi',
     show: 'Tampilkan',

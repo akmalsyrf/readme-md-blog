@@ -115,7 +115,7 @@ if (locale === 'id') {
     url: alt.url,
   }))}
 />
-<!-- Blocking script to prevent flash of light theme - must run before render -->
+<!-- Blocking script to prevent flash of wrong theme/font size - must run before render -->
 <script is:inline>
   (function () {
     try {
@@ -130,6 +130,15 @@ if (locale === 'id') {
       } else {
         document.documentElement.classList.remove('dark');
       }
+
+      // Get font size from localStorage or default to medium
+      const storedFontSize = localStorage.getItem('fontSize') || 'medium';
+      const fontSizes = { small: '14px', medium: '16px', large: '18px' };
+      document.documentElement.style.setProperty(
+        '--base-font-size',
+        fontSizes[storedFontSize] || '16px'
+      );
+      document.documentElement.setAttribute('data-fontsize', storedFontSize);
 
       // Mark theme as loaded after a short delay to enable transitions
       requestAnimationFrame(function () {

@@ -149,6 +149,12 @@ export default {
     light: 'Light',
     dark: 'Dark',
   },
+  fontSize: {
+    toggle: 'Font size',
+    small: 'Small',
+    medium: 'Medium',
+    large: 'Large',
+  },
   toc: {
     title: 'Table of Contents',
     show: 'Show',

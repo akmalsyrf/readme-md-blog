@@ -1,0 +1,77 @@
+---
+import { getTranslations, type Locale } from '../../utils/i18n';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'id' } = Astro.props;
+const t = getTranslations(locale as Locale);
+---
+
+<div class="fontsize-toggle" role="radiogroup" aria-label={t.fontSize.toggle}>
+  <button type="button" data-size="small" class="fontsize-btn" aria-label={t.fontSize.small}>
+    <span class="text-[10px]">A</span>
+  </button>
+  <button type="button" data-size="medium" class="fontsize-btn" aria-label={t.fontSize.medium}>
+    <span class="text-xs">A</span>
+  </button>
+  <button type="button" data-size="large" class="fontsize-btn" aria-label={t.fontSize.large}>
+    <span class="text-sm">A</span>
+  </button>
+</div>
+
+<script>
+  (function () {
+    const buttons = document.querySelectorAll('.fontsize-btn');
+
+    const fontSizes = {
+      small: '14px',
+      medium: '16px',
+      large: '18px',
+    };
+
+    const storedFontSize = localStorage.getItem('fontSize') || 'medium';
+
+    function applyFontSize(size) {
+      document.documentElement.style.setProperty('--base-font-size', fontSizes[size] || '16px');
+      document.documentElement.setAttribute('data-fontsize', size);
+
+      buttons.forEach((btn) => {
+        const isActive = btn?.dataset?.size === size;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
+      });
+    }
+
+    applyFontSize(storedFontSize);
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const size = btn?.dataset?.size || 'medium';
+        applyFontSize(size);
+        localStorage.setItem('fontSize', size);
+      });
+    });
+  })();
+</script>
+
+<style>
+  .fontsize-toggle {
+    @apply inline-flex items-center gap-0.5 rounded-md bg-gray-100 p-0.5 dark:bg-gray-800;
+  }
+
+  .fontsize-btn {
+    @apply flex h-7 w-7 items-center justify-center rounded text-gray-500 transition-all;
+    @apply hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500;
+  }
+
+  .fontsize-btn span {
+    @apply font-semibold leading-none;
+  }
+
+  .fontsize-btn.active {
+    @apply bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white;
+  }
+</style>
