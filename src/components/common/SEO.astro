@@ -33,7 +33,7 @@ const {
   twitterHandle,
 } = Astro.props;
 
-const siteURL = new URL(Astro.site || 'https://readme-md-blog.vercel.app');
+const siteURL = new URL(Astro.site || 'https://akmal-mind.vercel.app');
 const fullImageURL = image ? new URL(image, siteURL).href : new URL('/og-image.jpg', siteURL).href;
 
 // Open Graph tags

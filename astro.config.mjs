@@ -4,7 +4,7 @@ import vercel from '@astrojs/vercel/serverless';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://readme-md-blog.vercel.app',
+  site: 'https://akmal-mind.vercel.app',
   output: 'hybrid', // Enable API routes while keeping static pages
   adapter: vercel(),
   integrations: [
