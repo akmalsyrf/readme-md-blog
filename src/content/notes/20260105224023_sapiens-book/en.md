@@ -3,7 +3,7 @@ title: 'A Biography of Our Species: Why Sapiens Are the Greatest Storytellers in
 description: 'A reflection on the book Sapiens: Understanding inter-subjective realities like money, nations, and human rights as the primary foundation of our species’ power.'
 pubDate: 2026-01-05
 author: 'Akmal'
-tags: ['books', 'philosophy', 'history', 'sapiens', 'reflection']
+tags: ['books', 'philosophy', 'history', 'sapiens', 'reflections']
 ---
 
 It has been quite some time since I first closed the final pages of _Sapiens_ by Yuval Noah Harari. However, one specific concept from Harari continues to haunt my mind every time I see a skyscraper, use a banking app, or witness the political frenzy on social media.

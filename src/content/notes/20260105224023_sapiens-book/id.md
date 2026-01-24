@@ -3,7 +3,7 @@ title: 'Biografi Spesies Kita: Mengapa Sapiens Adalah Pendongeng Terhebat di Ala
 description: 'Refleksi atas buku Sapiens: Memahami realitas inter-subjektif seperti uang, negara, dan hak asasi manusia sebagai fondasi utama kekuatan spesies kita.'
 pubDate: 2026-01-05
 author: 'Akmal'
-tags: ['books', 'philosophy', 'history', 'sapiens', 'reflection']
+tags: ['books', 'philosophy', 'history', 'sapiens', 'reflections']
 ---
 
 Sudah cukup lama sejak saya pertama kali menutup lembar terakhir buku Sapiens karya Yuval Noah Harari. Namun, ada satu konsep dari Harari yang terus menghantui pikiran saya setiap kali saya melihat gedung pencakar langit, menggunakan aplikasi perbankan, atau melihat hiruk-pikuk politik di media sosial.
