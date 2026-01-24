@@ -94,7 +94,7 @@ export default {
       },
       cheatSheet: {
         title: 'Cheat Sheet',
-        description: 'Catatan ringkas saya untuk berbagai topik',
+        description: 'Cheat sheet saya untuk berbagai topik',
       },
     },
   },
