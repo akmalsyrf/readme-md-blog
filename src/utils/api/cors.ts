@@ -4,7 +4,10 @@ const ALLOWED_ORIGINS = (import.meta.env.ALLOWED_ORIGINS || process.env.ALLOWED_
   .filter(Boolean);
 
 // CORS helper
-export function getCORSHeaders(origin: string | null): Record<string, string> {
+export function getCORSHeaders(
+  origin: string | null,
+  methods: string = 'POST, OPTIONS'
+): Record<string, string> {
   const baseHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
   };
@@ -18,7 +21,7 @@ export function getCORSHeaders(origin: string | null): Record<string, string> {
     baseHeaders['Access-Control-Allow-Credentials'] = 'true';
   }
 
-  baseHeaders['Access-Control-Allow-Methods'] = 'POST, OPTIONS';
+  baseHeaders['Access-Control-Allow-Methods'] = methods;
   baseHeaders['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
 
   return baseHeaders;

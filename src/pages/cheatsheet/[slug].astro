@@ -63,7 +63,12 @@ const post = {
       <div class="mb-8">
         <div class="mb-4 flex items-start justify-between gap-4">
           <div class="flex-1">
-            <BlogPostHeader post={post} locale={locale} isReadingTimeVisible={false} />
+            <BlogPostHeader
+              post={post}
+              locale={locale}
+              isReadingTimeVisible={false}
+              showGiscusStats={false}
+            />
           </div>
           <a
             href={locale === 'id'

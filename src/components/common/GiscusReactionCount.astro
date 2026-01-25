@@ -5,13 +5,6 @@ interface Props {
 }
 
 const { pathname, locale = 'id' } = Astro.props;
-
-// Get Giscus config from environment variables
-const giscusConfig = {
-  repo: import.meta.env.PUBLIC_GISCUS_REPO || '',
-  category: import.meta.env.PUBLIC_GISCUS_CATEGORY || '',
-  categoryId: import.meta.env.PUBLIC_GISCUS_CATEGORY_ID || '',
-};
 ---
 
 <span
@@ -55,27 +48,16 @@ const giscusConfig = {
   </span>
 </span>
 
-<script
-  define:vars={{
-    giscusRepo: giscusConfig.repo,
-    giscusCategory: giscusConfig.category,
-    giscusCategoryId: giscusConfig.categoryId,
-  }}
->
+<script>
+  // @ts-ignore - Astro script tags don't support TypeScript syntax
   async function loadGiscusStats(element) {
+    if (!(element instanceof HTMLElement)) return;
     const pathname = element.getAttribute('data-pathname');
     if (!pathname) return;
 
     try {
-      // Use Giscus API to get discussion by pathname
-      if (!giscusRepo || !giscusCategory || !giscusCategoryId) {
-        element.style.display = 'none';
-        return;
-      }
-
-      const response = await fetch(
-        `https://giscus.app/api/discussions?repo=${encodeURIComponent(giscusRepo)}&category=${encodeURIComponent(giscusCategory)}&categoryId=${giscusCategoryId}&mapping=pathname&term=${encodeURIComponent(pathname)}`
-      );
+      // Use our API route proxy to avoid CORS issues
+      const response = await fetch(`/api/giscus-stats?pathname=${encodeURIComponent(pathname)}`);
 
       if (!response.ok) {
         element.style.display = 'none';
@@ -84,23 +66,9 @@ const giscusConfig = {
 
       const data = await response.json();
 
-      // Handle different response formats from Giscus API
-      // Response can be: { discussion: { reactionCount: ..., totalCommentCount: ... } } or array of such objects
-      let reactionCount = 0;
-      let commentCount = 0;
-
-      if (Array.isArray(data) && data.length > 0) {
-        // Giscus API returns array of discussion objects
-        const item = data[0];
-        const discussion = item.discussion || item;
-        reactionCount = discussion.reactionCount || 0;
-        commentCount = discussion.totalCommentCount || 0;
-      } else if (data && typeof data === 'object') {
-        // Single discussion object - check for nested discussion property
-        const discussion = data.discussion || data;
-        reactionCount = discussion.reactionCount || 0;
-        commentCount = discussion.totalCommentCount || 0;
-      }
+      // createSuccessResponse returns data directly, not wrapped in { success, data }
+      const reactionCount = data?.reactionCount || 0;
+      const commentCount = data?.commentCount || 0;
 
       // Update reaction count
       const reactionCountElement = element.querySelector('.reaction-count');
@@ -113,7 +81,12 @@ const giscusConfig = {
       if (commentCountElement) {
         commentCountElement.textContent = commentCount.toString();
       }
+
+      // Debug logging (remove in production if needed)
+      // console.log('Giscus stats loaded:', { pathname, reactionCount, commentCount });
     } catch (error) {
+      // Debug logging for errors
+      // console.error('Error loading Giscus stats:', error);
       // Silently fail - hide element on error
       element.style.display = 'none';
     }
@@ -124,7 +97,9 @@ const giscusConfig = {
     const elements = document.querySelectorAll('.giscus-stats');
     // Convert NodeList to Array to ensure forEach is available
     Array.from(elements).forEach((element) => {
-      loadGiscusStats(element);
+      if (element instanceof HTMLElement) {
+        loadGiscusStats(element);
+      }
     });
   }
 

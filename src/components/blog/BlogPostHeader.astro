@@ -1,15 +1,17 @@
 ---
-import { getTranslations, type Locale } from '../../utils/i18n';
+import { getTranslations, getLocalizedPath, type Locale } from '../../utils/i18n';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime';
+import GiscusReactionCount from '../common/GiscusReactionCount.astro';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   post: CollectionEntry<'notes'>;
   locale: Locale;
   isReadingTimeVisible?: boolean;
+  showGiscusStats?: boolean;
 }
 
-const { post, locale, isReadingTimeVisible = true } = Astro.props;
+const { post, locale, isReadingTimeVisible = true, showGiscusStats = true } = Astro.props;
 const t = getTranslations(locale);
 const readingTime = calculateReadingTime(post.body);
 const readingTimeText =
@@ -17,6 +19,10 @@ const readingTimeText =
     ? t.notes.underOneMinute
     : `${formatReadingTime(readingTime, locale)} ${t.notes.readingTime}`;
 const dateLocale = locale === 'id' ? 'id-ID' : 'en-US';
+
+// Get post path for Giscus stats
+const postSlug = post.slug.replace(/\/id$|\/en$/, '');
+const postPath = getLocalizedPath(`/notes/${postSlug}`, locale);
 ---
 
 <header class="mb-8">
@@ -39,6 +45,14 @@ const dateLocale = locale === 'id' ? 'id-ID' : 'en-US';
         <>
           <span>•</span>
           <span>{readingTimeText}</span>
+        </>
+      )
+    }
+    {
+      showGiscusStats && (
+        <>
+          <span>•</span>
+          <GiscusReactionCount pathname={postPath} locale={locale} />
         </>
       )
     }
