@@ -59,16 +59,26 @@ const { pathname, locale = 'id' } = Astro.props;
       // Use our API route proxy to avoid CORS issues
       const response = await fetch(`/api/giscus-stats?pathname=${encodeURIComponent(pathname)}`);
 
+      let reactionCount = 0;
+      let commentCount = 0;
+
       if (!response.ok) {
-        element.style.display = 'none';
-        return;
+        // If 404, show 0 counts instead of hiding
+        if (response.status === 404) {
+          reactionCount = 0;
+          commentCount = 0;
+        } else {
+          // For other errors, hide the element
+          element.style.display = 'none';
+          return;
+        }
+      } else {
+        const data = await response.json();
+
+        // createSuccessResponse returns data directly, not wrapped in { success, data }
+        reactionCount = data?.reactionCount || 0;
+        commentCount = data?.commentCount || 0;
       }
-
-      const data = await response.json();
-
-      // createSuccessResponse returns data directly, not wrapped in { success, data }
-      const reactionCount = data?.reactionCount || 0;
-      const commentCount = data?.commentCount || 0;
 
       // Update reaction count
       const reactionCountElement = element.querySelector('.reaction-count');
@@ -87,8 +97,16 @@ const { pathname, locale = 'id' } = Astro.props;
     } catch (error) {
       // Debug logging for errors
       // console.error('Error loading Giscus stats:', error);
-      // Silently fail - hide element on error
-      element.style.display = 'none';
+      // On error, show 0 counts instead of hiding
+      const reactionCountElement = element.querySelector('.reaction-count');
+      if (reactionCountElement) {
+        reactionCountElement.textContent = '0';
+      }
+
+      const commentCountElement = element.querySelector('.comment-count');
+      if (commentCountElement) {
+        commentCountElement.textContent = '0';
+      }
     }
   }
 
