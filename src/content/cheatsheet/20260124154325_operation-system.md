@@ -81,6 +81,189 @@ Cheatsheet lengkap untuk memahami Sistem Operasi (Operating System) dari konsep 
 - Interrupt management
 - Halt instruction
 
+### System Calls
+
+**System Call** adalah mekanisme yang memungkinkan program user mode untuk meminta layanan dari kernel. System call adalah satu-satunya cara legal untuk aplikasi mengakses sumber daya sistem yang dilindungi.
+
+**Mengapa System Call Diperlukan?**
+
+Aplikasi user tidak bisa langsung mengakses hardware karena:
+
+- **Keamanan**: Mencegah aplikasi merusak sistem atau mengakses data aplikasi lain
+- **Abstraksi**: Menyembunyikan kompleksitas hardware dari programmer
+- **Portabilitas**: Aplikasi bisa berjalan di hardware berbeda tanpa modifikasi
+
+**Mekanisme System Call:**
+
+```
+┌─────────────────────────────────────────────┐
+│  User Program                               │
+│  printf("Hello");                           │
+│       │                                     │
+│       ▼                                     │
+│  C Library (libc)                           │
+│  write(fd, buf, size)                       │
+│       │                                     │
+│       ▼                                     │
+│  System Call Wrapper                        │
+│  mov $1, %rax    # syscall number           │
+│  mov $fd, %rdi   # arg1                     │
+│  mov $buf, %rsi  # arg2                     │
+│  mov $size, %rdx # arg3                     │
+│  syscall        # interrupt ke kernel       │
+│       │                                     │
+│       ▼                                     │
+└───────┼─────────────────────────────────────┘
+        │ Trap/Interrupt
+        ▼
+┌─────────────────────────────────────────────┐
+│  Kernel Mode                                │
+│  System Call Handler                        │
+│  sys_write() {                              │
+│    // validasi parameter                    │
+│    // eksekusi operasi I/O                  │
+│    // return hasil                          │
+│  }                                          │
+│       │                                     │
+│       ▼                                     │
+│  Return ke User Mode                        │
+└─────────────────────────────────────────────┘
+```
+
+**Langkah-langkah System Call:**
+
+1. **User program** memanggil library function (misal: `write()`)
+2. **Library wrapper** menyiapkan parameter dan system call number
+3. **Trap instruction** (`syscall`, `int 0x80`, `SVC`) memicu mode switch
+4. **Kernel** menyimpan context user (registers, stack pointer)
+5. **System call handler** mengeksekusi fungsi kernel sesuai nomor
+6. **Kernel** mengembalikan hasil ke user space
+7. **Context switch** kembali ke user mode dengan hasil
+
+**System Call Number:**
+
+Setiap system call memiliki nomor unik yang digunakan untuk mengidentifikasi layanan yang diminta:
+
+```c
+// Linux x86-64 system call numbers
+#define __NR_read    0
+#define __NR_write   1
+#define __NR_open    2
+#define __NR_close   3
+#define __NR_fork   57
+#define __NR_execve 59
+#define __NR_exit   60
+```
+
+**Kategori System Calls:**
+
+| Kategori                    | Contoh                                             | Deskripsi                                    |
+| --------------------------- | -------------------------------------------------- | -------------------------------------------- |
+| **Process Control**         | `fork()`, `exec()`, `exit()`, `wait()`             | Membuat, menghentikan, dan mengontrol proses |
+| **File Management**         | `open()`, `read()`, `write()`, `close()`, `stat()` | Operasi file dan direktori                   |
+| **Device Management**       | `ioctl()`, `read()`, `write()`                     | Mengakses dan mengontrol device              |
+| **Information Maintenance** | `getpid()`, `gettimeofday()`, `sysinfo()`          | Mendapatkan informasi sistem                 |
+| **Communication**           | `pipe()`, `shmget()`, `msgget()`, `socket()`       | IPC dan komunikasi jaringan                  |
+| **Protection**              | `chmod()`, `chown()`, `setuid()`                   | Kontrol akses dan keamanan                   |
+
+**Contoh System Call di Linux:**
+
+```c
+#include <unistd.h>
+#include <sys/syscall.h>
+
+// Direct system call (tidak direkomendasikan)
+long result = syscall(SYS_write, STDOUT_FILENO, "Hello\n", 6);
+
+// Via library wrapper (direkomendasikan)
+write(STDOUT_FILENO, "Hello\n", 6);
+```
+
+**System Call Interface di Berbagai OS:**
+
+| OS               | Instruction | Calling Convention         | Register untuk syscall number |
+| ---------------- | ----------- | -------------------------- | ----------------------------- |
+| **Linux x86-64** | `syscall`   | RDI, RSI, RDX, R10, R8, R9 | RAX                           |
+| **Linux x86-32** | `int 0x80`  | Stack (EBX, ECX, EDX, ...) | EAX                           |
+| **Windows x64**  | `syscall`   | RCX, RDX, R8, R9, stack    | RAX                           |
+| **macOS/BSD**    | `syscall`   | RDI, RSI, RDX, R10, R8, R9 | RAX                           |
+| **ARM64**        | `svc #0`    | X0-X7                      | X8                            |
+
+**Error Handling:**
+
+System call mengembalikan nilai negatif atau -1 jika terjadi error, dan `errno` di-set dengan kode error:
+
+```c
+ssize_t bytes = write(fd, buffer, size);
+if (bytes == -1) {
+    // Error occurred
+    perror("write");  // prints: write: Bad file descriptor
+    // atau
+    fprintf(stderr, "Error: %s\n", strerror(errno));
+}
+```
+
+**Overhead System Call:**
+
+System call memiliki overhead karena:
+
+- **Context switch** (user ↔ kernel mode)
+- **Parameter validation** di kernel
+- **Security checks** (permissions, capabilities)
+- **Interrupt handling**
+
+**Optimasi:**
+
+- **VDSO (Virtual Dynamic Shared Object)**: System call tertentu (seperti `gettimeofday()`) diimplementasikan di user space untuk menghindari context switch
+- **Batching**: Menggabungkan multiple system calls menjadi satu
+- **Async I/O**: Menggunakan `epoll`, `kqueue`, atau `io_uring` untuk mengurangi blocking
+
+**System Call vs Library Function:**
+
+| System Call                   | Library Function               |
+| ----------------------------- | ------------------------------ |
+| Interface langsung ke kernel  | Wrapper di atas system call    |
+| Harus melalui trap            | Bisa di user space             |
+| Lebih lambat (context switch) | Lebih cepat (no trap)          |
+| Contoh: `read()`, `write()`   | Contoh: `printf()`, `strlen()` |
+
+**Contoh: Perjalanan `printf()` ke System Call**
+
+```c
+printf("Hello World\n");
+    │
+    ▼
+// Di libc: printf() memformat string
+fprintf(stdout, "Hello World\n");
+    │
+    ▼
+// Di libc: write() adalah wrapper
+write(STDOUT_FILENO, "Hello World\n", 12);
+    │
+    ▼
+// Assembly: setup system call
+mov $1, %rax        // __NR_write = 1
+mov $1, %rdi        // fd = STDOUT_FILENO
+mov $string, %rsi   // buffer address
+mov $12, %rdx       // size
+syscall             // Trap ke kernel
+    │
+    ▼
+// Kernel: sys_write()
+sys_write(fd, buf, count) {
+    // Validasi fd, buffer, permissions
+    // Copy data dari user space ke kernel
+    // Panggil device driver
+    // Return jumlah bytes written
+}
+```
+
+**Security Implications:**
+
+- **Sandboxing**: Membatasi system calls yang bisa dipanggil (seccomp, AppArmor, SELinux)
+- **Capabilities**: Memberikan privilege tanpa full root
+- **System call filtering**: Memblokir system calls berbahaya (seperti `ptrace`, `mount`)
+
 ---
 
 ## 2. Manajemen Proses
