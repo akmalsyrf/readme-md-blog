@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getTranslations, getLocaleFromPath, getLocalizedPath } from '../../utils/i18n';
 import { getCollection } from 'astro:content';
 import Breadcrumb from '../../components/common/Breadcrumb.astro';
+import GiscusReactionCount from '../../components/common/GiscusReactionCount.astro';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('notes');
@@ -82,6 +83,8 @@ const posts = allPosts
                     </time>
                     <span>•</span>
                     <span>{post.data.author}</span>
+                    <span>•</span>
+                    <GiscusReactionCount pathname={postPath} locale={locale} />
                   </div>
                   <a
                     href={postPath}
