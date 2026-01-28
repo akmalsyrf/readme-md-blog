@@ -114,6 +114,8 @@ export default {
     currencyLabel: 'Mata uang',
     principalLabel: 'Modal awal',
     monthlyContributionLabel: 'Setoran bulanan',
+    depositIncreaseLabel: 'Kenaikan setoran per tahun',
+    depositIncreaseHint: 'Kenaikan setoran bulanan tiap tahun (dari nilai setoran bulanan awal)',
     annualRateLabel: 'Bunga per tahun',
     annualRateHint: 'Contoh: 10 berarti 10% per tahun',
     yearsLabel: 'Durasi (tahun)',
@@ -133,6 +135,7 @@ export default {
     breakdownLabels: {
       principal: 'Modal awal',
       monthlyContribution: 'Setoran bulanan',
+      depositIncreaseRate: 'Kenaikan setoran/tahun',
       years: 'Durasi (tahun)',
       periods: 'Total bulan',
       annualRate: 'Bunga per tahun',

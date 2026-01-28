@@ -111,6 +111,8 @@ export default {
     currencyLabel: 'Currency',
     principalLabel: 'Initial amount',
     monthlyContributionLabel: 'Monthly contribution',
+    depositIncreaseLabel: 'Annual deposit increase',
+    depositIncreaseHint: 'Yearly increase in monthly contribution (from initial monthly amount)',
     annualRateLabel: 'Annual interest rate',
     annualRateHint: 'Example: 10 means 10% per year',
     yearsLabel: 'Time (years)',
@@ -130,6 +132,7 @@ export default {
     breakdownLabels: {
       principal: 'Initial amount',
       monthlyContribution: 'Monthly contribution',
+      depositIncreaseRate: 'Deposit increase p.a.',
       years: 'Time (years)',
       periods: 'Total months',
       annualRate: 'Annual rate',
