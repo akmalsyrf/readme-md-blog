@@ -7,6 +7,7 @@ import { chunkText } from './chunkText';
 import { getVectorStore, type VectorDocument } from './vectorStore';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { Locale } from '../i18n';
+import { embedWithCloudflare, isCloudflareConfigured } from './cloudflareAI';
 
 const apiKey = (import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '').trim();
 
@@ -27,6 +28,63 @@ const DEFAULT_EMBED_OPTIONS: EmbedOptions = {
 };
 
 /**
+ * Get embedding for text with fallback to Cloudflare Workers AI if Gemini fails
+ * @param text - Text to embed
+ * @returns Embedding vector as array of numbers
+ */
+async function getEmbeddingWithFallback(text: string): Promise<number[]> {
+  // Try Gemini first
+  if (apiKey) {
+    try {
+      const model = genAI.getGenerativeModel({ model: 'gemini-embedding-001' });
+      const result = await model.embedContent(text);
+
+      // Extract embedding values - handle different response formats
+      if (result.embedding && Array.isArray(result.embedding.values)) {
+        return result.embedding.values;
+      } else if (result.embedding && Array.isArray(result.embedding)) {
+        return result.embedding;
+      } else if (Array.isArray(result)) {
+        return result;
+      } else {
+        throw new TypeError('Invalid embedding response format from Gemini');
+      }
+    } catch (error) {
+      // Log error but don't throw yet - try Cloudflare fallback
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      // eslint-disable-next-line no-console
+      console.warn(`Gemini embedding failed: ${errorMessage}. Trying Cloudflare fallback...`);
+
+      // Fallback to Cloudflare if configured
+      if (isCloudflareConfigured()) {
+        try {
+          return await embedWithCloudflare(text);
+        } catch (cloudflareError) {
+          // Both failed, throw with context
+          const cloudflareMessage =
+            cloudflareError instanceof Error ? cloudflareError.message : String(cloudflareError);
+          throw new Error(
+            `Both Gemini and Cloudflare embedding failed. Gemini: ${errorMessage}, Cloudflare: ${cloudflareMessage}`
+          );
+        }
+      } else {
+        // No fallback available, throw original error
+        throw error;
+      }
+    }
+  }
+
+  // No Gemini API key, try Cloudflare if available
+  if (isCloudflareConfigured()) {
+    return await embedWithCloudflare(text);
+  }
+
+  throw new Error(
+    'No embedding provider configured. Please set GEMINI_API_KEY or Cloudflare credentials.'
+  );
+}
+
+/**
  * Internal function to embed notes with configurable behavior
  * @param locale - Locale to embed (required)
  * @param options - Configuration options
@@ -37,8 +95,11 @@ async function _embedNotesInternal(
   locale: Locale,
   options: EmbedOptions = DEFAULT_EMBED_OPTIONS
 ): Promise<void> {
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not configured. Please set it in your .env file.');
+  // Check if at least one embedding provider is configured
+  if (!apiKey && !isCloudflareConfigured()) {
+    throw new Error(
+      'No embedding provider configured. Please set GEMINI_API_KEY or Cloudflare credentials (CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN).'
+    );
   }
 
   const vectorStore = getVectorStore();
@@ -106,20 +167,8 @@ async function _embedNotesInternal(
         const chunk = chunks[i];
 
         try {
-          // Use Gemini embedding model
-          const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
-          const result = await model.embedContent(chunk);
-          // Extract embedding values - handle different response formats
-          let embedding: number[];
-          if (result.embedding && Array.isArray(result.embedding.values)) {
-            embedding = result.embedding.values;
-          } else if (result.embedding && Array.isArray(result.embedding)) {
-            embedding = result.embedding;
-          } else if (Array.isArray(result)) {
-            embedding = result;
-          } else {
-            throw new TypeError('Invalid embedding response format');
-          }
+          // Use embedding with fallback (Gemini -> Cloudflare)
+          const embedding = await getEmbeddingWithFallback(chunk);
 
           const document: VectorDocument = {
             id: `${noteId}-${locale}-${i}`,
@@ -218,34 +267,26 @@ export async function embedNotes(locale?: Locale): Promise<void> {
 }
 
 /**
- * Get embedding for a query text with retry logic
+ * Get embedding for a query text with retry logic and fallback
  */
 export async function getQueryEmbedding(query: string, maxRetries: number = 3): Promise<number[]> {
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not configured. Please set it in your .env file.');
-  }
-
   if (!query || query.trim() === '') {
     throw new Error('Query cannot be empty');
+  }
+
+  // Check if at least one provider is configured
+  if (!apiKey && !isCloudflareConfigured()) {
+    throw new Error(
+      'No embedding provider configured. Please set GEMINI_API_KEY or Cloudflare credentials.'
+    );
   }
 
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
-      const result = await model.embedContent(query);
-
-      // Extract embedding values - handle different response formats
-      if (result.embedding && Array.isArray(result.embedding.values)) {
-        return result.embedding.values;
-      } else if (result.embedding && Array.isArray(result.embedding)) {
-        return result.embedding;
-      } else if (Array.isArray(result)) {
-        return result;
-      } else {
-        throw new TypeError('Invalid embedding response format');
-      }
+      // Use embedding with automatic fallback
+      return await getEmbeddingWithFallback(query);
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
 
@@ -275,9 +316,10 @@ export async function getQueryEmbedding(query: string, maxRetries: number = 3): 
         if (
           error.message.includes('API_KEY') ||
           error.message.includes('api key') ||
-          error.message.includes('authentication')
+          error.message.includes('authentication') ||
+          error.message.includes('not configured')
         ) {
-          throw new Error('Invalid or missing GEMINI_API_KEY. Please check your .env file.');
+          throw lastError;
         }
 
         // Rate limit errors - wait longer

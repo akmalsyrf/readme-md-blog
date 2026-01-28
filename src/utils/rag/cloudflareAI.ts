@@ -217,3 +217,100 @@ export async function* generateWithCloudflareStream(
 export function isCloudflareConfigured(): boolean {
   return !!(accountId && apiToken);
 }
+
+/**
+ * Embedding model name for Cloudflare Workers AI
+ * Using EmbeddingGemma-300M which supports 100+ languages including Indonesian and English
+ */
+const embeddingModelName =
+  import.meta.env.CLOUDFLARE_EMBEDDING_MODEL || '@cf/google/embeddinggemma-300m';
+
+/**
+ * Get embedding for text using Cloudflare Workers AI
+ * @param text - Text to embed (single string or array of strings)
+ * @returns Embedding vector as array of numbers
+ */
+export async function embedWithCloudflare(text: string | string[]): Promise<number[]> {
+  if (!accountId || !apiToken) {
+    throw new Error(
+      'Cloudflare Workers AI is not configured. Please set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN.'
+    );
+  }
+
+  try {
+    const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${embeddingModelName}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: text,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Cloudflare Embedding API error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+
+    // Extract embedding from Cloudflare API response
+    // Response format: { result: { shape: [1, 768], data: [[...]] } } or { result: [...] }
+    let embedding: number[] = [];
+
+    if (data.result) {
+      if (Array.isArray(data.result)) {
+        // Direct array format
+        embedding = data.result;
+      } else if (data.result.data && Array.isArray(data.result.data)) {
+        // Nested data format: { result: { data: [[...]] } }
+        if (Array.isArray(data.result.data[0])) {
+          // Multiple embeddings (batch), take first one
+          embedding = data.result.data[0];
+        } else {
+          // Single embedding array
+          embedding = data.result.data;
+        }
+      } else if (data.result.embedding && Array.isArray(data.result.embedding)) {
+        // Alternative format with embedding field
+        embedding = data.result.embedding;
+      }
+    }
+
+    if (embedding.length === 0) {
+      // eslint-disable-next-line no-console
+      console.error(
+        'Unexpected Cloudflare Embedding API response format:',
+        JSON.stringify(data, null, 2)
+      );
+      throw new Error('Invalid embedding response format from Cloudflare Workers AI');
+    }
+
+    return embedding;
+  } catch (error) {
+    if (error instanceof Error) {
+      // Re-throw with more context
+      if (error.message.includes('fetch failed') || error.message.includes('network')) {
+        throw new Error(
+          'Network error: Unable to connect to Cloudflare Workers AI. Please check your internet connection.'
+        );
+      }
+      if (error.message.includes('401') || error.message.includes('403')) {
+        throw new Error(
+          'Invalid Cloudflare API credentials. Please check CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN.'
+        );
+      }
+      if (error.message.includes('429')) {
+        throw new Error(
+          'Cloudflare Workers AI rate limit exceeded. Please wait a moment and try again.'
+        );
+      }
+      throw error;
+    }
+    throw new Error('Unknown error occurred while calling Cloudflare Workers AI embedding');
+  }
+}
