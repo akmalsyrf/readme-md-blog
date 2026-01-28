@@ -1,0 +1,489 @@
+---
+import type { Locale } from '../../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  t: any;
+}
+
+const { locale, t } = Astro.props;
+---
+
+<div class="space-y-6">
+  <!-- Input Section -->
+  <div
+    class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+  >
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="md:col-span-2">
+        <label
+          for="currency"
+          class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          {t.compoundInterestCalculator.currencyLabel}
+        </label>
+        <select
+          id="currency"
+          class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+        >
+          <option value="IDR">IDR</option>
+          <option value="USD">USD</option>
+          <option value="SGD">SGD</option>
+          <option value="EUR">EUR</option>
+          <option value="JPY">JPY</option>
+          <option value="MYR">MYR</option>
+          <option value="THB">THB</option>
+          <option value="AUD">AUD</option>
+        </select>
+      </div>
+
+      <div>
+        <label
+          for="principal"
+          class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          {t.compoundInterestCalculator.principalLabel}
+        </label>
+        <input
+          id="principal"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="1000"
+          class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+          placeholder="0"
+        />
+        <p id="principal-hint" class="mt-1 text-xs text-gray-500 dark:text-gray-400"></p>
+      </div>
+
+      <div>
+        <label
+          for="monthly"
+          class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          {t.compoundInterestCalculator.monthlyContributionLabel}
+        </label>
+        <input
+          id="monthly"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="1000"
+          class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+          placeholder="0"
+        />
+        <p id="monthly-hint" class="mt-1 text-xs text-gray-500 dark:text-gray-400"></p>
+      </div>
+
+      <div>
+        <label for="rate" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          {t.compoundInterestCalculator.annualRateLabel}
+        </label>
+        <div class="relative">
+          <input
+            id="rate"
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="0.01"
+            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 pr-10 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            placeholder="10"
+          />
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            >%</span
+          >
+        </div>
+        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          {t.compoundInterestCalculator.annualRateHint}
+        </p>
+      </div>
+
+      <div>
+        <label for="years" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          {t.compoundInterestCalculator.yearsLabel}
+        </label>
+        <input
+          id="years"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          step="1"
+          class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+          placeholder="10"
+        />
+        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          {t.compoundInterestCalculator.yearsHint}
+        </p>
+      </div>
+
+      <div>
+        <label
+          for="inflation"
+          class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          {t.compoundInterestCalculator.inflationLabel}
+        </label>
+        <div class="relative">
+          <input
+            id="inflation"
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="0.01"
+            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 pr-10 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            placeholder="3"
+          />
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            >%</span
+          >
+        </div>
+        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          {t.compoundInterestCalculator.inflationHint}
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-5 flex flex-wrap gap-3">
+      <button
+        id="calculate-button"
+        class="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {t.compoundInterestCalculator.calculateButton}
+      </button>
+      <button
+        id="reset-button"
+        class="rounded-md border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+      >
+        {t.compoundInterestCalculator.resetButton}
+      </button>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div
+    id="error-message"
+    class="hidden rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+  >
+    <p id="error-text"></p>
+  </div>
+
+  <!-- Results -->
+  <div id="results" class="hidden space-y-6">
+    <div
+      class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+    >
+      <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+        {t.compoundInterestCalculator.resultsTitle}
+      </h2>
+
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {t.compoundInterestCalculator.finalAmount}
+          </p>
+          <p id="final-amount" class="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100"></p>
+        </div>
+        <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {t.compoundInterestCalculator.presentValue}
+          </p>
+          <p id="present-value" class="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400">
+          </p>
+        </div>
+        <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {t.compoundInterestCalculator.totalContributions}
+          </p>
+          <p id="total-contrib" class="mt-1 text-xl font-semibold text-gray-900 dark:text-gray-100">
+          </p>
+        </div>
+        <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {t.compoundInterestCalculator.totalInterest}
+          </p>
+          <p
+            id="total-interest"
+            class="mt-1 text-xl font-semibold text-gray-900 dark:text-gray-100"
+          >
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="mt-5 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+      >
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {t.compoundInterestCalculator.interestShare}
+          </p>
+          <p id="interest-share" class="text-sm text-gray-600 dark:text-gray-400"></p>
+        </div>
+        <div class="mt-2 h-3 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+          <div id="interest-bar" class="h-full bg-blue-600" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+    >
+      <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+        {t.compoundInterestCalculator.breakdownTitle}
+      </h2>
+      <div id="breakdown" class="space-y-2"></div>
+    </div>
+  </div>
+</div>
+
+<script
+  define:vars={{
+    locale,
+    translations: {
+      invalidInput: t.compoundInterestCalculator.invalidInput,
+      breakdownLabels: t.compoundInterestCalculator.breakdownLabels,
+    },
+  }}
+>
+  function initCompoundInterestCalculator() {
+    const currencyEl = document.getElementById('currency');
+    const principalEl = document.getElementById('principal');
+    const monthlyEl = document.getElementById('monthly');
+    const rateEl = document.getElementById('rate');
+    const yearsEl = document.getElementById('years');
+    const inflationEl = document.getElementById('inflation');
+    const calcBtn = document.getElementById('calculate-button');
+    const resetBtn = document.getElementById('reset-button');
+
+    const errorBox = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+
+    const results = document.getElementById('results');
+    const finalAmountEl = document.getElementById('final-amount');
+    const presentValueEl = document.getElementById('present-value');
+    const totalContribEl = document.getElementById('total-contrib');
+    const totalInterestEl = document.getElementById('total-interest');
+    const interestShareEl = document.getElementById('interest-share');
+    const interestBarEl = document.getElementById('interest-bar');
+    const breakdownEl = document.getElementById('breakdown');
+
+    const principalHint = document.getElementById('principal-hint');
+    const monthlyHint = document.getElementById('monthly-hint');
+
+    if (
+      !currencyEl ||
+      !principalEl ||
+      !monthlyEl ||
+      !rateEl ||
+      !yearsEl ||
+      !inflationEl ||
+      !calcBtn ||
+      !resetBtn ||
+      !errorBox ||
+      !errorText ||
+      !results ||
+      !finalAmountEl ||
+      !presentValueEl ||
+      !totalContribEl ||
+      !totalInterestEl ||
+      !interestShareEl ||
+      !interestBarEl ||
+      !breakdownEl ||
+      !principalHint ||
+      !monthlyHint
+    ) {
+      setTimeout(initCompoundInterestCalculator, 100);
+      return;
+    }
+
+    // Defaults (similar to common calculator presets)
+    currencyEl.value = 'IDR';
+    principalEl.value = '10000000';
+    monthlyEl.value = '1000000';
+    rateEl.value = '10';
+    yearsEl.value = '10';
+    inflationEl.value = '3';
+
+    const localeTag = locale === 'id' ? 'id-ID' : 'en-US';
+
+    function getMoneyFormatter() {
+      const currency = currencyEl.value || 'IDR';
+      return new Intl.NumberFormat(localeTag, {
+        style: 'currency',
+        currency,
+        maximumFractionDigits: currency === 'JPY' ? 0 : 0,
+      });
+    }
+
+    function formatMoney(value) {
+      const fmt = getMoneyFormatter();
+      const safe = Number.isFinite(value) ? value : 0;
+      return fmt.format(safe);
+    }
+
+    function parseNumber(el) {
+      const raw = String(el.value ?? '').trim();
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : NaN;
+    }
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorBox.classList.remove('hidden');
+    }
+
+    function hideError() {
+      errorBox.classList.add('hidden');
+    }
+
+    function updateHints() {
+      const p = parseNumber(principalEl);
+      const m = parseNumber(monthlyEl);
+      principalHint.textContent = Number.isFinite(p) ? formatMoney(p) : '';
+      monthlyHint.textContent = Number.isFinite(m) ? formatMoney(m) : '';
+    }
+
+    function calculate() {
+      hideError();
+
+      const principal = parseNumber(principalEl);
+      const monthly = parseNumber(monthlyEl);
+      const annualRatePct = parseNumber(rateEl);
+      const years = parseNumber(yearsEl);
+      const inflationPct = parseNumber(inflationEl);
+
+      if (
+        !Number.isFinite(principal) ||
+        !Number.isFinite(monthly) ||
+        !Number.isFinite(annualRatePct) ||
+        !Number.isFinite(years) ||
+        !Number.isFinite(inflationPct) ||
+        principal < 0 ||
+        monthly < 0 ||
+        annualRatePct < 0 ||
+        years < 0 ||
+        inflationPct < 0
+      ) {
+        showError(translations.invalidInput);
+        results.classList.add('hidden');
+        return;
+      }
+
+      const r = annualRatePct / 100;
+      const n = 12; // monthly compounding
+      const t = years;
+      const periods = Math.round(n * t);
+      const i = n === 0 ? 0 : r / n;
+
+      // FV with contributions at end of each period:
+      // FV = P*(1+i)^(nt) + PMT * [((1+i)^(nt) - 1) / i]
+      // Handle r=0 edge case.
+      let fvPrincipal = principal;
+      let fvContrib = monthly * periods;
+      let fv = principal + monthly * periods;
+
+      if (r > 0 && i > 0) {
+        const growth = Math.pow(1 + i, periods);
+        fvPrincipal = principal * growth;
+        fvContrib = monthly * ((growth - 1) / i);
+        fv = fvPrincipal + fvContrib;
+      }
+
+      const totalContributions = principal + monthly * periods;
+      const totalInterest = fv - totalContributions;
+      const interestShare = fv > 0 ? (totalInterest / fv) * 100 : 0;
+
+      // Calculate present value (purchasing power in today's money)
+      // PV = FV / (1 + inflation_rate)^years
+      const inflationRate = inflationPct / 100;
+      let presentValue = fv;
+      if (inflationRate > 0 && years > 0) {
+        presentValue = fv / Math.pow(1 + inflationRate, years);
+      }
+
+      finalAmountEl.textContent = formatMoney(fv);
+      presentValueEl.textContent = formatMoney(presentValue);
+      totalContribEl.textContent = formatMoney(totalContributions);
+      totalInterestEl.textContent = formatMoney(totalInterest);
+
+      const interestShareText = `${Math.max(0, interestShare).toFixed(1)}%`;
+      interestShareEl.textContent = interestShareText;
+      interestBarEl.style.width = `${Math.min(100, Math.max(0, interestShare))}%`;
+
+      const labels = translations.breakdownLabels;
+      breakdownEl.innerHTML = `
+        <div class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <span class="text-sm text-gray-700 dark:text-gray-300">${labels.principal}</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${formatMoney(principal)}</span>
+        </div>
+        <div class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <span class="text-sm text-gray-700 dark:text-gray-300">${labels.monthlyContribution}</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${formatMoney(monthly)}</span>
+        </div>
+        <div class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <span class="text-sm text-gray-700 dark:text-gray-300">${labels.years}</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${years}</span>
+        </div>
+        <div class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <span class="text-sm text-gray-700 dark:text-gray-300">${labels.periods}</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${periods}</span>
+        </div>
+        <div class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <span class="text-sm text-gray-700 dark:text-gray-300">${labels.annualRate}</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${annualRatePct}%</span>
+        </div>
+        <div class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <span class="text-sm text-gray-700 dark:text-gray-300">${labels.inflationRate}</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${inflationPct}%</span>
+        </div>
+      `;
+
+      results.classList.remove('hidden');
+    }
+
+    function reset() {
+      currencyEl.value = 'IDR';
+      principalEl.value = '10000000';
+      monthlyEl.value = '1000000';
+      rateEl.value = '10';
+      yearsEl.value = '10';
+      inflationEl.value = '3';
+      hideError();
+      results.classList.add('hidden');
+      updateHints();
+      principalEl.focus();
+    }
+
+    currencyEl.addEventListener('change', () => {
+      updateHints();
+      if (!results.classList.contains('hidden')) calculate();
+    });
+
+    for (const el of [principalEl, monthlyEl, rateEl, yearsEl, inflationEl]) {
+      el.addEventListener('input', () => {
+        updateHints();
+      });
+    }
+
+    calcBtn.addEventListener('click', calculate);
+    resetBtn.addEventListener('click', reset);
+
+    // Enter to calculate
+    for (const el of [principalEl, monthlyEl, rateEl, yearsEl, inflationEl]) {
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          calculate();
+        }
+      });
+    }
+
+    updateHints();
+    calculate();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCompoundInterestCalculator);
+  } else {
+    initCompoundInterestCalculator();
+  }
+</script>
