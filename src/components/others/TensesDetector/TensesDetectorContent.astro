@@ -1,0 +1,408 @@
+---
+import type { Locale } from '../../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  t: any;
+}
+
+const { locale, t } = Astro.props;
+
+// Color mapping for 16 tenses
+const tenseColors: Record<string, string> = {
+  'Simple Present': '#3B82F6', // blue
+  'Present Continuous': '#10B981', // green
+  'Present Perfect': '#8B5CF6', // purple
+  'Present Perfect Continuous': '#EC4899', // pink
+  'Simple Past': '#F59E0B', // amber
+  'Past Continuous': '#EF4444', // red
+  'Past Perfect': '#14B8A6', // teal
+  'Past Perfect Continuous': '#F97316', // orange
+  'Simple Future': '#06B6D4', // cyan
+  'Future Continuous': '#6366F1', // indigo
+  'Future Perfect': '#84CC16', // lime
+  'Future Perfect Continuous': '#A855F7', // violet
+  'Past Future': '#22C55E', // emerald
+  'Past Future Continuous': '#EAB308', // yellow
+  'Past Future Perfect': '#64748B', // slate
+  'Past Future Perfect Continuous': '#DC2626', // red-600
+};
+---
+
+<div class="space-y-6">
+  <!-- Input Section -->
+  <div
+    class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+  >
+    <div class="mb-4">
+      <label
+        for="text-input"
+        class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
+        {t.tensesDetector.inputPlaceholder}
+      </label>
+      <textarea
+        id="text-input"
+        rows="8"
+        class="w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+        placeholder={t.tensesDetector.inputPlaceholder}></textarea>
+    </div>
+    <div class="flex gap-3">
+      <button
+        id="analyze-button"
+        class="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {t.tensesDetector.analyzeButton}
+      </button>
+      <button
+        id="clear-button"
+        class="rounded-md border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+      >
+        {t.tensesDetector.clearButton}
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div
+    id="error-message"
+    class="hidden rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+  >
+    <p id="error-text"></p>
+  </div>
+
+  <!-- Results Section -->
+  <div id="results-section" class="hidden space-y-6">
+    <!-- Statistics -->
+    <div
+      class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+    >
+      <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+        {t.tensesDetector.statistics}
+      </h2>
+      <div id="statistics-content"></div>
+    </div>
+
+    <!-- Highlighted Text -->
+    <div
+      class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+    >
+      <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+        {t.tensesDetector.title}
+      </h2>
+      <div
+        id="highlighted-text"
+        class="min-h-[200px] rounded-md border border-gray-200 bg-gray-50 p-4 text-base leading-relaxed text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+      >
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div
+      class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+    >
+      <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+        {t.tensesDetector.legend}
+      </h2>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          Object.entries(tenseColors).map(([tense, color]) => (
+            <div class="flex items-center gap-2">
+              <div
+                class="h-4 w-4 rounded"
+                style={`background-color: ${color}; border: 1px solid ${color}`}
+              />
+              <span class="text-sm text-gray-700 dark:text-gray-300">{tense}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<script
+  define:vars={{
+    locale,
+    translations: {
+      analyzing: t.tensesDetector.analyzing,
+      noTextError: t.tensesDetector.noTextError,
+      error: t.tensesDetector.error,
+      errorMessage: t.tensesDetector.errorMessage,
+      totalTenses: t.tensesDetector.totalTenses,
+      tensesFound: t.tensesDetector.tensesFound,
+      noTensesFound: t.tensesDetector.noTensesFound,
+      tenseNames: t.tensesDetector.tenses,
+    },
+    tenseColors: tenseColors,
+  }}
+>
+  // Wait for DOM to be ready
+  function initTensesDetector() {
+    const textInput = document.getElementById('text-input');
+    const analyzeButton = document.getElementById('analyze-button');
+    const clearButton = document.getElementById('clear-button');
+    const errorMessage = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+    const resultsSection = document.getElementById('results-section');
+    const highlightedText = document.getElementById('highlighted-text');
+    const statisticsContent = document.getElementById('statistics-content');
+
+    // Check if all elements exist
+    if (
+      !textInput ||
+      !analyzeButton ||
+      !clearButton ||
+      !errorMessage ||
+      !errorText ||
+      !resultsSection ||
+      !highlightedText ||
+      !statisticsContent
+    ) {
+      // Retry if elements not found yet
+      setTimeout(initTensesDetector, 100);
+      return;
+    }
+
+    analyzeButton.addEventListener('click', async () => {
+      const text = textInput.value.trim();
+
+      if (!text) {
+        showError(translations.noTextError);
+        return;
+      }
+
+      analyzeButton.disabled = true;
+      analyzeButton.textContent = translations.analyzing;
+      hideError();
+      resultsSection.classList.add('hidden');
+
+      try {
+        const response = await fetch('/api/tenses-detector', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text,
+            locale,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || translations.errorMessage);
+        }
+
+        if (!data.success || !data.tenses) {
+          throw new Error(translations.errorMessage);
+        }
+
+        displayResults(text, data.tenses);
+      } catch (error) {
+        showError(error instanceof Error ? error.message : translations.errorMessage);
+      } finally {
+        analyzeButton.disabled = false;
+        analyzeButton.textContent = locale === 'id' ? 'Analisis Tenses' : 'Analyze Tenses';
+      }
+    });
+
+    clearButton.addEventListener('click', () => {
+      textInput.value = '';
+      hideError();
+      resultsSection.classList.add('hidden');
+      textInput.focus();
+    });
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorMessage.classList.remove('hidden');
+    }
+
+    function hideError() {
+      errorMessage.classList.add('hidden');
+    }
+
+    function displayResults(text, tenses) {
+      if (tenses.length === 0) {
+        highlightedText.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${translations.noTensesFound}</p>`;
+        statisticsContent.innerHTML = `<p class="text-gray-600 dark:text-gray-400">${translations.noTensesFound}</p>`;
+        resultsSection.classList.remove('hidden');
+        return;
+      }
+
+      // Filter and validate tenses
+      const validTenses = tenses
+        .filter((tense) => {
+          // Validate indices
+          if (
+            tense.startIndex < 0 ||
+            tense.endIndex <= tense.startIndex ||
+            tense.endIndex > text.length
+          ) {
+            return false;
+          }
+          return true;
+        })
+        .sort((a, b) => a.startIndex - b.startIndex);
+
+      // Remove only truly overlapping ranges (where ranges actually overlap, not just adjacent)
+      // Two ranges overlap if: start1 < end2 AND start2 < end1
+      // Adjacent ranges (end1 === start2) are NOT overlapping and should both be kept
+      const nonOverlappingTenses = [];
+
+      for (const tense of validTenses) {
+        let shouldAdd = true;
+
+        // Check if this tense overlaps with any already added tense
+        for (let i = 0; i < nonOverlappingTenses.length; i++) {
+          const existing = nonOverlappingTenses[i];
+
+          // Check if ranges truly overlap (not just adjacent)
+          // Overlap means: start1 < end2 AND start2 < end1
+          const overlaps =
+            tense.startIndex < existing.endIndex && existing.startIndex < tense.endIndex;
+
+          if (overlaps) {
+            // They overlap - keep the one that appears first
+            if (tense.startIndex < existing.startIndex) {
+              // Replace existing with this one (which starts earlier)
+              nonOverlappingTenses[i] = tense;
+            }
+            // Otherwise, skip adding this one (keep the existing)
+            shouldAdd = false;
+            break;
+          }
+        }
+
+        // If no overlap, add it
+        if (shouldAdd) {
+          nonOverlappingTenses.push(tense);
+        }
+      }
+
+      // Sort again after removing overlaps
+      nonOverlappingTenses.sort((a, b) => a.startIndex - b.startIndex);
+
+      // Build highlighted text using parts array
+      const parts = [];
+      let lastIndex = 0;
+
+      for (const tense of nonOverlappingTenses) {
+        // Ensure we don't go backwards
+        if (tense.startIndex < lastIndex) {
+          continue;
+        }
+
+        // Add text before this tense
+        if (tense.startIndex > lastIndex) {
+          const beforeText = text.substring(lastIndex, tense.startIndex);
+          parts.push({ type: 'text', content: beforeText });
+        }
+
+        // Add the marked tense (use actual text from input to ensure accuracy)
+        const tenseText = text.substring(tense.startIndex, tense.endIndex);
+        const color = tenseColors[tense.tense] || '#6B7280';
+        parts.push({
+          type: 'mark',
+          content: tenseText,
+          color: color,
+          tense: tense.tense,
+        });
+
+        lastIndex = Math.max(lastIndex, tense.endIndex);
+      }
+
+      // Add remaining text after last tense
+      if (lastIndex < text.length) {
+        parts.push({ type: 'text', content: text.substring(lastIndex) });
+      }
+
+      // Build HTML from parts
+      let highlightedHTML = '';
+      for (const part of parts) {
+        if (part.type === 'text') {
+          highlightedHTML += part.content.replace(/\n/g, '<br>');
+        } else {
+          const escapedText = part.content
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\n/g, '<br>');
+          highlightedHTML += `<mark style="background-color: ${part.color}40; color: ${part.color}; padding: 2px 4px; border-radius: 3px; border-bottom: 2px solid ${part.color}; font-weight: 500;" title="${part.tense}">${escapedText}</mark>`;
+        }
+      }
+
+      highlightedText.innerHTML = highlightedHTML;
+
+      // Build statistics (use nonOverlappingTenses if available, otherwise use validTenses)
+      const tensesForStats = nonOverlappingTenses.length > 0 ? nonOverlappingTenses : validTenses;
+      const tenseCounts = {};
+      for (const tense of tensesForStats) {
+        tenseCounts[tense.tense] = (tenseCounts[tense.tense] || 0) + 1;
+      }
+
+      const totalCount = tensesForStats.length;
+      const uniqueCount = Object.keys(tenseCounts).length;
+
+      let statsHTML = `
+      <div class="mb-4">
+        <p class="text-lg font-medium text-gray-900 dark:text-gray-100">
+          ${translations.totalTenses}: <span class="text-blue-600 dark:text-blue-400">${totalCount}</span> ${translations.tensesFound}
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Unique tenses: ${uniqueCount}
+        </p>
+      </div>
+      <div class="space-y-2">
+    `;
+
+      const sortedTenseCounts = Object.entries(tenseCounts).sort((a, b) => b[1] - a[1]);
+      for (const [tense, count] of sortedTenseCounts) {
+        const color = tenseColors[tense] || '#6B7280';
+        statsHTML += `
+        <div class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <div class="flex items-center gap-2">
+            <div class="h-3 w-3 rounded" style="background-color: ${color}"></div>
+            <span class="text-sm text-gray-700 dark:text-gray-300">${tense}</span>
+          </div>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${count}</span>
+        </div>
+      `;
+      }
+
+      statsHTML += '</div>';
+      statisticsContent.innerHTML = statsHTML;
+
+      resultsSection.classList.remove('hidden');
+    }
+
+    // Allow Enter key with Ctrl/Cmd to analyze
+    textInput.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        analyzeButton.click();
+      }
+    });
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTensesDetector);
+  } else {
+    // DOM already ready
+    initTensesDetector();
+  }
+</script>
+
+<style>
+  #highlighted-text mark {
+    transition: all 0.2s ease;
+  }
+
+  #highlighted-text mark:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+  }
+</style>
