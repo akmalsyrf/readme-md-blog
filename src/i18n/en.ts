@@ -129,6 +129,54 @@ export default {
     interestShare: 'Interest share of final amount',
     breakdownTitle: 'Input breakdown',
     invalidInput: 'Invalid input. Make sure all numbers are \u2265 0.',
+    exportButton: 'Export to Excel',
+    exportSuccess: 'Excel file downloaded successfully',
+    exportError: 'Failed to export to Excel',
+    tooltips: {
+      finalAmount: {
+        title: 'Final Amount (Estimate)',
+        description:
+          'Total investment value at the end of the period, including initial principal, all contributions, and earned interest.',
+        formula: 'FV = PV × (1 + r/n)^(n×t) + Σ[PMT × ((1 + r/n)^n - 1) / (r/n)]',
+        explanation:
+          'FV is calculated with monthly compounding (n=12) and monthly contributions that increase each year.',
+      },
+      presentValue: {
+        title: "Real Value in Today's Money",
+        description:
+          "Final amount adjusted for inflation to show actual purchasing power in today's terms.",
+        formula: 'PV = FV / (1 + inflation)^years',
+        explanation:
+          "Calculates how much the final amount is worth in today's purchasing power, accounting for inflation.",
+      },
+      totalContributions: {
+        title: 'Total Contributions',
+        description:
+          'Total amount of money deposited during the investment period, including initial principal and all monthly contributions.',
+        formula: 'Total = Initial Principal + Σ(Monthly Contribution × 12 × (1 + increase)^year)',
+        explanation:
+          'Sums the initial principal with all monthly contributions that increase each year by the specified percentage.',
+      },
+      totalInterest: {
+        title: 'Total Interest',
+        description:
+          'Difference between final amount and total contributions, showing the gain from compound interest.',
+        formula: 'Total Interest = Final Amount - Total Contributions',
+        explanation:
+          'Interest earned from the investment, calculated by subtracting total contributions from the final amount.',
+      },
+    },
+    exportLabels: {
+      year: 'Year',
+      startingBalance: 'Starting Balance',
+      monthlyContribution: 'Monthly Contribution',
+      yearlyContributions: 'Yearly Contributions',
+      interestEarned: 'Interest Earned',
+      endingBalance: 'Ending Balance',
+      presentValue: "Present Value (Today's Money)",
+      finalAmount: 'Final Amount',
+      total: 'Total',
+    },
     breakdownLabels: {
       principal: 'Initial amount',
       monthlyContribution: 'Monthly contribution',

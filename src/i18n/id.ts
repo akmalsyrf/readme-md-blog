@@ -132,6 +132,54 @@ export default {
     interestShare: 'Porsi bunga dari nilai akhir',
     breakdownTitle: 'Rincian input',
     invalidInput: 'Input tidak valid. Pastikan semua angka \u2265 0.',
+    exportButton: 'Ekspor ke Excel',
+    exportSuccess: 'File Excel berhasil diunduh',
+    exportError: 'Gagal mengekspor ke Excel',
+    tooltips: {
+      finalAmount: {
+        title: 'Nilai Akhir (Estimasi)',
+        description:
+          'Total nilai investasi di akhir periode, termasuk modal awal, semua setoran, dan bunga yang diperoleh.',
+        formula: 'FV = PV × (1 + r/n)^(n×t) + Σ[PMT × ((1 + r/n)^n - 1) / (r/n)]',
+        explanation:
+          'FV dihitung dengan bunga berbunga bulanan (n=12) dan setoran bulanan yang meningkat setiap tahun.',
+      },
+      presentValue: {
+        title: 'Nilai Riil di Tahun Sekarang',
+        description:
+          'Nilai akhir yang disesuaikan dengan inflasi untuk menunjukkan daya beli sebenarnya di tahun sekarang.',
+        formula: 'PV = FV / (1 + inflasi)^tahun',
+        explanation:
+          'Menghitung berapa nilai akhir jika diukur dengan daya beli saat ini, dengan mempertimbangkan inflasi.',
+      },
+      totalContributions: {
+        title: 'Total Setoran',
+        description:
+          'Jumlah total uang yang disetor selama periode investasi, termasuk modal awal dan semua setoran bulanan.',
+        formula: 'Total = Modal Awal + Σ(Setoran Bulanan × 12 × (1 + kenaikan)^tahun)',
+        explanation:
+          'Menjumlahkan modal awal dengan semua setoran bulanan yang meningkat setiap tahun sesuai persentase kenaikan.',
+      },
+      totalInterest: {
+        title: 'Total Bunga',
+        description:
+          'Selisih antara nilai akhir dan total setoran, menunjukkan keuntungan dari bunga berbunga.',
+        formula: 'Total Bunga = Nilai Akhir - Total Setoran',
+        explanation:
+          'Bunga yang diperoleh dari investasi, dihitung dengan mengurangi total setoran dari nilai akhir.',
+      },
+    },
+    exportLabels: {
+      year: 'Tahun',
+      startingBalance: 'Saldo Awal',
+      monthlyContribution: 'Setoran Bulanan',
+      yearlyContributions: 'Total Setoran Tahun Ini',
+      interestEarned: 'Bunga Tahun Ini',
+      endingBalance: 'Saldo Akhir',
+      presentValue: 'Nilai Riil di Tahun Sekarang',
+      finalAmount: 'Nilai Akhir',
+      total: 'Total',
+    },
     breakdownLabels: {
       principal: 'Modal awal',
       monthlyContribution: 'Setoran bulanan',

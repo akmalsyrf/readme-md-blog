@@ -1,5 +1,6 @@
 ---
 import type { Locale } from '../../../utils/i18n';
+import Tooltip from '../../common/Tooltip.astro';
 
 interface Props {
   locale: Locale;
@@ -198,35 +199,127 @@ const { locale, t } = Astro.props;
     <div
       class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
     >
-      <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
-        {t.compoundInterestCalculator.resultsTitle}
-      </h2>
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          {t.compoundInterestCalculator.resultsTitle}
+        </h2>
+        <button
+          id="export-button"
+          class="hidden rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+        >
+          {t.compoundInterestCalculator.exportButton}
+        </button>
+      </div>
 
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            {t.compoundInterestCalculator.finalAmount}
-          </p>
+          <Tooltip
+            title={t.compoundInterestCalculator.tooltips.finalAmount.title}
+            description={t.compoundInterestCalculator.tooltips.finalAmount.description}
+            formula={t.compoundInterestCalculator.tooltips.finalAmount.formula}
+            explanation={t.compoundInterestCalculator.tooltips.finalAmount.explanation}
+            position="left"
+          >
+            <p class="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+              {t.compoundInterestCalculator.finalAmount}
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </p>
+          </Tooltip>
           <p id="final-amount" class="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100"></p>
         </div>
         <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            {t.compoundInterestCalculator.presentValue}
-          </p>
+          <Tooltip
+            title={t.compoundInterestCalculator.tooltips.presentValue.title}
+            description={t.compoundInterestCalculator.tooltips.presentValue.description}
+            formula={t.compoundInterestCalculator.tooltips.presentValue.formula}
+            explanation={t.compoundInterestCalculator.tooltips.presentValue.explanation}
+            position="center"
+          >
+            <p class="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+              {t.compoundInterestCalculator.presentValue}
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </p>
+          </Tooltip>
           <p id="present-value" class="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400">
           </p>
         </div>
         <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            {t.compoundInterestCalculator.totalContributions}
-          </p>
+          <Tooltip
+            title={t.compoundInterestCalculator.tooltips.totalContributions.title}
+            description={t.compoundInterestCalculator.tooltips.totalContributions.description}
+            formula={t.compoundInterestCalculator.tooltips.totalContributions.formula}
+            explanation={t.compoundInterestCalculator.tooltips.totalContributions.explanation}
+            position="center"
+          >
+            <p class="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+              {t.compoundInterestCalculator.totalContributions}
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </p>
+          </Tooltip>
           <p id="total-contrib" class="mt-1 text-xl font-semibold text-gray-900 dark:text-gray-100">
           </p>
         </div>
         <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            {t.compoundInterestCalculator.totalInterest}
-          </p>
+          <Tooltip
+            title={t.compoundInterestCalculator.tooltips.totalInterest.title}
+            description={t.compoundInterestCalculator.tooltips.totalInterest.description}
+            formula={t.compoundInterestCalculator.tooltips.totalInterest.formula}
+            explanation={t.compoundInterestCalculator.tooltips.totalInterest.explanation}
+            position="right"
+          >
+            <p class="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+              {t.compoundInterestCalculator.totalInterest}
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </p>
+          </Tooltip>
           <p
             id="total-interest"
             class="mt-1 text-xl font-semibold text-gray-900 dark:text-gray-100"
@@ -267,6 +360,10 @@ const { locale, t } = Astro.props;
     translations: {
       invalidInput: t.compoundInterestCalculator.invalidInput,
       breakdownLabels: t.compoundInterestCalculator.breakdownLabels,
+      exportLabels: t.compoundInterestCalculator.exportLabels,
+      exportButton: t.compoundInterestCalculator.exportButton,
+      exportSuccess: t.compoundInterestCalculator.exportSuccess,
+      exportError: t.compoundInterestCalculator.exportError,
     },
   }}
 >
@@ -292,9 +389,13 @@ const { locale, t } = Astro.props;
     const interestShareEl = document.getElementById('interest-share');
     const interestBarEl = document.getElementById('interest-bar');
     const breakdownEl = document.getElementById('breakdown');
+    const exportBtn = document.getElementById('export-button');
 
     const principalHint = document.getElementById('principal-hint');
     const monthlyHint = document.getElementById('monthly-hint');
+
+    // Store yearly data for export
+    let yearlyData = [];
 
     if (
       !currencyEl ||
@@ -316,6 +417,7 @@ const { locale, t } = Astro.props;
       !interestShareEl ||
       !interestBarEl ||
       !breakdownEl ||
+      !exportBtn ||
       !principalHint ||
       !monthlyHint
     ) {
@@ -408,31 +510,78 @@ const { locale, t } = Astro.props;
       const periods = Math.round(n * t);
       const i = n === 0 ? 0 : r / n;
       const growth12 = Math.pow(1 + i, 12);
+      const inflationRate = inflationPct / 100;
 
       // FV with contributions increasing each year: monthly in year y = monthly * (1+g)^y
       let fv = principal;
       let totalContributions = principal;
+      yearlyData = []; // Reset yearly data
 
       if (i > 0) {
         for (let y = 0; y < years; y++) {
           const monthlyThisYear = monthly * Math.pow(1 + g, y);
-          fv = fv * growth12 + monthlyThisYear * ((growth12 - 1) / i);
-          totalContributions += 12 * monthlyThisYear;
+          const yearlyContrib = 12 * monthlyThisYear;
+          const startingBalance = fv;
+
+          // Calculate FV at end of year: FV = PV * (1+i)^12 + PMT * (((1+i)^12 - 1) / i)
+          const fvBeforeContrib = fv * growth12;
+          const contribFV = monthlyThisYear * ((growth12 - 1) / i);
+          const endingBalance = fvBeforeContrib + contribFV;
+          const interestEarned = endingBalance - startingBalance - yearlyContrib;
+
+          // Calculate present value for this year: PV = FV / (1 + inflation_rate)^year
+          let presentValue = endingBalance;
+          if (inflationRate > 0 && y + 1 > 0) {
+            presentValue = endingBalance / Math.pow(1 + inflationRate, y + 1);
+          }
+
+          fv = endingBalance;
+          totalContributions += yearlyContrib;
+
+          yearlyData.push({
+            year: y + 1,
+            startingBalance: startingBalance,
+            monthlyContribution: monthlyThisYear,
+            yearlyContributions: yearlyContrib,
+            interestEarned: interestEarned,
+            endingBalance: endingBalance,
+            presentValue: presentValue,
+          });
         }
       } else {
         // r = 0: no interest, just sum contributions
         for (let y = 0; y < years; y++) {
           const monthlyThisYear = monthly * Math.pow(1 + g, y);
-          fv += 12 * monthlyThisYear;
-          totalContributions += 12 * monthlyThisYear;
+          const yearlyContrib = 12 * monthlyThisYear;
+          const startingBalance = fv;
+          const endingBalance = fv + yearlyContrib;
+
+          // Calculate present value for this year: PV = FV / (1 + inflation_rate)^year
+          let presentValue = endingBalance;
+          if (inflationRate > 0 && y + 1 > 0) {
+            presentValue = endingBalance / Math.pow(1 + inflationRate, y + 1);
+          }
+
+          fv = endingBalance;
+          totalContributions += yearlyContrib;
+
+          yearlyData.push({
+            year: y + 1,
+            startingBalance: startingBalance,
+            monthlyContribution: monthlyThisYear,
+            yearlyContributions: yearlyContrib,
+            interestEarned: 0,
+            endingBalance: endingBalance,
+            presentValue: presentValue,
+          });
         }
       }
+
       const totalInterest = fv - totalContributions;
       const interestShare = fv > 0 ? (totalInterest / fv) * 100 : 0;
 
       // Calculate present value (purchasing power in today's money)
       // PV = FV / (1 + inflation_rate)^years
-      const inflationRate = inflationPct / 100;
       let presentValue = fv;
       if (inflationRate > 0 && years > 0) {
         presentValue = fv / Math.pow(1 + inflationRate, years);
@@ -480,6 +629,162 @@ const { locale, t } = Astro.props;
       `;
 
       results.classList.remove('hidden');
+      exportBtn.classList.remove('hidden');
+    }
+
+    // Helper function to export to Excel (using utility pattern)
+    async function exportToExcelHelper(options) {
+      const { data, filename, sheetName = 'Sheet1', columnWidths, onSuccess, onError } = options;
+
+      try {
+        // Dynamic import of xlsx library from CDN
+        const XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.1/package/xlsx.mjs');
+
+        // Create workbook and worksheet
+        const ws = XLSX.utils.aoa_to_sheet(data);
+
+        // Set column widths if provided
+        if (columnWidths && columnWidths.length > 0) {
+          ws['!cols'] = columnWidths.map((width) => ({ wch: width }));
+        }
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+        // Generate filename with date if not already included
+        const dateStr = new Date().toISOString().split('T')[0];
+        const finalFilename = filename.includes(dateStr)
+          ? `${filename}.xlsx`
+          : `${filename}-${dateStr}.xlsx`;
+
+        // Write file
+        XLSX.writeFile(wb, finalFilename);
+
+        // Call success callback if provided
+        if (onSuccess) {
+          onSuccess(finalFilename);
+        }
+      } catch (error) {
+        console.error('Export error:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Gagal mengekspor ke Excel';
+        if (onError) {
+          onError(errorMessage);
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    function showSuccessNotification(message, duration = 3000) {
+      const successMsg = document.createElement('div');
+      successMsg.className =
+        'fixed bottom-4 right-4 rounded-lg bg-green-500 px-4 py-2 text-white shadow-lg z-50';
+      successMsg.textContent = message;
+      document.body.appendChild(successMsg);
+      setTimeout(() => {
+        successMsg.remove();
+      }, duration);
+    }
+
+    async function handleExportToExcel() {
+      if (yearlyData.length === 0) {
+        showError(translations.exportError);
+        return;
+      }
+
+      try {
+        // Get column headers from translations
+        const headers = [
+          translations.exportLabels.year,
+          translations.exportLabels.startingBalance,
+          translations.exportLabels.monthlyContribution,
+          translations.exportLabels.yearlyContributions,
+          translations.exportLabels.interestEarned,
+          translations.exportLabels.endingBalance,
+          translations.exportLabels.presentValue,
+        ];
+
+        // Calculate final present value
+        const finalBalance = yearlyData[yearlyData.length - 1]?.endingBalance || 0;
+        const inflationRate = parseNumber(inflationEl) / 100;
+        const years = parseNumber(yearsEl) || 0;
+        let finalPresentValue = finalBalance;
+        if (inflationRate > 0 && years > 0) {
+          finalPresentValue = finalBalance / Math.pow(1 + inflationRate, years);
+        }
+
+        // Prepare data for export
+        const exportData = [
+          [translations.breakdownLabels.principal, formatMoney(parseNumber(principalEl))],
+          [translations.breakdownLabels.monthlyContribution, formatMoney(parseNumber(monthlyEl))],
+          [
+            translations.breakdownLabels.depositIncreaseRate,
+            `${parseNumber(depositIncreaseEl) || 0}%`,
+          ],
+          [translations.breakdownLabels.annualRate, `${parseNumber(rateEl) || 0}%`],
+          [translations.breakdownLabels.years, parseNumber(yearsEl) || 0],
+          [translations.breakdownLabels.inflationRate, `${parseNumber(inflationEl) || 0}%`],
+          [],
+          [translations.exportLabels.finalAmount, formatMoney(finalBalance)],
+          [translations.exportLabels.presentValue, formatMoney(finalPresentValue)],
+          [],
+          headers,
+        ];
+
+        // Add yearly data with present value calculation
+        yearlyData.forEach((data) => {
+          const yearsRemaining = years - data.year;
+          let presentValue = data.endingBalance;
+          if (inflationRate > 0 && yearsRemaining > 0) {
+            presentValue = data.endingBalance / Math.pow(1 + inflationRate, yearsRemaining);
+          }
+
+          exportData.push([
+            data.year,
+            formatMoney(data.startingBalance),
+            formatMoney(data.monthlyContribution),
+            formatMoney(data.yearlyContributions),
+            formatMoney(data.interestEarned),
+            formatMoney(data.endingBalance),
+            formatMoney(presentValue),
+          ]);
+        });
+
+        // Add summary row
+        exportData.push([]);
+        const totalContributions = yearlyData.reduce(
+          (sum, d) => sum + d.yearlyContributions,
+          parseNumber(principalEl)
+        );
+        const totalInterest = yearlyData.reduce((sum, d) => sum + d.interestEarned, 0);
+
+        exportData.push([
+          translations.exportLabels.total,
+          '',
+          '',
+          formatMoney(totalContributions),
+          formatMoney(totalInterest),
+          formatMoney(finalBalance),
+          formatMoney(finalPresentValue),
+        ]);
+
+        // Use helper function to export
+        await exportToExcelHelper({
+          data: exportData,
+          filename: 'compound-interest',
+          sheetName: 'Compound Interest',
+          columnWidths: [10, 20, 20, 25, 20, 20, 25],
+          onSuccess: () => {
+            showSuccessNotification(translations.exportSuccess);
+          },
+          onError: () => {
+            showError(translations.exportError);
+          },
+        });
+      } catch (error) {
+        console.error('Export error:', error);
+        showError(translations.exportError);
+      }
     }
 
     function reset() {
@@ -492,6 +797,8 @@ const { locale, t } = Astro.props;
       inflationEl.value = '3';
       hideError();
       results.classList.add('hidden');
+      exportBtn.classList.add('hidden');
+      yearlyData = [];
       updateHints();
       principalEl.focus();
     }
@@ -509,6 +816,7 @@ const { locale, t } = Astro.props;
 
     calcBtn.addEventListener('click', calculate);
     resetBtn.addEventListener('click', reset);
+    exportBtn.addEventListener('click', handleExportToExcel);
 
     // Enter to calculate
     for (const el of [principalEl, monthlyEl, depositIncreaseEl, rateEl, yearsEl, inflationEl]) {
