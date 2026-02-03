@@ -1,0 +1,855 @@
+---
+import type { Locale } from '../../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  t: any;
+}
+
+const { locale, t } = Astro.props;
+---
+
+<div class="space-y-6">
+  <!-- Target Allocation Section -->
+  <div
+    class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+  >
+    <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+      {t.portfolioBalancer.targetAllocationTitle}
+    </h2>
+    <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+      {t.portfolioBalancer.targetAllocationDescription}
+    </p>
+    <div id="target-allocation-inputs" class="space-y-3"></div>
+    <div
+      class="mt-4 flex items-center justify-between rounded-md bg-gray-50 px-4 py-2 dark:bg-gray-900"
+    >
+      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+        {t.portfolioBalancer.total}
+      </span>
+      <span id="target-total" class="text-sm font-semibold text-gray-900 dark:text-gray-100"
+        >0%</span
+      >
+    </div>
+    <button
+      id="add-target-asset-button"
+      class="mt-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+    >
+      {t.portfolioBalancer.addAsset}
+    </button>
+  </div>
+
+  <!-- Current Allocation Section -->
+  <div
+    class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+  >
+    <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+      {t.portfolioBalancer.currentAllocationTitle}
+    </h2>
+    <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+      {t.portfolioBalancer.currentAllocationDescription}
+    </p>
+
+    <!-- Currency Selector -->
+    <div class="mb-4">
+      <label for="currency" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+        {t.portfolioBalancer.currencyLabel}
+      </label>
+      <select
+        id="currency"
+        class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+      >
+        <option value="IDR">IDR</option>
+        <option value="USD">USD</option>
+        <option value="SGD">SGD</option>
+        <option value="EUR">EUR</option>
+        <option value="JPY">JPY</option>
+        <option value="MYR">MYR</option>
+        <option value="THB">THB</option>
+        <option value="AUD">AUD</option>
+      </select>
+    </div>
+
+    <div id="current-allocation-inputs" class="space-y-3"></div>
+    <div
+      class="mt-4 flex items-center justify-between rounded-md bg-gray-50 px-4 py-2 dark:bg-gray-900"
+    >
+      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+        {t.portfolioBalancer.totalPortfolioValue}
+      </span>
+      <span id="current-total" class="text-sm font-semibold text-gray-900 dark:text-gray-100"
+        >0</span
+      >
+    </div>
+    <button
+      id="add-current-asset-button"
+      class="mt-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+    >
+      {t.portfolioBalancer.addAsset}
+    </button>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex flex-wrap gap-3">
+    <button
+      id="calculate-button"
+      class="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {t.portfolioBalancer.calculateButton}
+    </button>
+    <button
+      id="reset-button"
+      class="rounded-md border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+    >
+      {t.portfolioBalancer.resetButton}
+    </button>
+  </div>
+
+  <!-- Error -->
+  <div
+    id="error-message"
+    class="hidden rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+  >
+    <p id="error-text"></p>
+  </div>
+
+  <!-- Results -->
+  <div id="results" class="hidden space-y-6">
+    <!-- Pie Charts -->
+    <div class="grid gap-6 md:grid-cols-2">
+      <!-- Target Allocation Chart -->
+      <div
+        class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+      >
+        <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          {t.portfolioBalancer.targetChartTitle}
+        </h3>
+        <div class="flex justify-center">
+          <canvas id="target-chart" width="300" height="300"></canvas>
+        </div>
+      </div>
+
+      <!-- Current Allocation Chart -->
+      <div
+        class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+      >
+        <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          {t.portfolioBalancer.currentChartTitle}
+        </h3>
+        <div class="flex justify-center">
+          <canvas id="current-chart" width="300" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Allocation Differences -->
+    <div
+      class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+    >
+      <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+        {t.portfolioBalancer.differencesTitle}
+      </h3>
+      <div id="differences-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Recommendations -->
+    <div
+      class="rounded-lg border border-blue-200 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20"
+    >
+      <h3 class="mb-4 text-lg font-semibold text-blue-900 dark:text-blue-100">
+        {t.portfolioBalancer.recommendationsTitle}
+      </h3>
+      <div id="recommendations-list" class="space-y-2"></div>
+    </div>
+  </div>
+</div>
+
+<script
+  define:vars={{
+    locale,
+    translations: {
+      invalidInput: t.portfolioBalancer.invalidInput,
+      totalMustBe100: t.portfolioBalancer.totalMustBe100,
+      targetAllocationTitle: t.portfolioBalancer.targetAllocationTitle,
+      currentAllocationTitle: t.portfolioBalancer.currentAllocationTitle,
+      overAllocated: t.portfolioBalancer.overAllocated,
+      underAllocated: t.portfolioBalancer.underAllocated,
+      correctlyAllocated: t.portfolioBalancer.correctlyAllocated,
+      recommendationBuy: t.portfolioBalancer.recommendationBuy,
+      recommendationSell: t.portfolioBalancer.recommendationSell,
+      addAsset: t.portfolioBalancer.addAsset,
+      removeAsset: t.portfolioBalancer.removeAsset,
+      assetNamePlaceholder: t.portfolioBalancer.assetNamePlaceholder,
+      targetPercentPlaceholder: t.portfolioBalancer.targetPercentPlaceholder,
+      currentAmountPlaceholder: t.portfolioBalancer.currentAmountPlaceholder,
+    },
+  }}
+>
+  function initPortfolioBalancer() {
+    // Default assets with example values
+    // Total portfolio example: 100,000,000
+    // Current allocation slightly different from target to show differences
+    const defaultAssets = [
+      { key: 'sp500', label: 'S&P 500', targetPercent: 35, currentAmount: 40000000 },
+      { key: 'growth', label: 'Growth Equity', targetPercent: 20, currentAmount: 15000000 },
+      { key: 'bonds', label: 'Obligasi', targetPercent: 25, currentAmount: 25000000 },
+      { key: 'gold', label: 'Emas', targetPercent: 10, currentAmount: 5000000 },
+      { key: 'cash', label: 'Cash', targetPercent: 10, currentAmount: 15000000 },
+    ];
+
+    const targetInputsContainer = document.getElementById('target-allocation-inputs');
+    const currentInputsContainer = document.getElementById('current-allocation-inputs');
+    const currencyEl = document.getElementById('currency');
+    const targetTotalEl = document.getElementById('target-total');
+    const currentTotalEl = document.getElementById('current-total');
+    const calcBtn = document.getElementById('calculate-button');
+    const resetBtn = document.getElementById('reset-button');
+    const addTargetAssetBtn = document.getElementById('add-target-asset-button');
+    const addCurrentAssetBtn = document.getElementById('add-current-asset-button');
+    const errorBox = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+    const results = document.getElementById('results');
+    const differencesList = document.getElementById('differences-list');
+    const recommendationsList = document.getElementById('recommendations-list');
+
+    if (
+      !targetInputsContainer ||
+      !currentInputsContainer ||
+      !currencyEl ||
+      !targetTotalEl ||
+      !currentTotalEl ||
+      !calcBtn ||
+      !resetBtn ||
+      !addTargetAssetBtn ||
+      !addCurrentAssetBtn ||
+      !errorBox ||
+      !errorText ||
+      !results ||
+      !differencesList ||
+      !recommendationsList
+    ) {
+      setTimeout(initPortfolioBalancer, 100);
+      return;
+    }
+
+    let targetChart = null;
+    let currentChart = null;
+    let assetCounter = defaultAssets.length;
+    let assets = JSON.parse(JSON.stringify(defaultAssets)); // Deep copy
+
+    const localeTag = locale === 'id' ? 'id-ID' : 'en-US';
+
+    function getMoneyFormatter() {
+      const currency = currencyEl.value || 'IDR';
+      return new Intl.NumberFormat(localeTag, {
+        style: 'currency',
+        currency,
+        maximumFractionDigits: currency === 'JPY' ? 0 : 0,
+      });
+    }
+
+    function formatMoney(value) {
+      const fmt = getMoneyFormatter();
+      const safe = Number.isFinite(value) ? value : 0;
+      return fmt.format(safe);
+    }
+
+    // Create target allocation input field
+    function createTargetInputField(asset) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex items-center gap-3';
+      wrapper.id = `target-wrapper-${asset.key}`;
+      wrapper.innerHTML = `
+        <input
+          type="text"
+          id="target-name-${asset.key}"
+          class="flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+          placeholder="${translations.assetNamePlaceholder}"
+          value="${asset.label}"
+        />
+        <div class="relative w-32">
+          <input
+            type="number"
+            id="target-${asset.key}"
+            min="0"
+            max="100"
+            step="0.1"
+            value="${asset.targetPercent || ''}"
+            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-right text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            placeholder="${translations.targetPercentPlaceholder}"
+          />
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+        </div>
+        <button
+          type="button"
+          class="remove-target-asset rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:border-red-700 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
+          data-key="${asset.key}"
+        >
+          ${translations.removeAsset}
+        </button>
+      `;
+      return wrapper;
+    }
+
+    // Create current allocation input field
+    function createCurrentInputField(asset) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex items-center gap-3';
+      wrapper.id = `current-wrapper-${asset.key}`;
+      wrapper.innerHTML = `
+        <input
+          type="text"
+          id="current-name-${asset.key}"
+          class="flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+          placeholder="${translations.assetNamePlaceholder}"
+          value="${asset.label}"
+        />
+        <div class="relative w-40">
+          <input
+            type="number"
+            id="current-${asset.key}"
+            min="0"
+            step="1000"
+            value="${asset.currentAmount || ''}"
+            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 pr-10 text-right text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            placeholder="${translations.currentAmountPlaceholder}"
+          />
+        </div>
+        <button
+          type="button"
+          class="remove-current-asset rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:border-red-700 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
+          data-key="${asset.key}"
+        >
+          ${translations.removeAsset}
+        </button>
+      `;
+      return wrapper;
+    }
+
+    // Initialize inputs
+    function initializeInputs() {
+      targetInputsContainer.innerHTML = '';
+      currentInputsContainer.innerHTML = '';
+
+      assets.forEach((asset) => {
+        const targetWrapper = createTargetInputField(asset);
+        const currentWrapper = createCurrentInputField(asset);
+
+        targetInputsContainer.appendChild(targetWrapper);
+        currentInputsContainer.appendChild(currentWrapper);
+
+        // Add event listeners
+        const targetInput = document.getElementById(`target-${asset.key}`);
+        const currentInput = document.getElementById(`current-${asset.key}`);
+        const targetNameInput = document.getElementById(`target-name-${asset.key}`);
+        const currentNameInput = document.getElementById(`current-name-${asset.key}`);
+
+        if (targetInput) {
+          targetInput.addEventListener('input', updateTotals);
+        }
+        if (currentInput) {
+          currentInput.addEventListener('input', updateTotals);
+        }
+        if (targetNameInput) {
+          targetNameInput.addEventListener('input', () => {
+            const assetObj = assets.find((a) => a.key === asset.key);
+            if (assetObj) {
+              assetObj.label = targetNameInput.value;
+              // Sync to current name input
+              const currentName = document.getElementById(`current-name-${asset.key}`);
+              if (currentName) currentName.value = targetNameInput.value;
+            }
+          });
+        }
+        if (currentNameInput) {
+          currentNameInput.addEventListener('input', () => {
+            const assetObj = assets.find((a) => a.key === asset.key);
+            if (assetObj) {
+              assetObj.label = currentNameInput.value;
+              // Sync to target name input
+              const targetName = document.getElementById(`target-name-${asset.key}`);
+              if (targetName) targetName.value = currentNameInput.value;
+            }
+          });
+        }
+      });
+
+      // Add remove button listeners
+      document.querySelectorAll('.remove-target-asset').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          const key = e.target.getAttribute('data-key');
+          if (assets.length > 1) {
+            assets = assets.filter((a) => a.key !== key);
+            initializeInputs();
+            updateTotals();
+          }
+        });
+      });
+
+      document.querySelectorAll('.remove-current-asset').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          const key = e.target.getAttribute('data-key');
+          if (assets.length > 1) {
+            assets = assets.filter((a) => a.key !== key);
+            initializeInputs();
+            updateTotals();
+          }
+        });
+      });
+
+      updateTotals();
+    }
+
+    // Calculate totals
+    function updateTotals() {
+      let targetTotal = 0;
+      let currentTotal = 0;
+
+      assets.forEach((asset) => {
+        const targetInput = document.getElementById(`target-${asset.key}`);
+        const currentInput = document.getElementById(`current-${asset.key}`);
+
+        if (targetInput) {
+          const val = parseFloat(targetInput.value) || 0;
+          targetTotal += val;
+        }
+        if (currentInput) {
+          const val = parseFloat(currentInput.value) || 0;
+          currentTotal += val;
+        }
+      });
+
+      if (targetTotalEl) {
+        targetTotalEl.textContent = `${targetTotal.toFixed(1)}%`;
+        targetTotalEl.className = `text-sm font-semibold ${
+          Math.abs(targetTotal - 100) < 0.1
+            ? 'text-green-600 dark:text-green-400'
+            : 'text-red-600 dark:text-red-400'
+        }`;
+      }
+      if (currentTotalEl) {
+        currentTotalEl.textContent = formatMoney(currentTotal);
+        currentTotalEl.className = 'text-sm font-semibold text-gray-900 dark:text-gray-100';
+      }
+    }
+
+    // Add new asset
+    function addAsset() {
+      const newKey = `asset-${assetCounter++}`;
+      const newAsset = {
+        key: newKey,
+        label: '',
+        targetPercent: 0,
+        currentAmount: 0,
+      };
+      assets.push(newAsset);
+      initializeInputs();
+    }
+
+    function showError(message) {
+      if (errorText) errorText.textContent = message;
+      if (errorBox) errorBox.classList.remove('hidden');
+    }
+
+    function hideError() {
+      if (errorBox) errorBox.classList.add('hidden');
+    }
+
+    // Load Chart.js and datalabels plugin from CDN
+    async function loadChartJS() {
+      if (window.Chart) {
+        // Check if datalabels plugin is already loaded
+        if (!window.ChartDataLabels) {
+          await loadDataLabelsPlugin();
+        }
+        return window.Chart;
+      }
+
+      return new Promise((resolve, reject) => {
+        // Load Chart.js first
+        const chartScript = document.createElement('script');
+        chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+
+        chartScript.onload = async () => {
+          // Then load datalabels plugin
+          try {
+            await loadDataLabelsPlugin();
+            resolve(window.Chart);
+          } catch (error) {
+            reject(error);
+          }
+        };
+
+        chartScript.onerror = () => reject(new Error('Failed to load Chart.js'));
+        document.head.appendChild(chartScript);
+      });
+    }
+
+    function loadDataLabelsPlugin() {
+      return new Promise((resolve, reject) => {
+        if (window.ChartDataLabels) {
+          if (window.Chart) {
+            window.Chart.register(window.ChartDataLabels);
+          }
+          resolve();
+          return;
+        }
+
+        const datalabelsScript = document.createElement('script');
+        datalabelsScript.src =
+          'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js';
+
+        datalabelsScript.onload = () => {
+          if (window.Chart && window.ChartDataLabels) {
+            window.Chart.register(window.ChartDataLabels);
+          }
+          resolve();
+        };
+
+        datalabelsScript.onerror = () =>
+          reject(new Error('Failed to load Chart.js datalabels plugin'));
+        document.head.appendChild(datalabelsScript);
+      });
+    }
+
+    // Create pie chart
+    function createPieChart(canvasId, data, labels, isCurrency = false) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return null;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return null;
+
+      // Destroy existing chart if any
+      if (canvasId === 'target-chart' && targetChart) {
+        targetChart.destroy();
+      }
+      if (canvasId === 'current-chart' && currentChart) {
+        currentChart.destroy();
+      }
+
+      const colors = [
+        'rgb(59, 130, 246)', // blue
+        'rgb(16, 185, 129)', // green
+        'rgb(245, 158, 11)', // yellow
+        'rgb(239, 68, 68)', // red
+        'rgb(139, 92, 246)', // purple
+        'rgb(236, 72, 153)', // pink
+        'rgb(14, 165, 233)', // sky
+        'rgb(34, 197, 94)', // emerald
+      ];
+
+      const chart = new window.Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              data: data,
+              backgroundColor: colors.slice(0, data.length),
+              borderWidth: 2,
+              borderColor: '#fff',
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                usePointStyle: true,
+                font: {
+                  size: 12,
+                },
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  if (isCurrency) {
+                    return `${label}: ${formatMoney(value)}`;
+                  }
+                  return `${label}: ${value.toFixed(1)}%`;
+                },
+              },
+            },
+            datalabels: {
+              color: '#fff',
+              font: {
+                weight: 'bold',
+                size: 14,
+              },
+              formatter: function (value) {
+                return value.toFixed(1) + '%';
+              },
+              textStrokeColor: 'rgba(0, 0, 0, 0.5)',
+              textStrokeWidth: 2,
+            },
+          },
+        },
+      });
+
+      if (canvasId === 'target-chart') {
+        targetChart = chart;
+      } else if (canvasId === 'current-chart') {
+        currentChart = chart;
+      }
+
+      return chart;
+    }
+
+    async function calculate() {
+      hideError();
+
+      // Validate target total
+      let targetTotal = 0;
+      const targetValues = {};
+      const currentValues = {};
+      let portfolioTotal = 0;
+
+      assets.forEach((asset) => {
+        const targetInput = document.getElementById(`target-${asset.key}`);
+        const currentInput = document.getElementById(`current-${asset.key}`);
+        const targetNameInput = document.getElementById(`target-name-${asset.key}`);
+
+        const targetVal = parseFloat(targetInput?.value || '0') || 0;
+        const currentVal = parseFloat(currentInput?.value || '0') || 0;
+        const label = targetNameInput?.value || asset.label || '';
+
+        targetValues[asset.key] = { percent: targetVal, label };
+        currentValues[asset.key] = { amount: currentVal, label };
+        targetTotal += targetVal;
+        portfolioTotal += currentVal;
+      });
+
+      if (Math.abs(targetTotal - 100) > 0.1) {
+        showError(
+          translations.totalMustBe100.replace('{type}', translations.targetAllocationTitle)
+        );
+        results.classList.add('hidden');
+        return;
+      }
+
+      if (portfolioTotal <= 0) {
+        showError(translations.invalidInput);
+        results.classList.add('hidden');
+        return;
+      }
+
+      // Load Chart.js if needed
+      try {
+        await loadChartJS();
+      } catch (error) {
+        showError('Failed to load chart library. Please refresh the page.');
+        return;
+      }
+
+      // Calculate differences
+      const differences = [];
+
+      assets.forEach((asset) => {
+        const target = targetValues[asset.key];
+        const current = currentValues[asset.key];
+
+        if (!target || !current) return;
+
+        const targetPercent = target.percent;
+        const currentAmount = current.amount;
+        const currentPercent = portfolioTotal > 0 ? (currentAmount / portfolioTotal) * 100 : 0;
+        const diffPercent = currentPercent - targetPercent;
+        const targetAmount = (targetPercent / 100) * portfolioTotal;
+        const diffAmount = currentAmount - targetAmount;
+
+        differences.push({
+          key: asset.key,
+          label: target.label || current.label || '',
+          targetPercent,
+          currentPercent,
+          diffPercent,
+          targetAmount,
+          currentAmount,
+          diffAmount,
+        });
+      });
+
+      // Create charts
+      const targetLabels = differences.filter((d) => d.targetPercent > 0).map((d) => d.label);
+      const targetData = differences.filter((d) => d.targetPercent > 0).map((d) => d.targetPercent);
+
+      const currentLabels = differences.filter((d) => d.currentAmount > 0).map((d) => d.label);
+      const currentData = differences
+        .filter((d) => d.currentAmount > 0)
+        .map((d) => d.currentPercent);
+
+      createPieChart('target-chart', targetData, targetLabels, false);
+      createPieChart('current-chart', currentData, currentLabels, false);
+
+      // Display differences
+      differencesList.innerHTML = '';
+      differences.forEach((diff) => {
+        const item = document.createElement('div');
+        item.className =
+          'flex items-center justify-between rounded-md px-4 py-3 ' +
+          (diff.diffPercent > 0.1
+            ? 'bg-red-50 dark:bg-red-900/20'
+            : diff.diffPercent < -0.1
+              ? 'bg-yellow-50 dark:bg-yellow-900/20'
+              : 'bg-green-50 dark:bg-green-900/20');
+
+        const diffText =
+          diff.diffPercent > 0.1
+            ? `+${diff.diffPercent.toFixed(1)}% ${translations.overAllocated}`
+            : diff.diffPercent < -0.1
+              ? `${diff.diffPercent.toFixed(1)}% ${translations.underAllocated}`
+              : translations.correctlyAllocated;
+
+        item.innerHTML = `
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-900 dark:text-gray-100">${diff.label}</p>
+            <p class="text-xs text-gray-600 dark:text-gray-400">
+              Target: ${diff.targetPercent.toFixed(1)}% (${formatMoney(diff.targetAmount)}) | Current: ${diff.currentPercent.toFixed(1)}% (${formatMoney(diff.currentAmount)})
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-semibold ${
+              diff.diffPercent > 0.1
+                ? 'text-red-600 dark:text-red-400'
+                : diff.diffPercent < -0.1
+                  ? 'text-yellow-600 dark:text-yellow-400'
+                  : 'text-green-600 dark:text-green-400'
+            }">
+              ${diffText}
+            </p>
+          </div>
+        `;
+        differencesList.appendChild(item);
+      });
+
+      // Display recommendations
+      recommendationsList.innerHTML = '';
+      differences.forEach((diff) => {
+        if (Math.abs(diff.diffPercent) < 0.1) return; // Skip if correctly allocated
+
+        const item = document.createElement('div');
+        item.className = 'flex items-start gap-2 rounded-md bg-white px-3 py-2 dark:bg-gray-800';
+
+        let recommendation = '';
+        if (diff.diffAmount > 0) {
+          recommendation = translations.recommendationSell.replace(
+            '{amount}',
+            formatMoney(Math.abs(diff.diffAmount))
+          );
+        } else {
+          recommendation = translations.recommendationBuy.replace(
+            '{amount}',
+            formatMoney(Math.abs(diff.diffAmount))
+          );
+        }
+
+        item.innerHTML = `
+          <span class="text-blue-600 dark:text-blue-400">•</span>
+          <p class="flex-1 text-sm text-blue-900 dark:text-blue-100">
+            <strong>${diff.label}:</strong> ${recommendation}
+          </p>
+        `;
+        recommendationsList.appendChild(item);
+      });
+
+      results.classList.remove('hidden');
+    }
+
+    function reset() {
+      assets = JSON.parse(JSON.stringify(defaultAssets)); // Reset to defaults
+      assetCounter = defaultAssets.length;
+      currencyEl.value = 'IDR';
+      initializeInputs();
+      hideError();
+      results.classList.add('hidden');
+
+      if (targetChart) {
+        targetChart.destroy();
+        targetChart = null;
+      }
+      if (currentChart) {
+        currentChart.destroy();
+        currentChart = null;
+      }
+
+      // Auto-calculate after reset if default values exist
+      setTimeout(() => {
+        let targetTotal = 0;
+        let portfolioTotal = 0;
+
+        assets.forEach((asset) => {
+          const targetInput = document.getElementById(`target-${asset.key}`);
+          const currentInput = document.getElementById(`current-${asset.key}`);
+
+          if (targetInput) {
+            const val = parseFloat(targetInput.value) || 0;
+            targetTotal += val;
+          }
+          if (currentInput) {
+            const val = parseFloat(currentInput.value) || 0;
+            portfolioTotal += val;
+          }
+        });
+
+        if (Math.abs(targetTotal - 100) < 0.1 && portfolioTotal > 0) {
+          calculate();
+        }
+      }, 100);
+    }
+
+    addTargetAssetBtn.addEventListener('click', addAsset);
+    addCurrentAssetBtn.addEventListener('click', addAsset);
+    calcBtn.addEventListener('click', calculate);
+    resetBtn.addEventListener('click', reset);
+    currencyEl.addEventListener('change', updateTotals);
+
+    // Enter key to calculate
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
+        e.preventDefault();
+        calculate();
+      }
+    });
+
+    initializeInputs();
+
+    // Auto-calculate on initial load if default values exist
+    setTimeout(() => {
+      // Check if target total is 100% and portfolio total > 0
+      let targetTotal = 0;
+      let portfolioTotal = 0;
+
+      assets.forEach((asset) => {
+        const targetInput = document.getElementById(`target-${asset.key}`);
+        const currentInput = document.getElementById(`current-${asset.key}`);
+
+        if (targetInput) {
+          const val = parseFloat(targetInput.value) || 0;
+          targetTotal += val;
+        }
+        if (currentInput) {
+          const val = parseFloat(currentInput.value) || 0;
+          portfolioTotal += val;
+        }
+      });
+
+      if (Math.abs(targetTotal - 100) < 0.1 && portfolioTotal > 0) {
+        calculate();
+      }
+    }, 100);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPortfolioBalancer);
+  } else {
+    initPortfolioBalancer();
+  }
+</script>
