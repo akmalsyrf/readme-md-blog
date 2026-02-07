@@ -12,7 +12,7 @@ export default {
       description: 'Catatan oleh',
       name: 'Akmal',
       intro:
-        'Selamat datang di ruang kecil saya di internet. Di sini, saya berbagi pemikiran tentang apapun yang saya ingin bagikan. Terkadang mengenai software development, tapi kadang juga tidak. Kadang tentang pengetahuan yang tidak populer, kadang yang populer aja.',
+        'Selamat datang di ruang kecil saya di internet. Di sini, saya berbagi pemikiran tentang apapun yang saya ingin bagikan. Terkadang mengenai software development, tapi kadang juga tidak. Kadang tentang pengetahuan yang tidak populer, kadang yang populer saja.',
       message:
         'Saya percaya bahwa berbagi pemikiran adalah cara terbaik untuk tumbuh bersama. Setiap artikel yang saya tulis adalah hasil dari pengalaman, lamunan, eksperimen, bacaan, juga refleksi pribadi.',
       closing:
@@ -108,6 +108,82 @@ export default {
       portfolioBalancer: {
         title: 'Portfolio Balancer',
         description: 'Seimbangkan portfolio investasi Anda sesuai target alokasi',
+      },
+      hppCalculator: {
+        title: 'Kalkulator HPP',
+        description:
+          'Hitung Harga Pokok Penjualan produk dengan akurat dan dapatkan saran harga jual',
+      },
+    },
+  },
+  hppCalculator: {
+    title: 'Kalkulator HPP',
+    description:
+      'Hitung Harga Pokok Penjualan (HPP) produk dengan akurat dan dapatkan saran harga jual yang menguntungkan',
+    productNameLabel: 'Nama Produk',
+    productNamePlaceholder: 'Contoh: Es Teh Manis',
+    materialsTitle: 'Bahan yang Dibeli',
+    materialNameLabel: 'Nama Bahan',
+    materialNamePlaceholder: 'Contoh: Gula',
+    materialUnitLabel: 'Satuan',
+    materialUnitPlaceholder: 'Contoh: kg',
+    materialPriceLabel: 'Harga Beli di Toko',
+    addMaterialButton: 'Tambah Bahan',
+    totalMaterialsLabel: 'Total Pembelian Bahan',
+    operationalCostsTitle: 'Biaya Operasional',
+    laborCostLabel: 'Biaya Tenaga Kerja per Unit (Rp)',
+    laborCostHint:
+      'Cara hitung: Gaji per hari ÷ jumlah produk per hari. Contoh: Rp 100.000 ÷ 500 = Rp 200',
+    overheadCostLabel: 'Biaya Overhead per Unit (Rp)',
+    overheadCostHint:
+      'Cara hitung: Total biaya bulanan (listrik, sewa, dll) ÷ jumlah produksi. Contoh: Rp 2.000.000 ÷ 10.000 = Rp 200',
+    productQuantityLabel: 'Jumlah Produk yang Dihasilkan',
+    productQuantityPlaceholder: 'Contoh: 100',
+    productQuantityHint: 'Contoh: Dari bahan yang dibeli bisa menghasilkan 100 gelas es teh',
+    calculateButton: 'Hitung HPP',
+    resetButton: 'Reset',
+    exampleButton: 'Contoh',
+    resultsTitle: 'Hasil Perhitungan',
+    hppPerUnit: 'HPP per Unit',
+    totalCost: 'Total Biaya',
+    totalMaterials: 'Total Bahan',
+    totalOperational: 'Total Operasional',
+    suggestedPricesTitle: 'Pilih Margin Keuntungan',
+    margin25: '25%',
+    margin35: '35%',
+    margin50: '50%',
+    sellingPrice: 'Harga jual',
+    profit: 'Untung',
+    invalidInput: 'Input tidak valid. Pastikan semua angka ≥ 0 dan jumlah produk > 0.',
+    emptyFormMessage: 'Lengkapi form untuk melihat hasil perhitungan HPP',
+    removeMaterial: 'Hapus',
+    exportToExcelButton: 'Ekspor ke Excel',
+    exportSuccess: 'File Excel berhasil diunduh',
+    exportError: 'Gagal mengekspor ke Excel',
+    creditText: 'Terinspirasi dari',
+    creditLink: 'https://hitunghpp.com/kalkulator-hpp',
+    creditLinkText: 'hitunghpp.com',
+    tooltips: {
+      margin25: {
+        title: 'Margin 25%',
+        description: 'Margin keuntungan ideal untuk mempertahankan bisnis',
+        formula: 'Harga Jual = HPP × 1.25',
+        explanation:
+          'Margin 25-30% cocok untuk mempertahankan bisnis. Margin ini tergantung pada jenis produk, kompetisi pasar, dan positioning brand.',
+      },
+      margin35: {
+        title: 'Margin 35%',
+        description: 'Margin keuntungan ideal untuk pengembangan bisnis',
+        formula: 'Harga Jual = HPP × 1.35',
+        explanation:
+          'Margin 35-45% cocok untuk pengembangan bisnis. Margin ini tergantung pada jenis produk, kompetisi pasar, dan positioning brand.',
+      },
+      margin50: {
+        title: 'Margin 50%',
+        description: 'Margin keuntungan ideal untuk produk premium/unik',
+        formula: 'Harga Jual = HPP × 1.50',
+        explanation:
+          'Margin 50%+ cocok untuk produk premium/unik. Margin ini tergantung pada jenis produk, kompetisi pasar, dan positioning brand.',
       },
     },
   },

@@ -1,0 +1,835 @@
+---
+import type { Locale } from '../../../utils/i18n';
+import Tooltip from '../../common/Tooltip.astro';
+
+interface Props {
+  locale: Locale;
+  t: any;
+}
+
+const { locale, t } = Astro.props;
+---
+
+<div class="space-y-6">
+  <!-- Input Section -->
+  <div
+    class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+  >
+    <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+      {t.hppCalculator.productNameLabel}
+    </h2>
+
+    <!-- Product Name -->
+    <div class="mb-6">
+      <input
+        id="product-name"
+        type="text"
+        class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+        placeholder={t.hppCalculator.productNamePlaceholder}
+      />
+    </div>
+
+    <!-- Materials Section -->
+    <div class="mb-6">
+      <h3 class="mb-3 text-lg font-medium text-gray-900 dark:text-gray-100">
+        {t.hppCalculator.materialsTitle}
+      </h3>
+      <div id="materials-container" class="space-y-3">
+        <!-- Material items will be added here dynamically -->
+      </div>
+      <button
+        id="add-material-button"
+        type="button"
+        class="mt-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+      >
+        {t.hppCalculator.addMaterialButton}
+      </button>
+      <div
+        class="mt-3 flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900"
+      >
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {t.hppCalculator.totalMaterialsLabel}:
+        </span>
+        <span id="total-materials" class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          Rp 0
+        </span>
+      </div>
+    </div>
+
+    <!-- Operational Costs -->
+    <div class="mb-6">
+      <h3 class="mb-3 text-lg font-medium text-gray-900 dark:text-gray-100">
+        {t.hppCalculator.operationalCostsTitle}
+      </h3>
+      <div class="space-y-4">
+        <div>
+          <label
+            for="labor-cost"
+            class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            {t.hppCalculator.laborCostLabel}
+          </label>
+          <input
+            id="labor-cost"
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="100"
+            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            placeholder="0"
+          />
+          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            {t.hppCalculator.laborCostHint}
+          </p>
+        </div>
+        <div>
+          <label
+            for="overhead-cost"
+            class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            {t.hppCalculator.overheadCostLabel}
+          </label>
+          <input
+            id="overhead-cost"
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="100"
+            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            placeholder="0"
+          />
+          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            {t.hppCalculator.overheadCostHint}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Quantity -->
+    <div class="mb-6">
+      <label
+        for="product-quantity"
+        class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
+        {t.hppCalculator.productQuantityLabel}
+      </label>
+      <input
+        id="product-quantity"
+        type="number"
+        inputmode="numeric"
+        min="1"
+        step="1"
+        class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+        placeholder={t.hppCalculator.productQuantityPlaceholder}
+      />
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        {t.hppCalculator.productQuantityHint}
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap gap-3">
+      <button
+        id="calculate-button"
+        class="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {t.hppCalculator.calculateButton}
+      </button>
+      <button
+        id="example-button"
+        type="button"
+        class="rounded-md border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+      >
+        {t.hppCalculator.exampleButton}
+      </button>
+      <button
+        id="reset-button"
+        type="button"
+        class="rounded-md border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+      >
+        {t.hppCalculator.resetButton}
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div
+    id="error-message"
+    class="hidden rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+  >
+    <p id="error-text"></p>
+  </div>
+
+  <!-- Results Section -->
+  <div id="results" class="hidden space-y-6">
+    <div
+      class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+    >
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          {t.hppCalculator.resultsTitle}
+        </h2>
+        <button
+          id="export-excel-button"
+          class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+        >
+          {t.hppCalculator.exportToExcelButton}
+        </button>
+      </div>
+
+      <!-- HPP Result -->
+      <div class="mb-6 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+        <p class="text-sm text-gray-600 dark:text-gray-400">{t.hppCalculator.hppPerUnit}</p>
+        <p id="hpp-per-unit" class="mt-1 text-3xl font-bold text-blue-600 dark:text-blue-400">
+          Rp 0
+        </p>
+      </div>
+
+      <!-- Cost Breakdown -->
+      <div class="mb-6 space-y-2">
+        <div
+          class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900"
+        >
+          <span class="text-sm text-gray-700 dark:text-gray-300">
+            {t.hppCalculator.totalMaterials}
+          </span>
+          <span
+            id="result-total-materials"
+            class="text-sm font-medium text-gray-900 dark:text-gray-100"
+          >
+            Rp 0
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900"
+        >
+          <span class="text-sm text-gray-700 dark:text-gray-300">
+            {t.hppCalculator.totalOperational}
+          </span>
+          <span
+            id="result-total-operational"
+            class="text-sm font-medium text-gray-900 dark:text-gray-100"
+          >
+            Rp 0
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900"
+        >
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {t.hppCalculator.totalCost}
+          </span>
+          <span
+            id="result-total-cost"
+            class="text-sm font-semibold text-gray-900 dark:text-gray-100"
+          >
+            Rp 0
+          </span>
+        </div>
+      </div>
+
+      <!-- Suggested Prices -->
+      <div>
+        <h3 class="mb-3 text-lg font-medium text-gray-900 dark:text-gray-100">
+          {t.hppCalculator.suggestedPricesTitle}
+        </h3>
+        <div class="grid gap-3 md:grid-cols-3">
+          <div
+            id="margin-25"
+            class="cursor-pointer rounded-lg border-2 border-gray-200 p-4 transition-all hover:border-blue-500 dark:border-gray-700 dark:hover:border-blue-500"
+          >
+            <Tooltip
+              title={t.hppCalculator.tooltips.margin25.title}
+              description={t.hppCalculator.tooltips.margin25.description}
+              formula={t.hppCalculator.tooltips.margin25.formula}
+              explanation={t.hppCalculator.tooltips.margin25.explanation}
+              position="left"
+            >
+              <p
+                class="mb-2 flex items-center gap-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {t.hppCalculator.margin25}
+                <svg
+                  class="h-4 w-4 cursor-help text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </p>
+            </Tooltip>
+            <p id="price-25" class="text-xl font-bold text-gray-900 dark:text-gray-100">Rp 0</p>
+            <p id="profit-25" class="text-sm text-green-600 dark:text-green-400">
+              ({t.hppCalculator.profit} Rp 0)
+            </p>
+          </div>
+          <div
+            id="margin-35"
+            class="cursor-pointer rounded-lg border-2 border-gray-200 p-4 transition-all hover:border-blue-500 dark:border-gray-700 dark:hover:border-blue-500"
+          >
+            <Tooltip
+              title={t.hppCalculator.tooltips.margin35.title}
+              description={t.hppCalculator.tooltips.margin35.description}
+              formula={t.hppCalculator.tooltips.margin35.formula}
+              explanation={t.hppCalculator.tooltips.margin35.explanation}
+              position="center"
+            >
+              <p
+                class="mb-2 flex items-center gap-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {t.hppCalculator.margin35}
+                <svg
+                  class="h-4 w-4 cursor-help text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </p>
+            </Tooltip>
+            <p id="price-35" class="text-xl font-bold text-gray-900 dark:text-gray-100">Rp 0</p>
+            <p id="profit-35" class="text-sm text-green-600 dark:text-green-400">
+              ({t.hppCalculator.profit} Rp 0)
+            </p>
+          </div>
+          <div
+            id="margin-50"
+            class="cursor-pointer rounded-lg border-2 border-gray-200 p-4 transition-all hover:border-blue-500 dark:border-gray-700 dark:hover:border-blue-500"
+          >
+            <Tooltip
+              title={t.hppCalculator.tooltips.margin50.title}
+              description={t.hppCalculator.tooltips.margin50.description}
+              formula={t.hppCalculator.tooltips.margin50.formula}
+              explanation={t.hppCalculator.tooltips.margin50.explanation}
+              position="right"
+            >
+              <p
+                class="mb-2 flex items-center gap-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {t.hppCalculator.margin50}
+                <svg
+                  class="h-4 w-4 cursor-help text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </p>
+            </Tooltip>
+            <p id="price-50" class="text-xl font-bold text-gray-900 dark:text-gray-100">Rp 0</p>
+            <p id="profit-50" class="text-sm text-green-600 dark:text-green-400">
+              ({t.hppCalculator.profit} Rp 0)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    id="empty-state"
+    class="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800"
+  >
+    <p class="text-gray-600 dark:text-gray-400">{t.hppCalculator.emptyFormMessage}</p>
+  </div>
+
+  <!-- Credit -->
+  <div
+    class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+  >
+    {t.hppCalculator.creditText}{' '}
+    <a
+      href={t.hppCalculator.creditLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="font-medium text-blue-600 hover:underline dark:text-blue-400"
+    >
+      {t.hppCalculator.creditLinkText}
+    </a>
+  </div>
+</div>
+
+<script
+  define:vars={{
+    locale,
+    translations: {
+      invalidInput: t.hppCalculator.invalidInput,
+      exportSuccess: t.hppCalculator.exportSuccess,
+      exportError: t.hppCalculator.exportError,
+      removeMaterial: t.hppCalculator.removeMaterial,
+      materialNamePlaceholder: t.hppCalculator.materialNamePlaceholder,
+      materialUnitPlaceholder: t.hppCalculator.materialUnitPlaceholder,
+      sellingPrice: t.hppCalculator.sellingPrice,
+      profit: t.hppCalculator.profit,
+      productNameLabel: t.hppCalculator.productNameLabel,
+      materialsTitle: t.hppCalculator.materialsTitle,
+      totalMaterialsLabel: t.hppCalculator.totalMaterialsLabel,
+      operationalCostsTitle: t.hppCalculator.operationalCostsTitle,
+      laborCostLabel: t.hppCalculator.laborCostLabel,
+      overheadCostLabel: t.hppCalculator.overheadCostLabel,
+      productQuantityLabel: t.hppCalculator.productQuantityLabel,
+      hppPerUnit: t.hppCalculator.hppPerUnit,
+      totalCost: t.hppCalculator.totalCost,
+      totalMaterials: t.hppCalculator.totalMaterials,
+      totalOperational: t.hppCalculator.totalOperational,
+      suggestedPricesTitle: t.hppCalculator.suggestedPricesTitle,
+      margin25: t.hppCalculator.margin25,
+      margin35: t.hppCalculator.margin35,
+      margin50: t.hppCalculator.margin50,
+    },
+  }}
+>
+  function initHPPCalculator() {
+    const productNameEl = document.getElementById('product-name');
+    const materialsContainer = document.getElementById('materials-container');
+    const addMaterialBtn = document.getElementById('add-material-button');
+    const totalMaterialsEl = document.getElementById('total-materials');
+    const laborCostEl = document.getElementById('labor-cost');
+    const overheadCostEl = document.getElementById('overhead-cost');
+    const productQuantityEl = document.getElementById('product-quantity');
+    const calculateBtn = document.getElementById('calculate-button');
+    const exampleBtn = document.getElementById('example-button');
+    const resetBtn = document.getElementById('reset-button');
+    const errorBox = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+    const results = document.getElementById('results');
+    const emptyState = document.getElementById('empty-state');
+    const exportExcelBtn = document.getElementById('export-excel-button');
+
+    if (
+      !productNameEl ||
+      !materialsContainer ||
+      !addMaterialBtn ||
+      !totalMaterialsEl ||
+      !laborCostEl ||
+      !overheadCostEl ||
+      !productQuantityEl ||
+      !calculateBtn ||
+      !exampleBtn ||
+      !resetBtn ||
+      !errorBox ||
+      !errorText ||
+      !results ||
+      !emptyState ||
+      !exportExcelBtn
+    ) {
+      setTimeout(initHPPCalculator, 100);
+      return;
+    }
+
+    let materials = [];
+    let calculationData = null;
+
+    function formatRupiah(value) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(value);
+    }
+
+    function parseNumber(value) {
+      const num = Number(value);
+      return Number.isFinite(num) && num >= 0 ? num : 0;
+    }
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorBox.classList.remove('hidden');
+    }
+
+    function hideError() {
+      errorBox.classList.add('hidden');
+    }
+
+    function updateTotalMaterials() {
+      const total = materials.reduce((sum, m) => sum + parseNumber(m.price), 0);
+      totalMaterialsEl.textContent = formatRupiah(total);
+    }
+
+    function addMaterialRow(material = null) {
+      const materialId = material?.id || Date.now();
+      const materialData = material || {
+        id: materialId,
+        name: '',
+        unit: '',
+        price: 0,
+      };
+
+      if (!material) {
+        materials.push(materialData);
+      }
+
+      const row = document.createElement('div');
+      row.className = 'flex gap-3 items-start';
+      row.dataset.materialId = materialId;
+
+      row.innerHTML = `
+        <div class="flex-1">
+          <input
+            type="text"
+            class="material-name w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            placeholder="${translations.materialNamePlaceholder}"
+            value="${materialData.name}"
+          />
+        </div>
+        <div class="w-24">
+          <input
+            type="text"
+            class="material-unit w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            placeholder="${translations.materialUnitPlaceholder}"
+            value="${materialData.unit}"
+          />
+        </div>
+        <div class="w-32">
+          <input
+            type="number"
+            class="material-price w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            placeholder="0"
+            min="0"
+            step="100"
+            value="${materialData.price}"
+          />
+        </div>
+        <button
+          type="button"
+          class="remove-material rounded-md border border-red-300 bg-white px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:border-red-600 dark:bg-gray-700 dark:text-red-400 dark:hover:bg-red-900/20"
+        >
+          ${translations.removeMaterial}
+        </button>
+      `;
+
+      materialsContainer.appendChild(row);
+
+      const nameInput = row.querySelector('.material-name');
+      const unitInput = row.querySelector('.material-unit');
+      const priceInput = row.querySelector('.material-price');
+      const removeBtn = row.querySelector('.remove-material');
+
+      nameInput.addEventListener('input', () => {
+        materialData.name = nameInput.value;
+      });
+
+      unitInput.addEventListener('input', () => {
+        materialData.unit = unitInput.value;
+      });
+
+      priceInput.addEventListener('input', () => {
+        materialData.price = parseNumber(priceInput.value);
+        updateTotalMaterials();
+      });
+
+      removeBtn.addEventListener('click', () => {
+        materials = materials.filter((m) => m.id !== materialId);
+        row.remove();
+        updateTotalMaterials();
+      });
+
+      updateTotalMaterials();
+    }
+
+    function calculate() {
+      hideError();
+
+      const productName = productNameEl.value.trim();
+      const laborCost = parseNumber(laborCostEl.value);
+      const overheadCost = parseNumber(overheadCostEl.value);
+      const productQuantity = parseNumber(productQuantityEl.value);
+
+      if (productQuantity <= 0) {
+        showError(translations.invalidInput);
+        results.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      const totalMaterialsCost = materials.reduce((sum, m) => sum + parseNumber(m.price), 0);
+      const totalOperationalCost = (laborCost + overheadCost) * productQuantity;
+      const totalCost = totalMaterialsCost + totalOperationalCost;
+      const hppPerUnit = totalCost / productQuantity;
+
+      // Update results
+      document.getElementById('hpp-per-unit').textContent = formatRupiah(hppPerUnit);
+      document.getElementById('result-total-materials').textContent =
+        formatRupiah(totalMaterialsCost);
+      document.getElementById('result-total-operational').textContent =
+        formatRupiah(totalOperationalCost);
+      document.getElementById('result-total-cost').textContent = formatRupiah(totalCost);
+
+      // Calculate suggested prices
+      const price25 = hppPerUnit * 1.25;
+      const price35 = hppPerUnit * 1.35;
+      const price50 = hppPerUnit * 1.5;
+
+      const profit25 = price25 - hppPerUnit;
+      const profit35 = price35 - hppPerUnit;
+      const profit50 = price50 - hppPerUnit;
+
+      document.getElementById('price-25').textContent = formatRupiah(price25);
+      document.getElementById('profit-25').textContent =
+        `(${translations.profit} ${formatRupiah(profit25)})`;
+      document.getElementById('price-35').textContent = formatRupiah(price35);
+      document.getElementById('profit-35').textContent =
+        `(${translations.profit} ${formatRupiah(profit35)})`;
+      document.getElementById('price-50').textContent = formatRupiah(price50);
+      document.getElementById('profit-50').textContent =
+        `(${translations.profit} ${formatRupiah(profit50)})`;
+
+      // Store calculation data for excel export
+      const defaultProductName = locale === 'id' ? 'Produk' : 'Product';
+      calculationData = {
+        productName: productName || defaultProductName,
+        materials,
+        laborCost,
+        overheadCost,
+        productQuantity,
+        totalMaterialsCost,
+        totalOperationalCost,
+        totalCost,
+        hppPerUnit,
+        prices: {
+          margin25: { price: price25, profit: profit25 },
+          margin35: { price: price35, profit: profit35 },
+          margin50: { price: price50, profit: profit50 },
+        },
+      };
+
+      results.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+    }
+
+    function loadExample() {
+      if (locale === 'id') {
+        productNameEl.value = 'Es Teh Manis';
+        materials = [
+          { id: 1, name: 'Gula', unit: 'kg', price: 15000 },
+          { id: 2, name: 'Teh', unit: 'box (25 pcs)', price: 12500 },
+        ];
+      } else {
+        productNameEl.value = 'Iced Sweet Tea';
+        materials = [
+          { id: 1, name: 'Sugar', unit: 'kg', price: 15000 },
+          { id: 2, name: 'Tea', unit: 'box (25 pcs)', price: 12500 },
+        ];
+      }
+      laborCostEl.value = '200';
+      overheadCostEl.value = '300';
+      productQuantityEl.value = '100';
+
+      materialsContainer.innerHTML = '';
+      materials.forEach((m) => addMaterialRow(m));
+      updateTotalMaterials();
+      calculate();
+    }
+
+    function reset() {
+      productNameEl.value = '';
+      materials = [];
+      materialsContainer.innerHTML = '';
+      laborCostEl.value = '';
+      overheadCostEl.value = '';
+      productQuantityEl.value = '';
+      calculationData = null;
+      hideError();
+      results.classList.add('hidden');
+      emptyState.classList.remove('hidden');
+      updateTotalMaterials();
+    }
+
+    // Helper function to export to Excel (using utility pattern)
+    async function exportToExcelHelper(options) {
+      const { data, filename, sheetName = 'Sheet1', columnWidths, onSuccess, onError } = options;
+
+      try {
+        // Dynamic import of xlsx library from CDN
+        const XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.1/package/xlsx.mjs');
+
+        // Create workbook and worksheet
+        const ws = XLSX.utils.aoa_to_sheet(data);
+
+        // Set column widths if provided
+        if (columnWidths && columnWidths.length > 0) {
+          ws['!cols'] = columnWidths.map((width) => ({ wch: width }));
+        }
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+        // Generate filename with date if not already included
+        const dateStr = new Date().toISOString().split('T')[0];
+        const finalFilename = filename.includes(dateStr)
+          ? `${filename}.xlsx`
+          : `${filename}-${dateStr}.xlsx`;
+
+        // Write file
+        XLSX.writeFile(wb, finalFilename);
+
+        // Call success callback if provided
+        if (onSuccess) {
+          onSuccess(finalFilename);
+        }
+      } catch (error) {
+        console.error('Export error:', error);
+        const errorMessage = error instanceof Error ? error.message : translations.exportError;
+        if (onError) {
+          onError(errorMessage);
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    function showSuccessNotification(message, duration = 3000) {
+      const successMsg = document.createElement('div');
+      successMsg.className =
+        'fixed bottom-4 right-4 rounded-lg bg-green-500 px-4 py-2 text-white shadow-lg z-50';
+      successMsg.textContent = message;
+      document.body.appendChild(successMsg);
+      setTimeout(() => {
+        successMsg.remove();
+      }, duration);
+    }
+
+    async function exportToExcel() {
+      if (!calculationData) {
+        showError(translations.exportError);
+        return;
+      }
+
+      try {
+        const productLabel = locale === 'id' ? 'Nama Produk' : 'Product Name';
+        const unitLabel = locale === 'id' ? 'Unit' : 'Units';
+        const materialNameLabel = locale === 'id' ? 'Nama Bahan' : 'Material Name';
+        const materialUnitLabel = locale === 'id' ? 'Satuan' : 'Unit';
+        const materialPriceLabel = locale === 'id' ? 'Harga' : 'Price';
+        const resultsTitle = locale === 'id' ? 'Hasil Perhitungan' : 'Calculation Results';
+
+        // Prepare data for export
+        const exportData = [
+          [productLabel, calculationData.productName],
+          [],
+          [translations.materialsTitle],
+          [materialNameLabel, materialUnitLabel, materialPriceLabel],
+        ];
+
+        // Add materials
+        calculationData.materials.forEach((material) => {
+          exportData.push([material.name, material.unit, formatRupiah(material.price)]);
+        });
+
+        exportData.push([]);
+        exportData.push([
+          translations.totalMaterialsLabel,
+          '',
+          formatRupiah(calculationData.totalMaterialsCost),
+        ]);
+        exportData.push([]);
+        exportData.push([translations.operationalCostsTitle]);
+        exportData.push([translations.laborCostLabel, formatRupiah(calculationData.laborCost)]);
+        exportData.push([
+          translations.overheadCostLabel,
+          formatRupiah(calculationData.overheadCost),
+        ]);
+        exportData.push([
+          translations.totalOperational,
+          formatRupiah(calculationData.totalOperationalCost),
+        ]);
+        exportData.push([]);
+        exportData.push([
+          translations.productQuantityLabel,
+          `${calculationData.productQuantity} ${unitLabel}`,
+        ]);
+        exportData.push([]);
+        exportData.push([resultsTitle]);
+        exportData.push([translations.totalCost, formatRupiah(calculationData.totalCost)]);
+        exportData.push([translations.hppPerUnit, formatRupiah(calculationData.hppPerUnit)]);
+        exportData.push([]);
+        exportData.push([translations.suggestedPricesTitle]);
+        exportData.push([
+          translations.margin25,
+          formatRupiah(calculationData.prices.margin25.price),
+          `(${translations.profit} ${formatRupiah(calculationData.prices.margin25.profit)})`,
+        ]);
+        exportData.push([
+          translations.margin35,
+          formatRupiah(calculationData.prices.margin35.price),
+          `(${translations.profit} ${formatRupiah(calculationData.prices.margin35.profit)})`,
+        ]);
+        exportData.push([
+          translations.margin50,
+          formatRupiah(calculationData.prices.margin50.price),
+          `(${translations.profit} ${formatRupiah(calculationData.prices.margin50.profit)})`,
+        ]);
+        exportData.push([]);
+        const creditText =
+          locale === 'id'
+            ? `Terinspirasi dari hitunghpp.com - Dibuat pada ${new Date().toLocaleDateString('id-ID')}`
+            : `Inspired by hitunghpp.com - Generated on ${new Date().toLocaleDateString('en-US')}`;
+        exportData.push([creditText]);
+
+        // Use helper function to export
+        await exportToExcelHelper({
+          data: exportData,
+          filename: `hpp-calculator-${calculationData.productName.replace(/\s+/g, '-').toLowerCase()}`,
+          sheetName: 'HPP Calculator',
+          columnWidths: [25, 20, 25],
+          onSuccess: () => {
+            showSuccessNotification(translations.exportSuccess);
+          },
+          onError: () => {
+            showError(translations.exportError);
+          },
+        });
+      } catch (error) {
+        console.error('Export error:', error);
+        showError(translations.exportError);
+      }
+    }
+
+    // Event listeners
+    addMaterialBtn.addEventListener('click', () => addMaterialRow());
+    calculateBtn.addEventListener('click', calculate);
+    exampleBtn.addEventListener('click', loadExample);
+    resetBtn.addEventListener('click', reset);
+    exportExcelBtn.addEventListener('click', exportToExcel);
+
+    // Enter key to calculate
+    [productNameEl, laborCostEl, overheadCostEl, productQuantityEl].forEach((el) => {
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          calculate();
+        }
+      });
+    });
+
+    // Add initial material row
+    addMaterialRow();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHPPCalculator);
+  } else {
+    initHPPCalculator();
+  }
+</script>
