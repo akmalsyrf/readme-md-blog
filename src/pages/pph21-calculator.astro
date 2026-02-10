@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getTranslations, getLocaleFromPath } from '../utils/i18n';
+import PPH21CalculatorContent from '../components/others/PPH21Calculator/PPH21CalculatorContent.astro';
+
+const currentPath = Astro.url.pathname;
+const locale = getLocaleFromPath(currentPath);
+const t = getTranslations(locale);
+---
+
+<BaseLayout title={t.pph21Calculator.title} description={t.pph21Calculator.description}>
+  <div class="container mx-auto px-4 py-8">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-6">
+        <h1 class="mb-2 text-3xl font-bold text-gray-900 dark:text-gray-100">
+          {t.pph21Calculator.title}
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">{t.pph21Calculator.description}</p>
+      </div>
+
+      <PPH21CalculatorContent locale={locale} t={t} />
+    </div>
+  </div>
+</BaseLayout>

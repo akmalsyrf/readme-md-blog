@@ -1,0 +1,787 @@
+---
+import type { Locale } from '../../../utils/i18n';
+import Tooltip from '../../common/Tooltip.astro';
+import {
+  PPH21_PTKP,
+  PPH21_BIAYA_JABATAN_RATE,
+  PPH21_BIAYA_JABATAN_MAX_YEARLY,
+  PPH21_APPLY_BIAYA_JABATAN,
+  PPH21_TAX_BRACKETS,
+  PPH21_NET_TO_GROSS_SEARCH_MIN_HIGH_YEARLY,
+  PPH21_TAX_TO_GROSS_SEARCH_MAX_YEARLY,
+} from '../../../config/pph21';
+
+interface Props {
+  locale: Locale;
+  t: any;
+}
+
+const { t } = Astro.props;
+---
+
+<div class="space-y-6">
+  <div
+    class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+  >
+    <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+      {t.pph21Calculator.inputTitle}
+    </h2>
+
+    <!-- Mode selector -->
+    <div class="mb-6">
+      <p class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+        {t.pph21Calculator.modeLabel}
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <label class="inline-flex cursor-pointer items-center gap-2">
+          <input
+            type="radio"
+            name="pph21-mode"
+            value="grossToNet"
+            checked
+            class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+          />
+          <span class="text-sm text-gray-700 dark:text-gray-300"
+            >{t.pph21Calculator.modeGrossToNet}</span
+          >
+        </label>
+        <label class="inline-flex cursor-pointer items-center gap-2">
+          <input
+            type="radio"
+            name="pph21-mode"
+            value="netToGross"
+            class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+          />
+          <span class="text-sm text-gray-700 dark:text-gray-300"
+            >{t.pph21Calculator.modeNetToGross}</span
+          >
+        </label>
+        <label class="inline-flex cursor-pointer items-center gap-2">
+          <input
+            type="radio"
+            name="pph21-mode"
+            value="taxToGross"
+            class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+          />
+          <span class="text-sm text-gray-700 dark:text-gray-300"
+            >{t.pph21Calculator.modeTaxToGross}</span
+          >
+        </label>
+      </div>
+    </div>
+
+    <!-- Main input (label changes by mode) -->
+    <div class="mb-4">
+      <label
+        id="pph21-main-label"
+        for="pph21-main-input"
+        class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
+        {t.pph21Calculator.monthlyGrossLabel}
+      </label>
+      <div class="relative">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+          >Rp</span
+        >
+        <input
+          id="pph21-main-input"
+          type="text"
+          inputmode="numeric"
+          class="w-full rounded-md border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+          placeholder="0"
+        />
+      </div>
+    </div>
+
+    <!-- THR -->
+    <div class="mb-4">
+      <label
+        for="pph21-thr"
+        class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
+        {t.pph21Calculator.thrLabel}
+      </label>
+      <div class="relative">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+          >Rp</span
+        >
+        <input
+          id="pph21-thr"
+          type="text"
+          inputmode="numeric"
+          class="w-full rounded-md border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+          placeholder="0"
+        />
+      </div>
+    </div>
+
+    <!-- Yearly Bonus -->
+    <div class="mb-4">
+      <label
+        for="pph21-bonus"
+        class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
+        {t.pph21Calculator.yearlyBonusLabel}
+      </label>
+      <div class="relative">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+          >Rp</span
+        >
+        <input
+          id="pph21-bonus"
+          type="text"
+          inputmode="numeric"
+          class="w-full rounded-md border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+          placeholder="0"
+        />
+      </div>
+    </div>
+
+    <!-- Marital status -->
+    <div class="mb-4">
+      <label
+        for="pph21-ptkp"
+        class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
+        {t.pph21Calculator.maritalStatusLabel}
+      </label>
+      <select
+        id="pph21-ptkp"
+        class="w-full rounded-md border border-gray-300 bg-white py-2.5 pl-3 pr-10 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+      >
+        <option value="TK0">{t.pph21Calculator.maritalStatusOptions.TK0}</option>
+        <option value="TK1">{t.pph21Calculator.maritalStatusOptions.TK1}</option>
+        <option value="TK2">{t.pph21Calculator.maritalStatusOptions.TK2}</option>
+        <option value="TK3">{t.pph21Calculator.maritalStatusOptions.TK3}</option>
+        <option value="K0">{t.pph21Calculator.maritalStatusOptions.K0}</option>
+        <option value="K1">{t.pph21Calculator.maritalStatusOptions.K1}</option>
+        <option value="K2">{t.pph21Calculator.maritalStatusOptions.K2}</option>
+        <option value="K3">{t.pph21Calculator.maritalStatusOptions.K3}</option>
+      </select>
+    </div>
+
+    <!-- Apply biaya jabatan (optional) -->
+    <div class="mb-6">
+      <Tooltip
+        title={t.pph21Calculator.applyBiayaJabatanTooltip.title}
+        description={t.pph21Calculator.applyBiayaJabatanTooltip.description}
+        formula={t.pph21Calculator.applyBiayaJabatanTooltip.formula}
+        explanation={t.pph21Calculator.applyBiayaJabatanTooltip.explanation}
+        position="left"
+      >
+        <label class="inline-flex cursor-pointer items-center gap-2">
+          <input
+            id="pph21-apply-biaya-jabatan"
+            type="checkbox"
+            checked={PPH21_APPLY_BIAYA_JABATAN}
+            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+          />
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {t.pph21Calculator.applyBiayaJabatanLabel}
+          </span>
+          <svg
+            class="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </label>
+      </Tooltip>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <button
+        id="pph21-calculate"
+        type="button"
+        class="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {t.pph21Calculator.calculateButton}
+      </button>
+      <button
+        id="pph21-reset"
+        type="button"
+        class="rounded-md border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+      >
+        {t.pph21Calculator.resetButton}
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="pph21-error"
+    class="hidden rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+  >
+    <p id="pph21-error-text"></p>
+  </div>
+
+  <div id="pph21-results" class="hidden space-y-4">
+    <div
+      class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+    >
+      <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+        {t.pph21Calculator.resultsTitle}
+      </h3>
+      <div class="space-y-3">
+        <div class="flex justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <Tooltip
+            title={t.pph21Calculator.tooltips.yearlyGross.title}
+            description={t.pph21Calculator.tooltips.yearlyGross.description}
+            formula={t.pph21Calculator.tooltips.yearlyGross.formula}
+            explanation={t.pph21Calculator.tooltips.yearlyGross.explanation}
+            position="left"
+          >
+            <span class="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300">
+              <span id="pph21-row1-label">{t.pph21Calculator.yearlyGross}</span>
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </span>
+          </Tooltip>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100" id="pph21-row1-value"
+            >Rp 0</span
+          >
+        </div>
+        <div class="flex justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <Tooltip
+            title={t.pph21Calculator.tooltips.biayaJabatan.title}
+            description={t.pph21Calculator.tooltips.biayaJabatan.description}
+            formula={t.pph21Calculator.tooltips.biayaJabatan.formula}
+            explanation={t.pph21Calculator.tooltips.biayaJabatan.explanation}
+            position="left"
+          >
+            <span class="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300">
+              {t.pph21Calculator.biayaJabatan}
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </span>
+          </Tooltip>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100" id="pph21-biaya"
+            >Rp 0</span
+          >
+        </div>
+        <div class="flex justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <Tooltip
+            title={t.pph21Calculator.tooltips.ptkp.title}
+            description={t.pph21Calculator.tooltips.ptkp.description}
+            formula={t.pph21Calculator.tooltips.ptkp.formula}
+            explanation={t.pph21Calculator.tooltips.ptkp.explanation}
+            position="left"
+          >
+            <span class="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300">
+              {t.pph21Calculator.ptkp}
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </span>
+          </Tooltip>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100" id="pph21-ptkp-value"
+            >Rp 0</span
+          >
+        </div>
+        <div class="flex justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <Tooltip
+            title={t.pph21Calculator.tooltips.pkp.title}
+            description={t.pph21Calculator.tooltips.pkp.description}
+            formula={t.pph21Calculator.tooltips.pkp.formula}
+            explanation={t.pph21Calculator.tooltips.pkp.explanation}
+            position="left"
+          >
+            <span class="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300">
+              {t.pph21Calculator.pkp}
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </span>
+          </Tooltip>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100" id="pph21-pkp-value"
+            >Rp 0</span
+          >
+        </div>
+        <div id="pph21-tier-section" class="space-y-2">
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {t.pph21Calculator.taxTierDetailTitle}
+          </p>
+          <div
+            id="pph21-tier-list"
+            class="space-y-1.5 pl-2 text-sm text-gray-600 dark:text-gray-400"
+          >
+            <!-- Tier rows filled by script -->
+          </div>
+        </div>
+        <div class="flex justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <Tooltip
+            title={t.pph21Calculator.tooltips.pphYearly.title}
+            description={t.pph21Calculator.tooltips.pphYearly.description}
+            formula={t.pph21Calculator.tooltips.pphYearly.formula}
+            explanation={t.pph21Calculator.tooltips.pphYearly.explanation}
+            position="left"
+          >
+            <span
+              class="flex items-center gap-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              {t.pph21Calculator.totalAnnualTax}
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </span>
+          </Tooltip>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100" id="pph21-tax-yearly"
+            >Rp 0</span
+          >
+        </div>
+        <div class="flex justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-900">
+          <Tooltip
+            title={t.pph21Calculator.tooltips.pphMonthly.title}
+            description={t.pph21Calculator.tooltips.pphMonthly.description}
+            formula={t.pph21Calculator.tooltips.pphMonthly.formula}
+            explanation={t.pph21Calculator.tooltips.pphMonthly.explanation}
+            position="left"
+          >
+            <span class="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300">
+              {t.pph21Calculator.pphMonthly}
+              <svg
+                class="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </span>
+          </Tooltip>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100" id="pph21-tax-monthly"
+            >Rp 0</span
+          >
+        </div>
+        <div
+          id="pph21-takehome-row"
+          class="flex justify-between rounded-lg bg-blue-50 px-4 py-3 dark:bg-blue-900/20"
+        >
+          <span class="flex items-center gap-1 font-medium text-gray-700 dark:text-gray-300">
+            <span id="pph21-takehome-label-wrap-takehome" class="pph21-takehome-label-wrap">
+              <Tooltip
+                title={t.pph21Calculator.tooltips.takeHomeMonthly.title}
+                description={t.pph21Calculator.tooltips.takeHomeMonthly.description}
+                formula={t.pph21Calculator.tooltips.takeHomeMonthly.formula}
+                explanation={t.pph21Calculator.tooltips.takeHomeMonthly.explanation}
+                position="left"
+              >
+                <span class="flex items-center gap-1" id="pph21-takehome-label">
+                  {t.pph21Calculator.takeHomeMonthly}
+                  <svg
+                    class="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </span>
+              </Tooltip>
+            </span>
+            <span id="pph21-takehome-label-wrap-required" class="pph21-takehome-label-wrap hidden">
+              <Tooltip
+                title={t.pph21Calculator.tooltips.requiredGrossMonthly.title}
+                description={t.pph21Calculator.tooltips.requiredGrossMonthly.description}
+                formula={t.pph21Calculator.tooltips.requiredGrossMonthly.formula}
+                explanation={t.pph21Calculator.tooltips.requiredGrossMonthly.explanation}
+                position="left"
+              >
+                <span class="flex items-center gap-1">
+                  {t.pph21Calculator.requiredGrossMonthly}
+                  <svg
+                    class="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </span>
+              </Tooltip>
+            </span>
+          </span>
+          <span class="text-xl font-bold text-blue-600 dark:text-blue-400" id="pph21-takehome-value"
+            >Rp 0</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script
+  define:vars={{
+    ptkpMap: PPH21_PTKP,
+    biayaJabatanRate: PPH21_BIAYA_JABATAN_RATE,
+    biayaJabatanMaxYearly: PPH21_BIAYA_JABATAN_MAX_YEARLY,
+    defaultApplyBiayaJabatan: PPH21_APPLY_BIAYA_JABATAN,
+    taxBrackets: PPH21_TAX_BRACKETS,
+    netToGrossSearchMinHigh: PPH21_NET_TO_GROSS_SEARCH_MIN_HIGH_YEARLY,
+    taxToGrossSearchMax: PPH21_TAX_TO_GROSS_SEARCH_MAX_YEARLY,
+    translations: {
+      monthlyGrossLabel: t.pph21Calculator.monthlyGrossLabel,
+      monthlyNetLabel: t.pph21Calculator.monthlyNetLabel,
+      taxMonthlyLabel: t.pph21Calculator.pphMonthly,
+      invalidInput: t.pph21Calculator.invalidInput,
+      yearlyGross: t.pph21Calculator.yearlyGross,
+      biayaJabatan: t.pph21Calculator.biayaJabatan,
+      ptkp: t.pph21Calculator.ptkp,
+      pkp: t.pph21Calculator.pkp,
+      pphYearly: t.pph21Calculator.pphYearly,
+      pphMonthly: t.pph21Calculator.pphMonthly,
+      takeHomeMonthly: t.pph21Calculator.takeHomeMonthly,
+      takeHomeYearly: t.pph21Calculator.takeHomeYearly,
+      requiredGrossMonthly: t.pph21Calculator.requiredGrossMonthly,
+      requiredGrossYearly: t.pph21Calculator.requiredGrossYearly,
+      taxTierLabel: t.pph21Calculator.taxTierLabel,
+      totalAnnualTax: t.pph21Calculator.totalAnnualTax,
+    },
+  }}
+>
+  function taxFromPKP(pkp) {
+    if (pkp <= 0) return 0;
+    let tax = 0;
+    let prevLimit = 0;
+    for (const { limit, rate } of taxBrackets) {
+      if (pkp <= prevLimit) break;
+      const band = Math.min(pkp, limit) - prevLimit;
+      tax += band * rate;
+      prevLimit = limit;
+    }
+    return tax;
+  }
+
+  function getTaxBreakdown(pkp) {
+    if (pkp <= 0) return [];
+    const breakdown = [];
+    let prevLimit = 0;
+    let tier = 0;
+    for (const { limit, rate } of taxBrackets) {
+      if (pkp <= prevLimit) break;
+      const band = Math.min(pkp, limit) - prevLimit;
+      if (band > 0) {
+        tier += 1;
+        breakdown.push({
+          tier,
+          ratePercent: Math.round(rate * 100),
+          pkpAmount: band,
+          tax: band * rate,
+        });
+      }
+      prevLimit = limit;
+    }
+    return breakdown;
+  }
+
+  function grossToTax(yearlyGross, ptkp, applyBJ) {
+    const biayaJabatan = applyBJ
+      ? Math.min(yearlyGross * biayaJabatanRate, biayaJabatanMaxYearly)
+      : 0;
+    const pkp = Math.max(0, yearlyGross - biayaJabatan - ptkp);
+    const tax = taxFromPKP(pkp);
+    return { biayaJabatan, pkp, tax };
+  }
+
+  function formatRupiah(value) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
+
+  function formatNumberId(value) {
+    return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(value);
+  }
+
+  function parseRpInput(value) {
+    const cleaned = String(value).replace(/\D/g, '');
+    const num = parseInt(cleaned, 10);
+    return Number.isFinite(num) && num >= 0 ? num : 0;
+  }
+
+  function initPPH21() {
+    const mainInput = document.getElementById('pph21-main-input');
+    const mainLabel = document.getElementById('pph21-main-label');
+    const thrInput = document.getElementById('pph21-thr');
+    const bonusInput = document.getElementById('pph21-bonus');
+    const ptkpSelect = document.getElementById('pph21-ptkp');
+    const calculateBtn = document.getElementById('pph21-calculate');
+    const resetBtn = document.getElementById('pph21-reset');
+    const errorBox = document.getElementById('pph21-error');
+    const errorText = document.getElementById('pph21-error-text');
+    const resultsBox = document.getElementById('pph21-results');
+    const takehomeRow = document.getElementById('pph21-takehome-row');
+    const row1Label = document.getElementById('pph21-row1-label');
+
+    if (
+      !mainInput ||
+      !mainLabel ||
+      !thrInput ||
+      !bonusInput ||
+      !ptkpSelect ||
+      !calculateBtn ||
+      !resetBtn ||
+      !errorBox ||
+      !errorText ||
+      !resultsBox ||
+      !takehomeRow ||
+      !row1Label
+    ) {
+      setTimeout(initPPH21, 100);
+      return;
+    }
+
+    const modes = document.querySelectorAll('input[name="pph21-mode"]');
+
+    function getMode() {
+      const m = document.querySelector('input[name="pph21-mode"]:checked');
+      return m ? m.value : 'grossToNet';
+    }
+
+    function updateMainLabel() {
+      const mode = getMode();
+      if (mode === 'grossToNet') mainLabel.textContent = translations.monthlyGrossLabel;
+      else if (mode === 'netToGross') mainLabel.textContent = translations.monthlyNetLabel;
+      else mainLabel.textContent = translations.taxMonthlyLabel;
+    }
+
+    modes.forEach((radio) => radio.addEventListener('change', updateMainLabel));
+
+    function hideError() {
+      errorBox.classList.add('hidden');
+    }
+
+    function calculate() {
+      hideError();
+      const mode = getMode();
+      const main = parseRpInput(mainInput.value);
+      const thr = parseRpInput(thrInput.value);
+      const bonus = parseRpInput(bonusInput.value);
+      const ptkpKey = ptkpSelect.value;
+      const ptkp = ptkpMap[ptkpKey] ?? 54_000_000;
+      const applyBiayaJabatan =
+        document.getElementById('pph21-apply-biaya-jabatan')?.checked ?? defaultApplyBiayaJabatan;
+
+      let yearlyGross = 0;
+      let taxYearly = 0;
+      let biayaJabatan = 0;
+      let pkp = 0;
+
+      if (mode === 'grossToNet') {
+        const monthlyGross = main;
+        yearlyGross = monthlyGross * 12 + thr + bonus;
+        const res = grossToTax(yearlyGross, ptkp, applyBiayaJabatan);
+        taxYearly = res.tax;
+        biayaJabatan = res.biayaJabatan;
+        pkp = res.pkp;
+      } else if (mode === 'netToGross') {
+        const monthlyNet = main;
+        const targetYearlyNet = monthlyNet * 12;
+        let low = targetYearlyNet;
+        let high = Math.max(targetYearlyNet * 3, netToGrossSearchMinHigh);
+        for (let i = 0; i < 100; i++) {
+          const mid = (low + high) / 2;
+          const res = grossToTax(mid, ptkp, applyBiayaJabatan);
+          const net = mid - res.tax;
+          if (Math.abs(net - targetYearlyNet) < 1000) {
+            yearlyGross = mid;
+            taxYearly = res.tax;
+            biayaJabatan = res.biayaJabatan;
+            pkp = res.pkp;
+            break;
+          }
+          if (net < targetYearlyNet) low = mid;
+          else high = mid;
+          yearlyGross = mid;
+          const r = grossToTax(mid, ptkp, applyBiayaJabatan);
+          taxYearly = r.tax;
+          biayaJabatan = r.biayaJabatan;
+          pkp = r.pkp;
+        }
+      } else {
+        const taxMonthly = main;
+        taxYearly = taxMonthly * 12;
+        let low = 0;
+        let high = taxToGrossSearchMax;
+        for (let i = 0; i < 100; i++) {
+          const mid = (low + high) / 2;
+          const res = grossToTax(mid, ptkp, applyBiayaJabatan);
+          if (Math.abs(res.tax - taxYearly) < 1000) {
+            yearlyGross = mid;
+            biayaJabatan = res.biayaJabatan;
+            pkp = res.pkp;
+            break;
+          }
+          if (res.tax < taxYearly) low = mid;
+          else high = mid;
+          yearlyGross = mid;
+          const r = grossToTax(mid, ptkp, applyBiayaJabatan);
+          biayaJabatan = r.biayaJabatan;
+          pkp = r.pkp;
+        }
+      }
+
+      const taxMonthly = taxYearly / 12;
+      const yearlyNet = yearlyGross - taxYearly;
+
+      document.getElementById('pph21-row1-value').textContent = formatRupiah(yearlyGross);
+      document.getElementById('pph21-biaya').textContent = formatRupiah(biayaJabatan);
+      document.getElementById('pph21-ptkp-value').textContent = formatRupiah(ptkp);
+      document.getElementById('pph21-pkp-value').textContent = formatRupiah(pkp);
+
+      const tierSection = document.getElementById('pph21-tier-section');
+      const tierListEl = document.getElementById('pph21-tier-list');
+      const breakdown = getTaxBreakdown(pkp);
+      if (tierSection) tierSection.classList.toggle('hidden', breakdown.length === 0);
+      if (tierListEl) {
+        tierListEl.innerHTML = breakdown
+          .map(
+            (b) =>
+              `<div class="flex justify-between rounded bg-gray-100/80 px-2 py-1.5 dark:bg-gray-800/80">
+                <span>${translations.taxTierLabel.replace('{tier}', b.tier).replace('{rate}', b.ratePercent).replace('{amount}', formatNumberId(b.pkpAmount))}</span>
+                <span class="font-medium text-gray-900 dark:text-gray-100">${formatRupiah(b.tax)}</span>
+              </div>`
+          )
+          .join('');
+      }
+
+      document.getElementById('pph21-tax-yearly').textContent = formatRupiah(taxYearly);
+      document.getElementById('pph21-tax-monthly').textContent = formatRupiah(taxMonthly);
+
+      const wrapTakehome = document.getElementById('pph21-takehome-label-wrap-takehome');
+      const wrapRequired = document.getElementById('pph21-takehome-label-wrap-required');
+
+      if (mode === 'grossToNet') {
+        row1Label.textContent = translations.yearlyGross;
+        if (wrapTakehome) wrapTakehome.classList.remove('hidden');
+        if (wrapRequired) wrapRequired.classList.add('hidden');
+        document.getElementById('pph21-takehome-value').textContent = formatRupiah(yearlyNet / 12);
+      } else if (mode === 'netToGross') {
+        row1Label.textContent = translations.requiredGrossYearly;
+        if (wrapTakehome) wrapTakehome.classList.add('hidden');
+        if (wrapRequired) wrapRequired.classList.remove('hidden');
+        const monthlyGrossRequired = (yearlyGross - thr - bonus) / 12;
+        document.getElementById('pph21-takehome-value').textContent =
+          formatRupiah(monthlyGrossRequired);
+      } else {
+        row1Label.textContent = translations.yearlyGross;
+        if (wrapTakehome) wrapTakehome.classList.remove('hidden');
+        if (wrapRequired) wrapRequired.classList.add('hidden');
+        document.getElementById('pph21-takehome-value').textContent = formatRupiah(yearlyNet / 12);
+      }
+
+      resultsBox.classList.remove('hidden');
+    }
+
+    function reset() {
+      mainInput.value = '';
+      thrInput.value = '';
+      bonusInput.value = '';
+      ptkpSelect.value = 'TK0';
+      const applyCb = document.getElementById('pph21-apply-biaya-jabatan');
+      if (applyCb) applyCb.checked = defaultApplyBiayaJabatan;
+      hideError();
+      resultsBox.classList.add('hidden');
+      updateMainLabel();
+    }
+
+    const applyCbInit = document.getElementById('pph21-apply-biaya-jabatan');
+    if (applyCbInit) applyCbInit.checked = defaultApplyBiayaJabatan;
+
+    calculateBtn.addEventListener('click', calculate);
+    resetBtn.addEventListener('click', reset);
+    mainInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') calculate();
+    });
+    thrInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') calculate();
+    });
+    bonusInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') calculate();
+    });
+
+    updateMainLabel();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPPH21);
+  } else {
+    initPPH21();
+  }
+</script>
