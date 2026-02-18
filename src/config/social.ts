@@ -20,4 +20,9 @@ export const socialLinks: SocialLink[] = [
     url: 'https://linkedin.com/in/akmal-syarifuddin',
     icon: 'linkedin',
   },
+  {
+    name: 'Quora',
+    url: 'https://id.quora.com/profile/Akmal-Syarifuddin-1',
+    icon: 'quora',
+  },
 ];
