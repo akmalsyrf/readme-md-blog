@@ -118,6 +118,10 @@ export default {
         title: 'Kalkulator PPh 21',
         description: 'Hitung pajak penghasilan PPh 21 (Gross–Net, Net–Gross, Tax–Gross)',
       },
+      mdToDocxConverter: {
+        title: 'Konverter MD ke DOCX',
+        description: 'Konversi teks Markdown ke DOCX dengan font, ukuran font, dan LaTeX/KaTeX',
+      },
     },
   },
   pph21Calculator: {
@@ -450,6 +454,23 @@ export default {
       'Past Future Perfect': 'Past Future Perfect',
       'Past Future Perfect Continuous': 'Past Future Perfect Continuous',
     },
+  },
+  mdToDocxConverter: {
+    title: 'Konverter MD ke DOCX',
+    description: 'Konversi teks Markdown ke DOCX dengan font, ukuran font, dan LaTeX/KaTeX',
+    inputPlaceholder:
+      'Tempel atau ketik Markdown di sini. Mendukung **bold**, *italic*, heading, list, dan rumus: $x^2$, $$E=mc^2$$, atau [ Ek = \\frac{1}{2}mv^2 ]',
+    fontLabel: 'Font',
+    fontSizeLabel: 'Ukuran font (pt)',
+    convertButton: 'Konversi ke DOCX',
+    converting: 'Mengonversi...',
+    clearButton: 'Hapus',
+    noTextError: 'Silakan masukkan teks Markdown terlebih dahulu',
+    error: 'Terjadi kesalahan',
+    errorMessage: 'Konversi gagal. Silakan coba lagi.',
+    successMessage: 'DOCX berhasil diunduh',
+    latexSupport:
+      'Rumus: $...$ (inline), $$...$$ atau [ ... ] (display) dikonversi ke equation Word. **Bold** dan *italic* juga didukung.',
   },
   aiPractice: {
     title: 'AI Practice',

@@ -114,6 +114,10 @@ export default {
         title: 'PPh 21 Calculator',
         description: 'Calculate Indonesian income tax PPh 21 (Gross–Net, Net–Gross, Tax–Gross)',
       },
+      mdToDocxConverter: {
+        title: 'MD to DOCX Converter',
+        description: 'Convert Markdown text to DOCX with font, font size, and LaTeX/KaTeX math',
+      },
     },
   },
   pph21Calculator: {
@@ -445,6 +449,23 @@ export default {
       'Past Future Perfect': 'Past Future Perfect',
       'Past Future Perfect Continuous': 'Past Future Perfect Continuous',
     },
+  },
+  mdToDocxConverter: {
+    title: 'MD to DOCX Converter',
+    description: 'Convert Markdown text to DOCX with font, font size, and LaTeX/KaTeX math',
+    inputPlaceholder:
+      'Paste or type Markdown here. Supports **bold**, *italic*, headings, lists, and math: $x^2$, $$E=mc^2$$, or [ Ek = \\frac{1}{2}mv^2 ]',
+    fontLabel: 'Font',
+    fontSizeLabel: 'Font size (pt)',
+    convertButton: 'Convert to DOCX',
+    converting: 'Converting...',
+    clearButton: 'Clear',
+    noTextError: 'Please enter Markdown text first',
+    error: 'Error',
+    errorMessage: 'Conversion failed. Please try again.',
+    successMessage: 'DOCX downloaded successfully',
+    latexSupport:
+      'Math: $...$ (inline), $$...$$ or [ ... ] (display) convert to Word equations. **Bold** and *italic* are also supported.',
   },
   aiPractice: {
     title: 'AI Practice',

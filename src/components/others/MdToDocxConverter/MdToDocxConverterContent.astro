@@ -1,0 +1,219 @@
+---
+import type { Locale } from '../../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  t: any;
+}
+
+const { t } = Astro.props;
+
+const fontOptions = [
+  'Calibri',
+  'Times New Roman',
+  'Arial',
+  'Georgia',
+  'Verdana',
+  'Cambria',
+  'Garamond',
+  'Helvetica',
+  'Courier New',
+];
+const fontSizeOptions = [9, 10, 11, 12, 14, 16, 18, 20, 22, 24];
+---
+
+<div class="space-y-6">
+  <div
+    class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+  >
+    <div class="mb-4">
+      <textarea
+        id="md-input"
+        rows="12"
+        class="w-full rounded-md border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+        placeholder={t.mdToDocxConverter.inputPlaceholder}></textarea>
+    </div>
+
+    <div class="mb-4 grid gap-4 sm:grid-cols-2">
+      <div>
+        <label
+          for="font-select"
+          class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          {t.mdToDocxConverter.fontLabel}
+        </label>
+        <select
+          id="font-select"
+          class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+        >
+          {
+            fontOptions.map((f) => (
+              <option value={f} selected={f === 'Calibri'}>
+                {f}
+              </option>
+            ))
+          }
+        </select>
+      </div>
+      <div>
+        <label
+          for="font-size-select"
+          class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          {t.mdToDocxConverter.fontSizeLabel}
+        </label>
+        <select
+          id="font-size-select"
+          class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+        >
+          {
+            fontSizeOptions.map((pt) => (
+              <option value={pt} selected={pt === 11}>
+                {pt} pt
+              </option>
+            ))
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <button
+        id="convert-button"
+        class="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {t.mdToDocxConverter.convertButton}
+      </button>
+      <button
+        id="clear-button"
+        type="button"
+        class="rounded-md border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+      >
+        {t.mdToDocxConverter.clearButton}
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="error-message"
+    class="hidden rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+  >
+    <p id="error-text"></p>
+  </div>
+  <div
+    id="success-message"
+    class="hidden rounded-lg border border-green-200 bg-green-50 p-4 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-200"
+  >
+    <p>{t.mdToDocxConverter.successMessage}</p>
+  </div>
+
+  <div
+    class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400"
+  >
+    <p>{t.mdToDocxConverter.latexSupport}</p>
+  </div>
+</div>
+
+<script
+  define:vars={{
+    translations: {
+      noTextError: t.mdToDocxConverter.noTextError,
+      errorMessage: t.mdToDocxConverter.errorMessage,
+      convertButton: t.mdToDocxConverter.convertButton,
+      converting: t.mdToDocxConverter.converting,
+    },
+  }}
+>
+  function initMdToDocx() {
+    const mdInput = document.getElementById('md-input');
+    const fontSelect = document.getElementById('font-select');
+    const fontSizeSelect = document.getElementById('font-size-select');
+    const convertBtn = document.getElementById('convert-button');
+    const clearBtn = document.getElementById('clear-button');
+    const errorEl = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+    const successEl = document.getElementById('success-message');
+
+    if (
+      !mdInput ||
+      !fontSelect ||
+      !fontSizeSelect ||
+      !convertBtn ||
+      !clearBtn ||
+      !errorEl ||
+      !errorText ||
+      !successEl
+    ) {
+      setTimeout(initMdToDocx, 100);
+      return;
+    }
+
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorEl.classList.remove('hidden');
+      successEl.classList.add('hidden');
+    }
+    function hideError() {
+      errorEl.classList.add('hidden');
+    }
+    function showSuccess() {
+      successEl.classList.remove('hidden');
+      errorEl.classList.add('hidden');
+    }
+
+    convertBtn.addEventListener('click', async () => {
+      const markdown = mdInput.value.trim();
+      if (!markdown) {
+        showError(translations.noTextError);
+        return;
+      }
+      convertBtn.disabled = true;
+      convertBtn.textContent = translations.converting;
+      hideError();
+      successEl.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/md-to-docx', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            markdown,
+            fontFamily: fontSelect.value || undefined,
+            fontSize: parseInt(fontSizeSelect.value, 10) || 11,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data?.error || translations.errorMessage);
+        }
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'document.docx';
+        a.click();
+        URL.revokeObjectURL(url);
+        showSuccess();
+      } catch (err) {
+        showError(err instanceof Error ? err.message : translations.errorMessage);
+      } finally {
+        convertBtn.disabled = false;
+        convertBtn.textContent = translations.convertButton;
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      mdInput.value = '';
+      hideError();
+      successEl.classList.add('hidden');
+      mdInput.focus();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMdToDocx);
+  } else {
+    initMdToDocx();
+  }
+</script>
