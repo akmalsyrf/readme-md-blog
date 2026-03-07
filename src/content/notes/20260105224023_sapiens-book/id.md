@@ -4,6 +4,7 @@ description: 'Refleksi atas buku Sapiens: Memahami realitas inter-subjektif sepe
 pubDate: 2026-01-05
 author: 'Akmal'
 tags: ['books', 'philosophy', 'history', 'sapiens', 'reflections']
+image: '/notes/20260105224023_sapiens-book/homo-sapiens.webp'
 ---
 
 Sudah cukup lama sejak saya pertama kali menutup lembar terakhir buku Sapiens karya Yuval Noah Harari. Namun, ada satu konsep dari Harari yang terus menghantui pikiran saya setiap kali saya melihat gedung pencakar langit, menggunakan aplikasi perbankan, atau melihat hiruk-pikuk politik di media sosial.

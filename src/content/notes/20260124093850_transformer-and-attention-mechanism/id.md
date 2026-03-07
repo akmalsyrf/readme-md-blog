@@ -4,6 +4,7 @@ description: 'Membedah arsitektur Transformer yang merevolusi AI  hingga mekanis
 pubDate: 2026-01-24
 author: 'Akmal'
 tags: ['transformer', 'attention', 'nlp', 'deep-learning', 'artificial-intelligence']
+image: '/notes/20260124093850_transformer-and-attention-mechanism/cover.webp'
 ---
 
 Halo semua! Kembali lagi bersama saya. Pernahkah Anda bertanya-tanya, bagaimana ChatGPT bisa memahami konteks percakapan dengan begitu baik? Atau bagaimana Google Translate bisa menerjemahkan kalimat panjang dengan akurat? Jawabannya ada pada **Transformer Architecture** - sebuah arsitektur yang tidak hanya mengubah cara kita memproses bahasa alami, tapi juga menjadi fondasi dari hampir semua model AI modern yang kita gunakan hari ini.

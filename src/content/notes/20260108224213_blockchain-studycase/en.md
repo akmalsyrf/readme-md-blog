@@ -4,6 +4,7 @@ description: 'Exploring blockchain technology through technical case studies fro
 pubDate: 2026-01-08
 author: 'Akmal'
 tags: ['blockchain', 'web3', 'smart-contract']
+image: '/notes/20260108224213_blockchain-studycase/erc.webp'
 ---
 
 Hello everyone! Still with me here. This time, I want to dive deeper into another old project I created on GitHub. This repository contains _study cases_ in the Blockchain field that can be accessed [here](https://github.com/akmalsyrf/blockchain-studycase).

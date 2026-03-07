@@ -4,6 +4,7 @@ description: 'The story of maintaining a Duolingo streak for over 400 days.'
 pubDate: 2026-01-02
 author: 'Akmal'
 tags: ['duolingo', 'english', 'japanese', 'resolution']
+image: '/notes/20260102203713_duolingo-streak/duo.webp'
 ---
 
 ### Prologue: The Green Gatekeeper

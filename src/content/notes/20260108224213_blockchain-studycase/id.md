@@ -4,6 +4,7 @@ description: 'Menelusuri teknologi blockchain melalui studi kasus teknis reposit
 pubDate: 2026-01-08
 author: 'Akmal'
 tags: ['blockchain', 'web3', 'smart-contract']
+image: '/notes/20260108224213_blockchain-studycase/erc.webp'
 ---
 
 Halo semua! Masih bersama saya di sini. Kali ini, saya ingin membedah lebih dalam project lama lainnya yang saya buat di GitHub. Repo ini berisikan _studycase_ di bidang Blockchain yang bisa diakses [disini](https://github.com/akmalsyrf/blockchain-studycase).

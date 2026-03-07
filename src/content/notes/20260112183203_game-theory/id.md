@@ -4,6 +4,7 @@ description: 'Mengapa menjadi orang baik dan pemaaf justru menjadi strategi terb
 pubDate: 2026-01-12
 author: 'Akmal'
 tags: ['game-theory', 'psychology', 'philosophy', 'reflections', 'fun-facts']
+image: '/notes/20260112183203_game-theory/prisoners-dillema.webp'
 ---
 
 Banyak orang percaya pada pepatah _"Nice guys finish last"_—bahwa orang baik akan selalu kalah oleh mereka yang licik. Namun, apakah sains mendukung klaim ini? Kita akan membedah **Game Theory** untuk menemukan strategi terbaik dalam menghadapi interaksi manusia yang kompleks.

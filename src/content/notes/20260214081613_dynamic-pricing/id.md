@@ -4,6 +4,7 @@ description: 'Bedah dynamic pricing di Indonesia: Gojek, Grab, Traveloka; lonjak
 pubDate: 2026-02-14
 author: 'Akmal'
 tags: ['technology', 'dynamic-pricing', 'unicorn', 'economics', 'society']
+image: '/notes/20260214081613_dynamic-pricing/dynamic-pricing.webp'
 ---
 
 Pernahkah kamu merasa harga ojol tiba-tiba naik dua kali lipat saat hujan deras, padahal lima menit sebelumnya masih normal? Itulah **dynamic pricing**. Terinspirasi dari thread [Hanif Luthfi](https://x.com/hanifproduktif) ([1](https://x.com/hanifproduktif/status/2021022476407337471), [2](https://x.com/hanifproduktif/status/2021395323453571174)), tulisan ini membedah cara kerjanya dan dampaknya—bukan sekadar "harga naik", tapi bagaimana data dan konteks kita dipakai untuk menebak seberapa besar kita mau bayar.

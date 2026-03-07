@@ -4,6 +4,7 @@ description: 'How the physics principle “at rest stays at rest, in motion stay
 pubDate: 2026-02-08
 author: 'Akmal'
 tags: ['physics', 'productivity', 'motivation', 'habit', 'newton']
+image: '/notes/20260208185635_newtons-inertia-law-in-daily-life/lazy-meme.webp'
 ---
 
 Ever sat for hours in front of a screen, knowing you have a ton to do, but your body feels glued to the chair? Or woken up planning to work out, only to still be lying in bed an hour later, scrolling? If so, congrats—you’ve just experienced **Newton’s Law of Inertia** in its most personal form.

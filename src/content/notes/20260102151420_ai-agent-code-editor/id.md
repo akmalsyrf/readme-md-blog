@@ -4,6 +4,7 @@ description: 'Renungan dari tahun 2025 tentang bagaimana AI agent mengubah cara 
 pubDate: 2026-01-02
 author: 'Akmal'
 tags: ['random-thought', 'software-engineering', 'ai-agent']
+image: '/notes/20260102151420_ai-agent-code-editor/image.webp'
 ---
 
 Hujan di luar belum berhenti, mengetuk jendela kamar kos dengan ritme yang monoton. Namun, di dalam ruangan kecil ini, suasananya jauh dari suram. Justru, saya sedang asyik-asyiknya.

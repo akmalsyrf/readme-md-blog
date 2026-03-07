@@ -4,6 +4,7 @@ description: 'Complete breakdown of Proof of Concept (PoC) in Software Developme
 pubDate: 2026-02-07
 author: 'Akmal'
 tags: ['software-engineering', 'sdlc', 'development', 'project-management', 'technology']
+image: '/notes/20260207115950_poc-in-sldc/from-poc-to-product.webp'
 ---
 
 Imagine you're a developer asked to add a real-time notification feature to an existing application. Or maybe you're asked to integrate AI for a product recommendation system. Or even migrate a legacy application to cloud computing.

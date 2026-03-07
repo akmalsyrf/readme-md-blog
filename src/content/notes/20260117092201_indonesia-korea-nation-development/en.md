@@ -4,6 +4,7 @@ description: 'A comparison of economic development strategies between Indonesia 
 pubDate: 2026-01-07
 author: 'Akmal'
 tags: ['economy', 'history', 'nations', 'nation-development']
+image: '/notes/20260117092201_indonesia-korea-nation-development/flag.webp'
 ---
 
 Imagine a farmer in Daegu, South Korea, in 1960. His life was more destitute than a farmer in Klaten, Central Java. Today, the grandson of the Daegu farmer designs semiconductors at Samsung, while the grandson of the Klaten farmer is still stuck in a land certificate dispute that has been unresolved since his grandfather's time.

@@ -4,6 +4,7 @@ description: 'Bedah tuntas data dan fakta tentang probabilitas orang miskin menj
 pubDate: 2026-02-07
 author: 'Akmal'
 tags: ['finance', 'society', 'inequality', 'social-mobility', 'wealth']
+image: '/notes/20260207080450_how-realistic-is-it-for-the-poor-to-become-billionaires/economic-mobility.webp'
 ---
 
 Bayangkan kamu adalah seorang anak yang lahir di keluarga miskin. Setiap hari, kamu mendengar cerita motivasi tentang bagaimana seseorang berhasil keluar dari kemiskinan dan menjadi kaya raya. "Jika mereka bisa, kenapa kamu tidak?" begitu kata-kata yang sering kita dengar.

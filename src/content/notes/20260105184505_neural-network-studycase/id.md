@@ -4,6 +4,7 @@ description: 'Membongkar cara kerja Jaringan Saraf Tiruan melalui paradigma Mach
 pubDate: 2026-01-05
 author: 'Akmal'
 tags: ['python', 'neural-network', 'machine-learning', 'jupyter-notebook', 'math']
+image: '/notes/20260105184505_neural-network-studycase/3-multilayer-perceptron.webp'
 ---
 
 Halo semua! Masih bersama saya di sini. Kali ini, saya ingin membedah lebih dalam proyek lama yang saya buat di GitHub. Proyek ini bukan sekadar _copy-paste_ kode, melainkan usaha untuk memahami setiap baris logika di balik **Neural Network**.

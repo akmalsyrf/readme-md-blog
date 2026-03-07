@@ -4,6 +4,7 @@ description: 'Menelusuri sejarah ekonomi Jepang dari kejayaan bubble asset hingg
 pubDate: 2026-01-24
 author: 'Akmal'
 tags: ['economy', 'japan', 'carry-trade', 'history', 'financial']
+image: '/notes/20260124103733_japan-lost-decade-and-carry-trade/shibuya.webp'
 ---
 
 Halo semua! Kali ini, saya ingin membawa Anda menjelajahi salah satu episode paling menarik dalam sejarah ekonomi modern: **Japan Lost Decade** dan bagaimana fenomena ini melahirkan strategi investasi global yang dikenal sebagai **Japan Carry Trade**.

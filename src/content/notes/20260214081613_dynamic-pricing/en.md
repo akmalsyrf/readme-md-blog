@@ -4,6 +4,7 @@ description: 'A look at dynamic pricing in Indonesia: Gojek, Grab, Traveloka; ri
 pubDate: 2026-02-14
 author: 'Akmal'
 tags: ['technology', 'dynamic-pricing', 'unicorn', 'economics', 'society']
+image: '/notes/20260214081613_dynamic-pricing/dynamic-pricing.webp'
 ---
 
 Have you ever noticed ride-hailing fares suddenly double in a downpour, when they were normal five minutes earlier? That’s **dynamic pricing**. Inspired by [Hanif Luthfi](https://x.com/hanifproduktif)’s threads ([1](https://x.com/hanifproduktif/status/2021022476407337471), [2](https://x.com/hanifproduktif/status/2021395323453571174)), this post breaks down how it works and what it costs us—not just “prices go up,” but how our data and context are used to guess how much we’re willing to pay.

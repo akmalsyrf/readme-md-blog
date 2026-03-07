@@ -4,6 +4,7 @@ description: 'Develop and test AWS-based applications without always hitting the
 pubDate: 2026-03-02
 author: 'Akmal'
 tags: ['aws', 'cloud', 'localstack', 'docker', 'development', 'devops', 'software-engineering']
+image: '/notes/20260302185652_localstack-for-aws-development/logo.webp'
 ---
 
 In the age of cloud computing, many developers build applications that rely on **Amazon Web Services (AWS)**—whether it’s S3 for storage, Lambda for serverless functions, or DynamoDB for databases. Integrating with AWS is commonplace.

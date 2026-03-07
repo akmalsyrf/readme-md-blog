@@ -4,6 +4,7 @@ description: 'Bedah lengkap tentang Proof of Concept (PoC) dalam Software Develo
 pubDate: 2026-02-07
 author: 'Akmal'
 tags: ['software-engineering', 'sdlc', 'development', 'project-management']
+image: '/notes/20260207115950_poc-in-sldc/from-poc-to-product.webp'
 ---
 
 Bayangkan kamu adalah seorang developer yang diminta untuk menambahkan fitur real-time notification ke aplikasi yang sudah ada. Atau mungkin kamu diminta mengintegrasikan AI untuk sistem rekomendasi produk. Atau bahkan migrasi aplikasi legacy ke cloud computing.

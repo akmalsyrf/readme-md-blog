@@ -4,6 +4,7 @@ description: 'Menelusuri sejarah di balik istilah pemrograman populer seperti Bu
 pubDate: 2026-01-06
 author: 'Akmal'
 tags: ['software-engineering', 'history', 'fun-facts', 'computer']
+image: '/notes/20260106200755_history-of-bug-patch-core-dumped/bug.webp'
 ---
 
 Membangun perangkat lunak di zaman modern sering kali membuat kita lupa bahwa bahasa yang kita gunakan sehari-hari—seperti _print_, _bug_, hingga _patch_—sebenarnya adalah "warisan" dari tumpukan besi, kabel, dan kertas di masa lalu.

@@ -4,6 +4,7 @@ description: 'Bagaimana prinsip fisika "diam tetap diam, bergerak tetap bergerak
 pubDate: 2026-02-08
 author: 'Akmal'
 tags: ['physics', 'productivity', 'motivation', 'habit', 'newton']
+image: '/notes/20260208185635_newtons-inertia-law-in-daily-life/lazy-meme.webp'
 ---
 
 Pernahkah kamu duduk berjam-jam di depan layar, tahu ada segudang tugas yang harus diselesaikan, tapi rasanya tubuh ini seperti tertanam di kursi? Atau bangun pagi dengan niat olahraga, lalu satu jam kemudian masih berbaring sambil scroll media sosial? Kalau iya, selamat—kamu baru saja mengalami **Hukum Kelembaman Newton** dalam wujud yang paling personal.

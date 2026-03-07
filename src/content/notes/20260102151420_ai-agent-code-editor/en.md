@@ -4,6 +4,7 @@ description: 'Reflections from 2025 on how AI agents are revolutionizing the way
 pubDate: 2026-01-02
 author: 'Akmal'
 tags: ['random-thought', 'software-engineering', 'ai-agent']
+image: '/notes/20260102151420_ai-agent-code-editor/image.webp'
 ---
 
 Outside, the rain hasn't stopped, tapping against my boarding house window with a monotonous rhythm. Inside this small room, however, the atmosphere is far from gloomy. In fact, I’m in the middle of a breakthrough.

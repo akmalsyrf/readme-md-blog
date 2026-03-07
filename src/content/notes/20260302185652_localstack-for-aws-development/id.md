@@ -4,6 +4,7 @@ description: 'Mengembangkan dan menguji aplikasi berbasis AWS tanpa harus selalu
 pubDate: 2026-03-02
 author: 'Akmal'
 tags: ['aws', 'cloud', 'localstack', 'docker', 'development', 'devops', 'software-engineering']
+image: '/notes/20260302185652_localstack-for-aws-development/logo.webp'
 ---
 
 Di era cloud computing, banyak developer membangun aplikasi yang mengandalkan layanan **Amazon Web Services (AWS)**. Entah itu S3 untuk penyimpanan, Lambda untuk fungsi serverless, atau DynamoDB untuk database—integrasi dengan AWS sudah menjadi hal yang lumrah.

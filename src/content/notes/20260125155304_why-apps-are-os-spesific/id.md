@@ -4,6 +4,7 @@ description: 'Membongkar alasan teknis di balik ketidakcocokan aplikasi antara W
 pubDate: 2026-01-25
 author: 'Akmal'
 tags: ['computer-science', 'operating-system', 'software-engineering']
+image: '/notes/20260125155304_why-apps-are-os-spesific/interaction.webp'
 ---
 
 Pernahkah kalian bertanya-tanya, kenapa file `.exe` dari Windows tidak bisa dibuka di MacBook, atau aplikasi Mac tidak bisa jalan di Linux? Jawaban simpelnya mungkin: _"Ya, kan beda OS!"_. Tapi bagi kita yang ingin tahu lebih dalam, jawabannya jauh lebih kompleks daripada sekadar perbedaan merek device.

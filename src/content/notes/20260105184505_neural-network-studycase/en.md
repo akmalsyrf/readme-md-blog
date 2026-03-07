@@ -4,6 +4,7 @@ description: 'Unpacking the inner workings of Artificial Neural Networks through
 pubDate: 2026-01-05
 author: 'Akmal'
 tags: ['python', 'neural-network', 'machine-learning', 'jupyter-notebook', 'math']
+image: '/notes/20260105184505_neural-network-studycase/3-multilayer-perceptron.webp'
 ---
 
 Hello everyone! Still with me here. This time, I want to dissect an old project of mine on GitHub. This project wasn't just about copying and pasting code—it was an effort to understand every line of logic behind a **Neural Network**.

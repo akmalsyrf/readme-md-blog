@@ -4,6 +4,7 @@ description: 'Bedah tuntas pemikiran Max Tegmark tentang evolusi kehidupan, leda
 pubDate: 2026-01-13
 author: 'Akmal'
 tags: ['artificial-intelligence', 'books', 'philosophy']
+image: '/notes/20260113192523_life-3-0-book/life3-0.webp'
 ---
 
 Halo semua! Setelah sebelumnya kita membahas sejarah manusia di masa lalu lewat Sapiens, kali ini saya ingin mengajak kalian melompat jauh ke depan. Jika Harari bercerita tentang bagaimana "cerita" dan "fiksi" menyatukan kita, **Max Tegmark** dalam bukunya Life 3.0 mengajak kita berpikir tentang apa yang terjadi ketika "cerita" tersebut tidak lagi ditulis oleh manusia, melainkan oleh entitas yang 'kemungkinan besar' akan jauh lebih cerdas dari kita.

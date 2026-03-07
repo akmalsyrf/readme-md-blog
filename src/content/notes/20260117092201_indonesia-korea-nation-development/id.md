@@ -4,6 +4,7 @@ description: 'Perbandingan strategi pembangunan ekonomi antara Indonesia dan Kor
 pubDate: 2026-01-07
 author: 'Akmal'
 tags: ['economy', 'history', 'nations', 'nation-development']
+image: '/notes/20260117092201_indonesia-korea-nation-development/flag.webp'
 ---
 
 Bayangkan seorang petani di Daegu, Korea Selatan, tahun 1960. Hidupnya lebih melarat dari petani di Klaten, Jawa Tengah. Sekarang, cucu petani Daegu merancang semikonduktor di Samsung, sementara cucu petani Klaten masih terjebak sengketa sertifikat tanah yang belum selesai sejak jaman kakeknya.

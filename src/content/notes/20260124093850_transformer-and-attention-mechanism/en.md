@@ -4,6 +4,7 @@ description: 'Dissecting the Transformer architecture that revolutionized AI to 
 pubDate: 2026-01-24
 author: 'Akmal'
 tags: ['transformer', 'attention', 'nlp', 'deep-learning', 'artificial-intelligence']
+image: '/notes/20260124093850_transformer-and-attention-mechanism/cover.webp'
 ---
 
 Hello everyone! Back again with me. Have you ever wondered how ChatGPT can understand conversation context so well? Or how Google Translate can translate long sentences accurately? The answer lies in **Transformer Architecture** - an architecture that not only changed how we process natural language, but also became the foundation of almost all modern AI models we use today.

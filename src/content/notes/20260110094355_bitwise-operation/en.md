@@ -4,6 +4,7 @@ description: 'Unpacking the concept of bitwise operations in low-level programmi
 pubDate: 2026-01-10
 author: 'Akmal'
 tags: ['bitwise-operation', 'software-engineering', 'low-level-programming']
+image: '/notes/20260110094355_bitwise-operation/bit-packing.webp'
 ---
 
 Have you ever peeked at the Linux kernel source code, hardware _drivers_, or cryptography libraries and felt confused seeing symbols like `&`, `|`, `<<`, along with mysterious hexadecimal number sequences? For web application developers or _high-level_ developers, this code looks like an alien language. However, in the _low-level_ world, these are precision instruments for maximum efficiency.

@@ -4,6 +4,7 @@ description: 'Unveiling the technical reasons behind application incompatibility
 pubDate: 2026-01-25
 author: 'Akmal'
 tags: ['computer-science', 'operating-system', 'software-engineering']
+image: '/notes/20260125155304_why-apps-are-os-spesific/interaction.webp'
 ---
 
 Have you ever wondered why `.exe` files from Windows can't be opened on a MacBook, or why Mac applications can't run on Linux? The simple answer might be: _"Well, they're different OSes!"_. But for those of us who want to dig deeper, the answer is far more complex than just different device brands.

@@ -4,6 +4,7 @@ description: 'Membongkar konsep operasi bitwise dalam pemrograman low-level, dar
 pubDate: 2026-01-10
 author: 'Akmal'
 tags: ['bitwise-operation', 'software-engineering', 'low-level-programming']
+image: '/notes/20260110094355_bitwise-operation/bit-packing.webp'
 ---
 
 Pernahkah Anda mengintip kode sumber kernel Linux, _driver_ perangkat keras, atau pustaka kriptografi dan merasa bingung melihat simbol-simbol seperti `&`, `|`, `<<`, serta deretan angka heksadesimal misterius? Bagi pengembang aplikasi web atau _high-level_, kode ini tampak seperti bahasa alien. Namun, di dunia _low-level_, ini adalah instrumen presisi untuk efisiensi maksimal.

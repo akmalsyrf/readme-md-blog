@@ -4,6 +4,7 @@ description: 'Muak dengan Postman yang makin berat dan ribet? Simak cerita migra
 pubDate: 2026-01-08
 author: 'Akmal'
 tags: ['backend', 'api', 'bruno', 'automation', 'git', 'software-engineering']
+image: '/notes/20260108191821_bruno-api-collection/cover.webp'
 ---
 
 Akhir-akhir ini saya merasa Postman terasa semakin _cloud-centric_ juga semakin banyak _additional-feature_ yang sepertinya tidak perlukan untuk sebuah _API Client_. Masalah utama muncul saat kolaborasi tim menjadi ribet karena batasan _workspace_ atau batasan _member_ untuk bergabung di organisasi Postman _free tier_. Sebagai _engineer_ yang memuja efisiensi, saya mendambakan sesuatu yang bisa masuk ke dalam ekosistem yang sudah ada: **Git**.

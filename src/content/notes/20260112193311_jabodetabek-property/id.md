@@ -4,6 +4,7 @@ description: 'Bedah tuntas riset The Overpost mengenai realita pasar properti In
 pubDate: 2026-01-07
 author: 'Akmal'
 tags: ['property', 'finance', 'investment', 'real-estate', 'gen-z']
+image: '/notes/20260112193311_jabodetabek-property/zillow.webp'
 ---
 
 Halo teman-teman! Masih dengan saya, Akmal. Sebagai _salaryman_ yang nantinya tentu akan menimbang-nimbang untuk membeli hunian, saya sering merasa kepikiran dengan narasi, _"Beli sekarang, kalau nggak harga bakal naik tahun depan!"_. Namun, beberapa waktu lalu saya menonton sebuah video menarik dari [**Leonard Hartono**](https://www.youtube.com/@leon.hartono) (The Overpost) yang seorang ahli di bidang properti. Penjelasannya bukan sekadar opini, melainkan hasil riset mendalam terhadap ratusan _listing_ properti selama satu dekade terakhir. (_Link video saya cantumkan di bawah_)

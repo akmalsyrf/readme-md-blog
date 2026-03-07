@@ -4,6 +4,7 @@ description: 'A comprehensive breakdown of data and facts about the probability 
 pubDate: 2026-02-07
 author: 'Akmal'
 tags: ['finance', 'society', 'inequality', 'social-mobility', 'wealth']
+image: '/notes/20260207080450_how-realistic-is-it-for-the-poor-to-become-billionaires/economic-mobility.webp'
 ---
 
 Imagine you're a child born into a poor family. Every day, you hear motivational stories about how someone managed to escape poverty and become wealthy. "If they can do it, why can't you?"—that's what we often hear.

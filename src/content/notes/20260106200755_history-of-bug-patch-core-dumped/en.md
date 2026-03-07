@@ -4,6 +4,7 @@ description: 'Tracing the history behind popular programming terms like Bug, Pri
 pubDate: 2026-01-06
 author: 'Akmal'
 tags: ['software-engineering', 'history', 'fun-facts', 'computer']
+image: '/notes/20260106200755_history-of-bug-patch-core-dumped/bug.webp'
 ---
 
 Building modern software often makes us forget that the language we use every day—terms like _print_, _bug_, and _patch_—is actually a "legacy" inherited from piles of iron, cables, and paper from the past.

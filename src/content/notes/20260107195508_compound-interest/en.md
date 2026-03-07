@@ -4,6 +4,7 @@ description: "Why time is Gen Z's greatest asset in facing inflation and today's
 pubDate: 2026-01-07
 author: 'Akmal'
 tags: ['finance', 'investing', 'compound-interest', 'gen-z']
+image: '/notes/20260107195508_compound-interest/compound-interest.webp'
 ---
 
 Have you ever imagined a snowball rolling down from a mountain peak? Initially, it's small, maybe just a handful. However, as it rolls down, it picks up more snow, becomes increasingly larger, and its speed increases exponentially. By the end of its journey, it's no longer a small snowball, but an unstoppable giant mass.

@@ -4,6 +4,7 @@ description: 'Pengalaman suka duka menjaga Duolingo streak selama 400+ hari'
 pubDate: 2026-01-02
 author: 'Akmal'
 tags: ['duolingo', 'english', 'japanese', 'resolution']
+image: '/notes/20260102203713_duolingo-streak/duo.webp'
 ---
 
 ### Prolog: Sang Penjaga Gerbang Hijau

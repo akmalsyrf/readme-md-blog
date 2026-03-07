@@ -4,6 +4,7 @@ description: "A thorough dissection of Max Tegmark's thoughts on the evolution o
 pubDate: 2026-01-13
 author: 'Akmal'
 tags: ['artificial-intelligence', 'books', 'philosophy']
+image: '/notes/20260113192523_life-3-0-book/life3-0.webp'
 ---
 
 Hello everyone! After previously discussing human history through Sapiens, this time I want to invite you to leap far into the future. If Harari tells us how "stories" and "fiction" unite us, **Max Tegmark** in his book Life 3.0 invites us to think about what happens when those "stories" are no longer written by humans, but by entities that will 'most likely' be far more intelligent than us.

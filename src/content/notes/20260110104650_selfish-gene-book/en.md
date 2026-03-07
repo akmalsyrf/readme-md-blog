@@ -4,6 +4,7 @@ description: "Exploring Richard Dawkins' revolutionary perspective on evolution,
 pubDate: 2026-01-10
 author: 'Akmal'
 tags: ['biology', 'evolution', 'philosophy', 'reflections']
+image: '/notes/20260110104650_selfish-gene-book/selfish-gene.webp'
 ---
 
 After previously discussing _Sapiens_, there's another book that fundamentally changed how I view life: **The Selfish Gene** by Richard Dawkins.

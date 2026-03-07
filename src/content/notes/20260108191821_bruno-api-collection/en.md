@@ -4,6 +4,7 @@ description: 'Fed up with Postman getting heavier and more complicated? Read on 
 pubDate: 2026-01-08
 author: 'Akmal'
 tags: ['backend', 'api', 'bruno', 'automation', 'git', 'software-engineering']
+image: '/notes/20260108191821_bruno-api-collection/cover.webp'
 ---
 
 Lately, I’ve felt that Postman is becoming increasingly _cloud-centric_, packed with additional features that, frankly, I don't need in an _API Client_. The main issue arises when team collaboration becomes cumbersome due to workspace limitations or member caps on the Postman _free tier_. As an engineer who worships efficiency, I yearned for something that fits into our existing ecosystem: **Git**.

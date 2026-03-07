@@ -4,6 +4,7 @@ description: 'Why being nice and forgiving turns out to be the best strategy for
 pubDate: 2026-01-12
 author: 'Akmal'
 tags: ['game-theory', 'psychology', 'philosophy', 'reflections', 'fun-facts']
+image: '/notes/20260112183203_game-theory/prisoners-dillema.webp'
 ---
 
 Many people believe in the saying _"Nice guys finish last"_—that good people will always lose to those who are cunning. However, does science support this claim? We will dissect **Game Theory** to find the best strategy for dealing with complex human interactions.

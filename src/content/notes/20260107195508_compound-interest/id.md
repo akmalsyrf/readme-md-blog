@@ -4,6 +4,7 @@ description: 'Mengapa waktu adalah aset terbesar Gen Z menghadapi inflasi dan ke
 pubDate: 2026-01-07
 author: 'Akmal'
 tags: ['finance', 'investing', 'compound-interest', 'gen-z']
+image: '/notes/20260107195508_compound-interest/compound-interest.webp'
 ---
 
 Pernahkah kalian membayangkan sebuah bola salju yang menggelinding dari puncak gunung? Awalnya, bola itu kecil, mungkin hanya segenggaman tangan. Namun, seiring ia menggelinding ke bawah, bola itu memungut lebih banyak salju, menjadi semakin besar, dan kecepatannya meningkat secara eksponensial. Di akhir perjalanan, ia bukan lagi bola salju kecil, melainkan sebuah bongkahan raksasa yang tak terbendung.

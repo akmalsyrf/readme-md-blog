@@ -4,6 +4,7 @@ description: 'Menelusuri perspektif revolusioner Richard Dawkins tentang evolusi
 pubDate: 2026-01-10
 author: 'Akmal'
 tags: ['biology', 'evolution', 'philosophy', 'reflections']
+image: '/notes/20260110104650_selfish-gene-book/selfish-gene.webp'
 ---
 
 Setelah sebelumnya saya sempat membahas tentang _Sapiens_, ada satu buku lagi yang mengubah cara saya memandang kehidupan secara fundamental: **The Selfish Gene** karya Richard Dawkins.
