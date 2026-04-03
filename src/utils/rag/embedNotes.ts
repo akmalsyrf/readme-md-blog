@@ -5,17 +5,8 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { chunkText } from './chunkText';
 import { getVectorStore, type VectorDocument } from './vectorStore';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { Locale } from '../i18n';
 import { embedWithCloudflare, isCloudflareConfigured } from './cloudflareAI';
-
-const apiKey = (import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '').trim();
-
-if (!apiKey) {
-  console.warn('⚠️  GEMINI_API_KEY is not set in embedNotes.ts');
-}
-
-const genAI = new GoogleGenerativeAI(apiKey);
 
 interface EmbedOptions {
   clearExisting: boolean;
@@ -28,60 +19,15 @@ const DEFAULT_EMBED_OPTIONS: EmbedOptions = {
 };
 
 /**
- * Get embedding for text with fallback to Cloudflare Workers AI if Gemini fails
- * @param text - Text to embed
- * @returns Embedding vector as array of numbers
+ * Embedding only via Cloudflare Workers AI (see CLOUDFLARE_EMBEDDING_MODEL in cloudflareAI.ts).
  */
-async function getEmbeddingWithFallback(text: string): Promise<number[]> {
-  // Try Gemini first
-  if (apiKey) {
-    try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-embedding-001' });
-      const result = await model.embedContent(text);
-
-      // Extract embedding values - handle different response formats
-      if (result.embedding && Array.isArray(result.embedding.values)) {
-        return result.embedding.values;
-      } else if (result.embedding && Array.isArray(result.embedding)) {
-        return result.embedding;
-      } else if (Array.isArray(result)) {
-        return result;
-      } else {
-        throw new TypeError('Invalid embedding response format from Gemini');
-      }
-    } catch (error) {
-      // Log error but don't throw yet - try Cloudflare fallback
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      // eslint-disable-next-line no-console
-      console.warn(`Gemini embedding failed: ${errorMessage}. Trying Cloudflare fallback...`);
-
-      // Fallback to Cloudflare if configured
-      if (isCloudflareConfigured()) {
-        try {
-          return await embedWithCloudflare(text);
-        } catch (cloudflareError) {
-          // Both failed, throw with context
-          const cloudflareMessage =
-            cloudflareError instanceof Error ? cloudflareError.message : String(cloudflareError);
-          throw new Error(
-            `Both Gemini and Cloudflare embedding failed. Gemini: ${errorMessage}, Cloudflare: ${cloudflareMessage}`
-          );
-        }
-      } else {
-        // No fallback available, throw original error
-        throw error;
-      }
-    }
+async function getEmbedding(text: string): Promise<number[]> {
+  if (!isCloudflareConfigured()) {
+    throw new Error(
+      'Embedding requires Cloudflare Workers AI. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN.'
+    );
   }
-
-  // No Gemini API key, try Cloudflare if available
-  if (isCloudflareConfigured()) {
-    return await embedWithCloudflare(text);
-  }
-
-  throw new Error(
-    'No embedding provider configured. Please set GEMINI_API_KEY or Cloudflare credentials.'
-  );
+  return embedWithCloudflare(text);
 }
 
 /**
@@ -95,10 +41,9 @@ async function _embedNotesInternal(
   locale: Locale,
   options: EmbedOptions = DEFAULT_EMBED_OPTIONS
 ): Promise<void> {
-  // Check if at least one embedding provider is configured
-  if (!apiKey && !isCloudflareConfigured()) {
+  if (!isCloudflareConfigured()) {
     throw new Error(
-      'No embedding provider configured. Please set GEMINI_API_KEY or Cloudflare credentials (CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN).'
+      'No embedding provider configured. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN.'
     );
   }
 
@@ -167,8 +112,7 @@ async function _embedNotesInternal(
         const chunk = chunks[i];
 
         try {
-          // Use embedding with fallback (Gemini -> Cloudflare)
-          const embedding = await getEmbeddingWithFallback(chunk);
+          const embedding = await getEmbedding(chunk);
 
           const document: VectorDocument = {
             id: `${noteId}-${locale}-${i}`,
@@ -267,17 +211,16 @@ export async function embedNotes(locale?: Locale): Promise<void> {
 }
 
 /**
- * Get embedding for a query text with retry logic and fallback
+ * Get embedding for a query text with retry logic (Cloudflare Workers AI only)
  */
 export async function getQueryEmbedding(query: string, maxRetries: number = 3): Promise<number[]> {
   if (!query || query.trim() === '') {
     throw new Error('Query cannot be empty');
   }
 
-  // Check if at least one provider is configured
-  if (!apiKey && !isCloudflareConfigured()) {
+  if (!isCloudflareConfigured()) {
     throw new Error(
-      'No embedding provider configured. Please set GEMINI_API_KEY or Cloudflare credentials.'
+      'No embedding provider configured. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN.'
     );
   }
 
@@ -285,8 +228,7 @@ export async function getQueryEmbedding(query: string, maxRetries: number = 3): 
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      // Use embedding with automatic fallback
-      return await getEmbeddingWithFallback(query);
+      return await getEmbedding(query);
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
 
