@@ -25,4 +25,9 @@ export const socialLinks: SocialLink[] = [
     url: 'https://id.quora.com/profile/Akmal-Syarifuddin-1',
     icon: 'quora',
   },
+  {
+    name: 'Portfolio',
+    url: 'https://akmalsyrf.is-a.dev',
+    icon: 'link',
+  },
 ];
