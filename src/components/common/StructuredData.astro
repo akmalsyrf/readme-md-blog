@@ -84,7 +84,10 @@ function getStructuredData() {
   if (type === 'WebSite') {
     return {
       ...baseData,
+      '@id': `${siteURL}/#website`,
       '@type': 'WebSite',
+      author: { '@id': `${siteURL}/#person` },
+      publisher: { '@id': `${siteURL}/#person` },
       potentialAction: {
         '@type': 'SearchAction',
         target: {

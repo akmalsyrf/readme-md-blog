@@ -1,0 +1,32 @@
+---
+import { person } from '../../config/person';
+
+interface Props {
+  siteURL?: string;
+  aboutURL?: string;
+}
+
+const { siteURL = 'https://akmal-mind.vercel.app', aboutURL } = Astro.props;
+
+const personUrl = aboutURL || new URL('/about', siteURL).href;
+const imageUrl = new URL(person.image, siteURL).href;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${siteURL}/#person`,
+  name: person.name,
+  alternateName: person.alternateName,
+  url: personUrl,
+  image: imageUrl,
+  jobTitle: person.jobTitle,
+  nationality: {
+    '@type': 'Country',
+    name: person.location,
+  },
+  knowsAbout: person.knowsAbout,
+  sameAs: person.sameAs,
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
