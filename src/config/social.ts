@@ -30,4 +30,9 @@ export const socialLinks: SocialLink[] = [
     url: 'https://akmalsyrf.is-a.dev',
     icon: 'link',
   },
+  {
+    name: 'Blog',
+    url: 'https://akmal-mind.vercel.app',
+    icon: 'link',
+  },
 ];

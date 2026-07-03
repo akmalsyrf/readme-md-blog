@@ -2,6 +2,7 @@
 import { getTranslations, getLocalizedPath, type Locale } from '../../utils/i18n';
 import SEO from '../common/SEO.astro';
 import StructuredData from '../common/StructuredData.astro';
+import PersonStructuredData from '../common/PersonStructuredData.astro';
 
 interface Props {
   title?: string;
@@ -115,6 +116,11 @@ if (locale === 'id') {
     locale: alt.locale === 'id' ? 'id-ID' : 'en-US',
     url: alt.url,
   }))}
+/>
+
+<PersonStructuredData
+  siteURL={Astro.site?.href}
+  aboutURL={new URL(getLocalizedPath('/about', locale), Astro.site || Astro.url).href}
 />
 <!-- Blocking script to prevent flash of wrong theme/font size - must run before render -->
 <script is:inline>

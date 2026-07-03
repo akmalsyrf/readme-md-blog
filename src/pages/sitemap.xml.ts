@@ -28,6 +28,22 @@ export const GET: APIRoute = async ({ site }) => {
     <xhtml:link rel="alternate" hreflang="id" href="${siteURL}" />
     <xhtml:link rel="alternate" hreflang="en" href="${siteURL}/en" />
   </url>
+
+  <!-- About -->
+  <url>
+    <loc>${siteURL}/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="id" href="${siteURL}/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="${siteURL}/en/about" />
+  </url>
+  <url>
+    <loc>${siteURL}/en/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="id" href="${siteURL}/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="${siteURL}/en/about" />
+  </url>
   
   <!-- Blog Index -->
   <url>

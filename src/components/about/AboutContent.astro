@@ -1,0 +1,87 @@
+---
+import { person } from '../../config/person';
+import SocialLinks from '../common/SocialLinks.astro';
+import type { Locale } from '../../utils/i18n';
+
+interface Props {
+  locale: Locale;
+  t: {
+    about: {
+      title: string;
+      description: string;
+      bio: string;
+      experience: string;
+      experienceItems: string[];
+      skills: string;
+      skillsItems: string[];
+      location: string;
+      contact: string;
+      portfolio: string;
+      portfolioCta: string;
+      notes: string;
+      notesCta: string;
+    };
+  };
+}
+
+const { locale, t } = Astro.props;
+---
+
+<div class="prose prose-lg max-w-none dark:prose-invert">
+  <p class="text-lg text-gray-600 dark:text-gray-400">{t.about.description}</p>
+
+  <section class="mt-10">
+    <h2>{t.about.bio}</h2>
+    <p>
+      {person.name} — {person.jobTitle}. {t.about.description}
+    </p>
+  </section>
+
+  <section class="mt-10">
+    <h2>{t.about.experience}</h2>
+    <ul>
+      {t.about.experienceItems.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+
+  <section class="mt-10">
+    <h2>{t.about.skills}</h2>
+    <div class="not-prose flex flex-wrap gap-2">
+      {
+        t.about.skillsItems.map((skill) => (
+          <span class="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+            {skill}
+          </span>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <h2>{t.about.location}</h2>
+    <p>{person.location}</p>
+  </section>
+
+  <section class="mt-10">
+    <h2>{t.about.contact}</h2>
+    <div class="not-prose">
+      <SocialLinks />
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <h2>{t.about.portfolio}</h2>
+    <p>
+      <a href={person.portfolioUrl} target="_blank" rel="noopener noreferrer">
+        {t.about.portfolioCta}
+      </a>
+    </p>
+  </section>
+
+  <section class="mt-10">
+    <h2>{t.about.notes}</h2>
+    <p>
+      <a href={locale === 'id' ? '/notes' : '/en/notes'}>{t.about.notesCta}</a>
+    </p>
+  </section>
+</div>
