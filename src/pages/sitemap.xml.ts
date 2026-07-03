@@ -3,7 +3,8 @@ import { getCollection } from 'astro:content';
 import { getLocalizedPath } from '../utils/i18n';
 
 export const GET: APIRoute = async ({ site }) => {
-  const siteURL = site || new URL('https://akmal-mind.vercel.app');
+  const siteOrigin = new URL(site?.href ?? 'https://akmal-mind.vercel.app').origin;
+  const absoluteUrl = (path: string) => new URL(path, siteOrigin).href;
   const allPosts = await getCollection('notes');
 
   // Get posts for both locales (only published posts)
@@ -15,58 +16,58 @@ export const GET: APIRoute = async ({ site }) => {
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <!-- Homepage -->
   <url>
-    <loc>${siteURL}</loc>
+    <loc>${absoluteUrl('/')}</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="id" href="${siteURL}" />
-    <xhtml:link rel="alternate" hreflang="en" href="${siteURL}/en" />
+    <xhtml:link rel="alternate" hreflang="id" href="${absoluteUrl('/')}" />
+    <xhtml:link rel="alternate" hreflang="en" href="${absoluteUrl('/en')}" />
   </url>
   <url>
-    <loc>${siteURL}/en</loc>
+    <loc>${absoluteUrl('/en')}</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="id" href="${siteURL}" />
-    <xhtml:link rel="alternate" hreflang="en" href="${siteURL}/en" />
+    <xhtml:link rel="alternate" hreflang="id" href="${absoluteUrl('/')}" />
+    <xhtml:link rel="alternate" hreflang="en" href="${absoluteUrl('/en')}" />
   </url>
 
   <!-- About -->
   <url>
-    <loc>${siteURL}/about</loc>
+    <loc>${absoluteUrl('/about')}</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="id" href="${siteURL}/about" />
-    <xhtml:link rel="alternate" hreflang="en" href="${siteURL}/en/about" />
+    <xhtml:link rel="alternate" hreflang="id" href="${absoluteUrl('/about')}" />
+    <xhtml:link rel="alternate" hreflang="en" href="${absoluteUrl('/en/about')}" />
   </url>
   <url>
-    <loc>${siteURL}/en/about</loc>
+    <loc>${absoluteUrl('/en/about')}</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="id" href="${siteURL}/about" />
-    <xhtml:link rel="alternate" hreflang="en" href="${siteURL}/en/about" />
+    <xhtml:link rel="alternate" hreflang="id" href="${absoluteUrl('/about')}" />
+    <xhtml:link rel="alternate" hreflang="en" href="${absoluteUrl('/en/about')}" />
   </url>
   
   <!-- Blog Index -->
   <url>
-    <loc>${siteURL}/notes</loc>
+    <loc>${absoluteUrl('/notes')}</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="id" href="${siteURL}/notes" />
-    <xhtml:link rel="alternate" hreflang="en" href="${siteURL}/en/notes" />
+    <xhtml:link rel="alternate" hreflang="id" href="${absoluteUrl('/notes')}" />
+    <xhtml:link rel="alternate" hreflang="en" href="${absoluteUrl('/en/notes')}" />
   </url>
   <url>
-    <loc>${siteURL}/en/notes</loc>
+    <loc>${absoluteUrl('/en/notes')}</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="id" href="${siteURL}/notes" />
-    <xhtml:link rel="alternate" hreflang="en" href="${siteURL}/en/notes" />
+    <xhtml:link rel="alternate" hreflang="id" href="${absoluteUrl('/notes')}" />
+    <xhtml:link rel="alternate" hreflang="en" href="${absoluteUrl('/en/notes')}" />
   </url>
 
   <!-- Blog Posts - Indonesian -->
   ${idPosts
     .map((post) => {
       const slug = post.slug.replace(/\/id$/, '');
-      const postURL = new URL(getLocalizedPath(`/notes/${slug}`, 'id'), siteURL).href;
-      const enPostURL = new URL(getLocalizedPath(`/notes/${slug}`, 'en'), siteURL).href;
+      const postURL = absoluteUrl(getLocalizedPath(`/notes/${slug}`, 'id'));
+      const enPostURL = absoluteUrl(getLocalizedPath(`/notes/${slug}`, 'en'));
       return `  <url>
     <loc>${postURL}</loc>
     <lastmod>${post.data.pubDate.toISOString()}</lastmod>
@@ -82,8 +83,8 @@ export const GET: APIRoute = async ({ site }) => {
   ${enPosts
     .map((post) => {
       const slug = post.slug.replace(/\/en$/, '');
-      const postURL = new URL(getLocalizedPath(`/notes/${slug}`, 'en'), siteURL).href;
-      const idPostURL = new URL(getLocalizedPath(`/notes/${slug}`, 'id'), siteURL).href;
+      const postURL = absoluteUrl(getLocalizedPath(`/notes/${slug}`, 'en'));
+      const idPostURL = absoluteUrl(getLocalizedPath(`/notes/${slug}`, 'id'));
       return `  <url>
     <loc>${postURL}</loc>
     <lastmod>${post.data.pubDate.toISOString()}</lastmod>
